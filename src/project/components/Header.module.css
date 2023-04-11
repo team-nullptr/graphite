@@ -1,0 +1,15 @@
+.header {
+  grid-area: header;
+  padding: 4px;
+}
+
+.input {
+  border: 1px solid rgb(222, 222, 222);
+  background-color: transparent;
+  text-align: center;
+  font-size: 0.88rem;
+  height: 28px;
+  border-radius: 4px;
+  margin-left: 12px;
+  width: 360px;
+}

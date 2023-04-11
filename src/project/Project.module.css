@@ -1,0 +1,6 @@
+.container {
+  display: grid;
+  grid-template: "header header" "sidebar timeline" "sidebar editor";
+  grid-template-columns: 360px 1fr;
+  grid-template-rows: auto auto 1fr;
+}
