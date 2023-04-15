@@ -3,21 +3,3 @@
   width: 100%;
   height: 100%;
 }
-
-.edge {
-  stroke: rgba(222, 222, 222);
-}
-
-.vertex {
-  font-family: system-ui;
-}
-
-.vertex circle {
-  fill: rgba(247, 247, 247);
-  stroke: rgba(222, 222, 222);
-}
-
-.vertex text {
-  text-anchor: middle;
-  dominant-baseline: central;
-}
