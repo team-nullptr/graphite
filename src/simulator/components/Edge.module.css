@@ -1,3 +1,5 @@
 .edge {
-  fill: rgba(175, 175, 175);
+  stroke: rgba(175, 175, 175);
+  stroke-width: 0.83;
+  fill: none;
 }
