@@ -1,13 +1,13 @@
-import { Edge } from "../../core/models/Graph";
+import { Edge } from "../../engine/graph";
 
-export type Edges<T> = [Edge<T>, number][];
+export type Edges<T> = [Edge, number][];
 
 interface Group<T> {
   key: string;
-  edges: Edge<T>[];
+  edges: Edge[];
 }
 
-export const positionEdges = <T>(edges: Edge<T>[]): Edges<T> => {
+export const positionEdges = <T>(edges: Edge[]): Edges<T> => {
   const groupedEdges = group(edges);
   const groups = [...groupedEdges.values()];
 
@@ -22,7 +22,7 @@ export const positionEdges = <T>(edges: Edge<T>[]): Edges<T> => {
   return result;
 };
 
-const group = <T>(edges: Edge<T>[]): Map<string, Group<T>> => {
+const group = <T>(edges: Edge[]): Map<string, Group<T>> => {
   const grouped = new Map<string, Group<T>>();
 
   for (const edge of edges) {
@@ -32,7 +32,7 @@ const group = <T>(edges: Edge<T>[]): Map<string, Group<T>> => {
     if (group) {
       group.edges.push(edge);
     } else {
-      const group = { key: edge.a, edges: [edge] };
+      const group = { key: edge.a.id, edges: [edge] };
       grouped.set(key, group);
     }
   }
@@ -40,7 +40,7 @@ const group = <T>(edges: Edge<T>[]): Map<string, Group<T>> => {
   return grouped;
 };
 
-const sort = <T>(edges: Edge<T>[], key: string): Edge<T>[] => {
+const sort = (edges: Edge[], key: string): Edge[] => {
   return edges.slice().sort((a, b) => {
     const firstDiscriminator = getEdgeDiscriminator(a, key);
     const secondDiscriminator = getEdgeDiscriminator(b, key);
@@ -48,16 +48,16 @@ const sort = <T>(edges: Edge<T>[], key: string): Edge<T>[] => {
   });
 };
 
-const getEdgeDiscriminator = <T>(edge: Edge<T>, key: string) => {
+const getEdgeDiscriminator = <T>(edge: Edge, key: string) => {
   if (!edge.directed) return 0;
-  if (edge.a === key) return 1;
+  if (edge.a.id === key) return 1;
   return -1;
 };
 
-const position = <T>(edges: Edge<T>[], key: string): Edges<T> => {
+const position = <T>(edges: Edge[], key: string): Edges<T> => {
   return edges.map((edge, index) => {
     let position = index - (edges.length - 1) / 2;
-    if (edge.a !== key) position *= -1;
+    if (edge.a.id !== key) position *= -1;
     return [edge, position];
   });
 };
