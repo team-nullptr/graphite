@@ -9,11 +9,9 @@ interface Group<T> {
 
 export const positionEdges = <T>(edges: Edge[]): Edges<T> => {
   const groupedEdges = group(edges);
-  const groups = [...groupedEdges.values()];
-
   let result: Edges<T> = [];
 
-  for (const { key, edges } of groups) {
+  for (const { key, edges } of groupedEdges.values()) {
     const sortedEdges = sort(edges, key);
     const positionedEdges = position(sortedEdges, key);
     result = [...result, ...positionedEdges];
@@ -26,7 +24,7 @@ const group = <T>(edges: Edge[]): Map<string, Group<T>> => {
   const grouped = new Map<string, Group<T>>();
 
   for (const edge of edges) {
-    const key = [edge.a, edge.b].sort().join("");
+    const key = [edge.a.id, edge.b.id].sort().join("");
     const group = grouped.get(key);
 
     if (group) {

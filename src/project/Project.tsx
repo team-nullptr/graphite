@@ -12,10 +12,17 @@ const buildGraph = (): Graph => {
 
   const v1 = graph.addVertex(1);
   const v2 = graph.addVertex(2);
+  const v3 = graph.addVertex(3);
+  const v4 = graph.addVertex(4);
+  const v5 = graph.addVertex(5);
 
   graph.addDirectedEdge(v1, v2, 10);
-  graph.addDirectedEdge(v1, v2, 5);
-  graph.addDirectedEdge(v2, v1, 20);
+  graph.addDirectedEdge(v2, v4, 10);
+  graph.addDirectedEdge(v2, v3, 10);
+  graph.addDirectedEdge(v3, v4, 20);
+  graph.addDirectedEdge(v4, v5, 10);
+  graph.addDirectedEdge(v4, v2, 10);
+  graph.addDirectedEdge(v5, v1, 100);
 
   return graph;
 };
@@ -52,8 +59,11 @@ export const Project = (props: ProjectProps) => {
       <Simulator
         graph={graph}
         arrangement={{
-          "v-0": [200, 200],
-          "v-1": [300, 200],
+          "v-0": [300, 200],
+          "v-1": [400, 200],
+          "v-2": [400, 400],
+          "v-3": [250, 300],
+          "v-4": [200, 200],
         }}
       />
     </main>

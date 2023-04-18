@@ -13,12 +13,10 @@ export interface SimulatorProps {
   arrangement: Arrangement;
 }
 
-export const Simulator = (props: SimulatorProps) => {
-  const { graph, arrangement } = props;
-
+export const Simulator = ({ graph, arrangement }: SimulatorProps) => {
   const positionedEdges = useMemo(() => {
     return positionEdges(graph.edges);
-  }, [graph.edges]);
+  }, [graph]);
 
   const renderEdges = () =>
     positionedEdges.map((positionedEdge) => {
@@ -27,15 +25,26 @@ export const Simulator = (props: SimulatorProps) => {
       const [x, y] = arrangement[edge.a.id] ?? [0, 0];
       const [dx, dy] = arrangement[edge.b.id] ?? [0, 0];
 
-      // prettier-ignore
-      return <Edge key={edge.id} position={position} x={x} y={y} dx={dx} dy={dy} directed={edge.directed} />
+      return (
+        <Edge
+          key={edge.id}
+          position={position}
+          x={x}
+          y={y}
+          dx={dx}
+          dy={dy}
+          directed={edge.directed}
+        />
+      );
     });
 
   const renderVertices = () =>
     graph.vertices.map((vertex) => {
       const [x, y] = arrangement[vertex.id] ?? [0, 0];
-      // prettier-ignore
-      return <Vertex key={vertex.id} cx={x} cy={y} value={vertex.value as any} />;
+
+      return (
+        <Vertex key={vertex.id} cx={x} cy={y} value={vertex.value as any} />
+      );
     });
 
   return (
