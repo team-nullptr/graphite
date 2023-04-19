@@ -1,13 +1,13 @@
-import { ChangeEvent, useEffect, useState } from "react";
+import { ChangeEvent } from "react";
 
 import { Controls } from "../../core/components/Controls";
 import styles from "./Timeline.module.css";
 
 import BackIcon from "../../assets/arrow_back_FILL0_wght200_GRAD0_opsz24.svg";
 import ForwardIcon from "../../assets/arrow_forward_FILL0_wght200_GRAD0_opsz24.svg";
+import PlayIcon from "../../assets/play_arrow_FILL0_wght100_GRAD0_opsz24.svg";
 import RestartIcon from "../../assets/replay_FILL0_wght200_GRAD0_opsz24.svg";
 import StopIcon from "../../assets/stop_FILL0_wght100_GRAD0_opsz24.svg";
-import PlayIcon from "../../assets/play_arrow_FILL0_wght200_GRAD0_opsz24.svg";
 
 export interface TimelineProps {
   playing: boolean;
