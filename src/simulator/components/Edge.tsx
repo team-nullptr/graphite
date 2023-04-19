@@ -1,7 +1,7 @@
 import { Position } from "../Simulator";
 import styles from "./Edge.module.css";
 
-const vertexRadius = 20;
+const vertexRadius = 19;
 
 export interface EdgeProps {
   x: number;
@@ -20,7 +20,7 @@ export const Edge = (props: EdgeProps) => {
   const length = Math.sqrt(Math.pow(width, 2) + Math.pow(height, 2));
 
   const start = rotate([vertexRadius, 0], angle);
-  const end = rotate([length - vertexRadius, 0], -angle, [length, 0]);
+  const end = rotate([length - vertexRadius - 2, 0], -angle, [length, 0]);
 
   const linePath = getLinePath(start, end, angle);
   // prettier-ignore
@@ -32,21 +32,9 @@ export const Edge = (props: EdgeProps) => {
   const transform = `translate(${props.x} ${props.y}) rotate(${deg})`;
 
   return (
-    <g>
-      <path
-        className={styles.edge}
-        // prettier-ignore
-        d={linePath}
-        transform={transform}
-      />
-      {props.directed && (
-        <path
-          className={styles.arrow}
-          // prettier-ignore
-          d={arrowPath}
-          transform={transform}
-        />
-      )}
+    <g transform={transform}>
+      <path className={styles.line} d={linePath} />
+      {props.directed && <path className={styles.arrow} d={arrowPath} />}
     </g>
   );
 };
@@ -61,8 +49,8 @@ const getArrowPath = (
 
   const [sx, sy] = start; // Arrow start point
   const [mx, my] = rotate([sx, sy], angle, origin); // Rotated start point
-  const [ax, ay] = rotate([sx + deltaX, sy - 3], angle, origin); // End of the left arm
-  const [bx, by] = rotate([sx + deltaX, sy + 3], angle, origin); // End of the right arm
+  const [ax, ay] = rotate([sx + deltaX, sy - 4], angle, origin); // End of the left arm
+  const [bx, by] = rotate([sx + deltaX, sy + 4], angle, origin); // End of the right arm
 
   // Move to start -> line to left end -> line to right end -> line to start
   return `M ${mx} ${my} L ${ax} ${ay} L ${bx} ${by} L ${mx} ${my}`;

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Instruction } from "../engine/instruction";
+import { Instruction } from "../../engine/instruction";
 import { useMemo } from "react";
 
 /** Provides flow for algorithm inspection. */
