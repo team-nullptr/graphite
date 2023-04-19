@@ -1,8 +1,8 @@
 export type Vertex = {
   id: string;
   value: number;
-  out: Edge[];
   in: Edge[];
+  out: Edge[];
 };
 
 export type Edge = {
@@ -14,61 +14,27 @@ export type Edge = {
 };
 
 export class Graph {
-  private __vertices: Vertex[] = [];
-  private __edges: Edge[] = [];
-
-  get vertices(): Vertex[] {
-    return this.__vertices;
-  }
-
-  get edges(): Edge[] {
-    return this.__edges;
-  }
+  readonly vertices: Vertex[] = [];
+  readonly edges: Edge[] = [];
 
   addVertex(value: number) {
-    const vertex = {
-      id: `v-${this.__vertices.length}`,
-      in: [],
-      out: [],
-      value,
-    };
-
-    this.__vertices.push(vertex);
-
+    const id = `v-${this.vertices.length}`;
+    const vertex: Vertex = { id, in: [], out: [], value };
+    this.vertices.push(vertex);
     return vertex;
   }
 
-  addDirectedEdge(a: Vertex, b: Vertex, weight: number): Edge {
-    const edge: Edge = {
-      id: `e-${this.__edges.length}`,
-      a,
-      b,
-      weight,
-      directed: true,
-    };
-
-    a.out.push(edge);
-    b.in.push(edge);
-    this.__edges.push(edge);
-
+  addEdge(a: Vertex, b: Vertex, weight: number, directed: boolean): Edge {
+    const id = `e-${this.edges.length}`;
+    const edge: Edge = { id, a, b, weight, directed };
+    this.connectEdge(edge, a, b);
+    this.connectEdge(edge, b, a);
+    this.edges.push(edge);
     return edge;
   }
 
-  addUndirectedEdge(a: Vertex, b: Vertex, weight: number): Edge {
-    const edge: Edge = {
-      id: `e-${this.__edges.length}`,
-      a,
-      b,
-      weight,
-      directed: false,
-    };
-
-    a.out.push(edge);
-    a.in.push(edge);
-    b.out.push(edge);
-    b.in.push(edge);
-    this.__edges.push(edge);
-
-    return edge;
+  private connectEdge(edge: Edge, from: Vertex, to: Vertex): void {
+    from.out.push(edge);
+    to.in.push(edge);
   }
 }
