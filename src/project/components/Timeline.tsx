@@ -1,4 +1,4 @@
-import { ChangeEvent } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 
 import { Controls } from "../../core/components/Controls";
 import styles from "./Timeline.module.css";
@@ -7,12 +7,15 @@ import BackIcon from "../../assets/arrow_back_FILL0_wght200_GRAD0_opsz24.svg";
 import ForwardIcon from "../../assets/arrow_forward_FILL0_wght200_GRAD0_opsz24.svg";
 import RestartIcon from "../../assets/replay_FILL0_wght200_GRAD0_opsz24.svg";
 import StopIcon from "../../assets/stop_FILL0_wght100_GRAD0_opsz24.svg";
+import PlayIcon from "../../assets/play_arrow_FILL0_wght200_GRAD0_opsz24.svg";
 
 export interface TimelineProps {
+  playing: boolean;
   currentStep: number;
   stepCount: number;
   onStepChange?: (step: number) => void;
   onStop?: () => void;
+  onStart?: () => void;
 }
 
 export const Timeline = (props: TimelineProps) => {
@@ -21,13 +24,9 @@ export const Timeline = (props: TimelineProps) => {
     props.onStepChange?.(parseInt(value));
   };
 
-  const stopHandler = () => {
-    props.onStop?.();
-  };
-
-  const restartHandler = () => {
-    props.onStepChange?.(1);
-  };
+  const startHandler = () => props.onStart?.();
+  const stopHandler = () => props.onStop?.();
+  const restartHandler = () => props.onStepChange?.(1);
 
   const previousStepHandler = () => {
     const value = Math.max(props.currentStep - 1, 1);
@@ -43,9 +42,23 @@ export const Timeline = (props: TimelineProps) => {
     <Controls className={styles.container}>
       <ul className={styles["timeline-controls"]}>
         <li>
-          <button onClick={stopHandler}>
-            <img src={StopIcon} alt="stop" style={{ width: 29, height: 29 }} />
-          </button>
+          {props.playing ? (
+            <button onClick={stopHandler}>
+              <img
+                src={StopIcon}
+                alt="stop"
+                style={{ width: 29, height: 29 }}
+              />
+            </button>
+          ) : (
+            <button onClick={startHandler}>
+              <img
+                src={PlayIcon}
+                alt="play"
+                style={{ width: 29, height: 29 }}
+              />
+            </button>
+          )}
         </li>
         <li>
           <button onClick={restartHandler}>

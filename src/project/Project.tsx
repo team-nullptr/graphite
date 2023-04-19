@@ -1,10 +1,11 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Simulator } from "../simulator/Simulator";
 import styles from "./Project.module.css";
 import { Header } from "./components/Header";
 import { Timeline } from "./components/Timeline";
 import { Graph } from "../engine/graph";
 import { Sidebar } from "./components/Sidebar";
+import { unstable_renderSubtreeIntoContainer } from "react-dom";
 
 /** This is a temporary solution to get a test graph. */
 const buildGraph = (): Graph => {
@@ -23,6 +24,12 @@ const buildGraph = (): Graph => {
   graph.addDirectedEdge(v4, v5, 10);
   graph.addDirectedEdge(v4, v2, 10);
   graph.addDirectedEdge(v5, v1, 100);
+  graph.addDirectedEdge(v5, v1, 100);
+  graph.addDirectedEdge(v5, v1, 100);
+  graph.addDirectedEdge(v5, v1, 100);
+  graph.addDirectedEdge(v5, v1, 100);
+  graph.addDirectedEdge(v5, v1, 100);
+  graph.addDirectedEdge(v5, v1, 100);
 
   return graph;
 };
@@ -33,29 +40,50 @@ export interface ProjectProps {
   readonly id: string;
 }
 
+const stepCount = 7;
+
 export const Project = (props: ProjectProps) => {
+  const [projectName, setProjectName] = useState("");
+  const [playing, setPlaying] = useState(false);
   const [currentStep, setCurrentStep] = useState(1);
 
-  const stepChangeHandler = (step: number) => {
-    setCurrentStep(step);
-  };
+  useEffect(() => {
+    if (!playing) {
+      return;
+    }
+
+    const stepInterval = setInterval(
+      () => setCurrentStep((step) => Math.min(step + 1, stepCount)),
+      1000
+    );
+
+    return () => clearInterval(stepInterval);
+  }, [playing]);
+
+  const stepChangeHandler = (step: number) => setCurrentStep(step);
 
   const stopHandler = () => {
+    setPlaying(false);
     console.log("stopped");
   };
 
-  const [projectName, setProjectName] = useState("");
+  const startHandler = () => {
+    setPlaying(true);
+    console.log("started");
+  };
 
   return (
     <main className={styles.container}>
+      <Sidebar />
       <Header name={projectName} onRename={setProjectName} />
       <Timeline
+        playing={playing}
         currentStep={currentStep}
-        stepCount={7}
+        stepCount={stepCount}
         onStepChange={stepChangeHandler}
+        onStart={startHandler}
         onStop={stopHandler}
       />
-      <Sidebar></Sidebar>
       <Simulator
         graph={graph}
         arrangement={{

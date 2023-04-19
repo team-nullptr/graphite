@@ -50,8 +50,8 @@ const getArrowPath = (
   const deltaX = reversed ? -6 : 6;
 
   const [sx, sy] = start;
-  const [ax, ay] = rotate([sx + deltaX, sy - 6], angle, origin);
-  const [bx, by] = rotate([sx + deltaX, sy + 6], angle, origin);
+  const [ax, ay] = rotate([sx + deltaX, sy - 2], angle, origin);
+  const [bx, by] = rotate([sx + deltaX, sy + 2], angle, origin);
   const [mx, my] = rotate([sx, sy], angle, origin);
 
   return `M${ax} ${ay}L${mx} ${my}L${bx} ${by}`;
