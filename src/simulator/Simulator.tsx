@@ -1,9 +1,9 @@
 import { useMemo } from "react";
+import { Graph } from "../engine/graph";
 import styles from "./Simulator.module.css";
 import { Edge } from "./components/Edge";
 import { Vertex } from "./components/Vertex";
-import { positionEdges } from "./util/positionEdges";
-import { Graph } from "../engine/graph";
+import { distributeEdges, groupEdges, sortEdges } from "./util/distributeEdges";
 
 export type Position = [x: number, y: number];
 export type Arrangement = { [key: string]: Position };
@@ -13,29 +13,37 @@ export interface SimulatorProps {
   arrangement: Arrangement;
 }
 
-export const Simulator = ({ graph, arrangement }: SimulatorProps) => {
+export const Simulator = (props: SimulatorProps) => {
+  const { graph, arrangement } = props;
+
   const positionedEdges = useMemo(() => {
-    return positionEdges(graph.edges);
+    const connections = groupEdges(graph.edges);
+    return connections.map((connection) => {
+      const [vertex, edges] = connection;
+      const sortedEdges = sortEdges(edges, vertex);
+      return distributeEdges(sortedEdges, vertex);
+    });
   }, [graph]);
 
   const renderEdges = () =>
-    positionedEdges.map((positionedEdge) => {
-      const [edge, position] = positionedEdge;
+    positionedEdges.flatMap((group) => {
+      return group.map((positionedEdge) => {
+        const [edge, position] = positionedEdge;
+        const [x, y] = arrangement[edge.a.id] ?? [0, 0];
+        const [dx, dy] = arrangement[edge.b.id] ?? [0, 0];
 
-      const [x, y] = arrangement[edge.a.id] ?? [0, 0];
-      const [dx, dy] = arrangement[edge.b.id] ?? [0, 0];
-
-      return (
-        <Edge
-          key={edge.id}
-          position={position}
-          x={x}
-          y={y}
-          dx={dx}
-          dy={dy}
-          directed={edge.directed}
-        />
-      );
+        return (
+          <Edge
+            key={edge.id}
+            position={position}
+            x={x}
+            y={y}
+            dx={dx}
+            dy={dy}
+            directed={edge.directed}
+          />
+        );
+      });
     });
 
   const renderVertices = () =>
