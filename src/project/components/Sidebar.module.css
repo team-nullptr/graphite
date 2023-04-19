@@ -2,8 +2,6 @@
   grid-area: sidebar;
   border-right: 1px solid rgb(222, 222, 222);
   display: flex;
-  flex-direction: row-reverse;
-  width: 300px;
 }
 
 .resize {
@@ -12,19 +10,49 @@
   align-items: center;
   justify-content: center;
   height: 100%;
-  width: 5px;
+  width: 8px;
   background-color: rgb(222, 222, 222);
-}
-
-.resize:hover {
-  cursor: col-resize;
-  background-color: rgb(115, 168, 254);
 }
 
 .resizeIcon {
   user-select: none;
 }
 
-.resize:hover .resizeIcon {
+.resize:hover,
+.resizeActive {
+  cursor: col-resize;
+  background-color: #3b82f7;
+}
+
+.resize:hover .resizeIcon,
+.resizeActive .resizeIcon {
+  filter: invert();
+}
+
+.sidebarContent {
+  width: 100%;
+  height: 100%;
+}
+
+.sidebarExpand {
+  display: flex;
+  flex-direction: column;
+  align-items: cneter;
+  justify-content: center;
+  height: 100%;
+  width: 24px;
+  background-color: rgb(222, 222, 222);
+  cursor: pointer;
+}
+
+.sidebarExpandIcon {
+  user-select: none;
+}
+
+.sidebarExpand:hover {
+  background-color: #3b82f7;
+}
+
+.sidebarExpand:hover .sidebarExpandIcon {
   filter: invert();
 }
