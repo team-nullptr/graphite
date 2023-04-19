@@ -1,5 +1,10 @@
 .edge {
-  stroke: rgba(175, 175, 175);
+  stroke: rgb(175, 175, 175);
   stroke-width: 0.83;
   fill: none;
+}
+
+.arrow {
+  stroke: rgb(175, 175, 175);
+  fill: rgb(175, 175, 175);
 }

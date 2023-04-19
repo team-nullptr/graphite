@@ -32,12 +32,22 @@ export const Edge = (props: EdgeProps) => {
   const transform = `translate(${props.x} ${props.y}) rotate(${deg})`;
 
   return (
-    <path
-      className={styles.edge}
-      // prettier-ignore
-      d={linePath + (props.directed ? arrowPath : "")}
-      transform={transform}
-    />
+    <g>
+      <path
+        className={styles.edge}
+        // prettier-ignore
+        d={linePath}
+        transform={transform}
+      />
+      {props.directed && (
+        <path
+          className={styles.arrow}
+          // prettier-ignore
+          d={arrowPath}
+          transform={transform}
+        />
+      )}
+    </g>
   );
 };
 
@@ -49,12 +59,13 @@ const getArrowPath = (
 ): string => {
   const deltaX = reversed ? -6 : 6;
 
-  const [sx, sy] = start;
-  const [ax, ay] = rotate([sx + deltaX, sy - 2], angle, origin);
-  const [bx, by] = rotate([sx + deltaX, sy + 2], angle, origin);
-  const [mx, my] = rotate([sx, sy], angle, origin);
+  const [sx, sy] = start; // Arrow start point
+  const [mx, my] = rotate([sx, sy], angle, origin); // Rotated start point
+  const [ax, ay] = rotate([sx + deltaX, sy - 3], angle, origin); // End of the left arm
+  const [bx, by] = rotate([sx + deltaX, sy + 3], angle, origin); // End of the right arm
 
-  return `M${ax} ${ay}L${mx} ${my}L${bx} ${by}`;
+  // Move to start -> line to left end -> line to right end -> line to start
+  return `M ${mx} ${my} L ${ax} ${ay} L ${bx} ${by} L ${mx} ${my}`;
 };
 
 const getLinePath = (a: Position, b: Position, angle: number): string => {
