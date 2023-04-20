@@ -1,14 +1,3 @@
-/*
-
-vertex A 10
-vertex B 10
-edge A B 20 
-
-vertex ::= "vertex" 
-edge ::= vertex vertex
-
-*/
-
 import { Token } from "./tokens";
 
 export class Lexer {
@@ -29,6 +18,7 @@ export class Lexer {
   scanTokens(): Token[] {
     while (!this.isAtEnd()) {
       this.start = this.current;
+      console.log(this.start);
       this.scanToken();
     }
 
@@ -37,28 +27,26 @@ export class Lexer {
   }
 
   private scanToken() {
-    while (!this.isAtEnd()) {
-      const char = this.advance();
+    const char = this.advance();
 
-      switch (char) {
-        // Skip white characters
-        case " ":
-          break;
+    switch (char) {
+      // Skip white characters
+      case " ":
+        break;
 
-        case "\n":
-          this.line++;
-          break;
+      case "\n":
+        this.line++;
+        break;
 
-        // Scan longer lexemes
-        default:
-          if (this.isAlpha(char)) {
-            this.identifier();
-          } else if (this.isDigit(char)) {
-            this.number();
-          } else {
-            throw new Error(`Unexpected character at line ${this.line}.`);
-          }
-      }
+      // Scan longer lexemes
+      default:
+        if (this.isAlpha(char)) {
+          this.identifier();
+        } else if (this.isDigit(char)) {
+          this.number();
+        } else {
+          throw new Error(`Unexpected character at line ${this.line}.`);
+        }
     }
   }
 
@@ -94,17 +82,17 @@ export class Lexer {
 
   /** Checks if given character is a valid number. */
   private isDigit(char: string) {
-    return !Number.isNaN(char);
+    return char && /[0-9]+/g.test(char);
   }
 
   /** Checks if char is alphanumeric. */
   private isAlpha(char: string) {
-    return /[a-zA-Z_]*/g.test(char);
+    return char && /[a-zA-Z_]+/g.test(char);
   }
 
   /** Checks if we finished parsing. */
   private isAtEnd() {
-    return this.current < this.source.length;
+    return this.current >= this.source.length;
   }
 
   /** Advances to the next character. */
