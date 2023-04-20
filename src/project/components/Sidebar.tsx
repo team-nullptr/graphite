@@ -1,6 +1,6 @@
 import styles from "./Sidebar.module.css";
 
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState } from "react";
 
 import ResizeIcon from "../../assets/more_vert_FILL0_wght200_GRAD0_opsz24.svg";
 import ExpandIcon from "../../assets/keyboard_double_arrow_right_FILL0_wght200_GRAD0_opsz24.svg";
@@ -24,7 +24,9 @@ export const Sidebar = () => {
   useEffect(() => {
     document.addEventListener("mousemove", handleResize);
 
-    return () => document.removeEventListener("mousemove", handleResize);
+    return () => {
+      document.removeEventListener("mousemove", handleResize);
+    };
   }, [isResizing]);
 
   const handleExpand = () => setWidth(400);
