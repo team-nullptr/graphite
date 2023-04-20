@@ -1,7 +1,9 @@
+import { Project } from "./project/Project";
+
 export const App = () => {
   return (
     <>
-      <h1>App</h1>
+      <Project id="p=1"></Project>
     </>
   );
 };

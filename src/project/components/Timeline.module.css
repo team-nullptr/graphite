@@ -1,0 +1,17 @@
+.container {
+  grid-area: timeline;
+}
+
+.timeline-controls {
+  list-style: none;
+  padding-left: 0;
+  display: flex;
+  margin: 0;
+  gap: 2px;
+  padding: 4px;
+}
+
+.slider {
+  width: 360px;
+  margin: 0 0 0 12px;
+}

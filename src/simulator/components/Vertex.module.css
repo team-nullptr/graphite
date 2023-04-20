@@ -1,0 +1,14 @@
+.vertex {
+  font-family: system-ui;
+}
+
+.vertex circle {
+  fill: transparent;
+  stroke: rgba(175, 175, 175);
+  stroke-width: 0.83px;
+}
+
+.vertex text {
+  text-anchor: middle;
+  dominant-baseline: central;
+}

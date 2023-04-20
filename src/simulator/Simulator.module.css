@@ -1,0 +1,6 @@
+.simulator {
+  user-select: none;
+  grid-area: simulator;
+  width: 100%;
+  height: 100%;
+}
