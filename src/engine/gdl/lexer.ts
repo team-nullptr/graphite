@@ -1,4 +1,4 @@
-import { Token } from "./tokens";
+import { Token, TokenType } from "./tokens";
 
 export class Lexer {
   private source = "";
@@ -22,7 +22,6 @@ export class Lexer {
       this.scanToken();
     }
 
-    this.tokens.push({ kind: "EOF" });
     return this.tokens;
   }
 
@@ -58,7 +57,7 @@ export class Lexer {
     }
 
     const text = this.source.slice(this.start, this.current);
-    this.tokens.push({ kind: "NUMBER", literal: parseInt(text) });
+    this.addToken("NUMBER", parseInt(text));
   }
 
   /** Scans an identifier. */
@@ -69,25 +68,31 @@ export class Lexer {
 
     switch (text) {
       case "edge":
-        this.tokens.push({ kind: "EDGE" });
+        this.addToken("EDGE");
         break;
       case "vertex":
-        this.tokens.push({ kind: "VERTEX" });
+        this.addToken("VERTEX");
         break;
       default:
-        this.tokens.push({ kind: "STRING", literal: text });
+        this.addToken("STRING", text);
         break;
     }
   }
 
+  /** Utility function for adding tokens. */
+  private addToken(type: TokenType, literal: unknown = undefined) {
+    const lexeme = this.source.slice(this.start, this.current);
+    this.tokens.push(new Token(type, lexeme, literal, this.line));
+  }
+
   /** Checks if given character is a valid number. */
-  private isDigit(char: string) {
-    return char && /[0-9]+/g.test(char);
+  private isDigit(char: string): boolean {
+    return /[0-9]+/g.test(char);
   }
 
   /** Checks if char is alphanumeric. */
-  private isAlpha(char: string) {
-    return char && /[a-zA-Z_]+/g.test(char);
+  private isAlpha(char: string): boolean {
+    return /[a-zA-Z_]+/g.test(char);
   }
 
   /** Checks if we finished parsing. */
@@ -102,6 +107,6 @@ export class Lexer {
 
   /** Looks at the next character. */
   private peek() {
-    return this.source[this.current];
+    return this.isAtEnd() ? "\0" : this.source[this.current];
   }
 }

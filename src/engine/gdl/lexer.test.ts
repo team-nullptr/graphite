@@ -4,50 +4,30 @@ import { Token } from "./tokens";
 
 describe("test lexer", async () => {
   it("case 1", () => {
-    const lexer = new Lexer();
+    // arrange
     const source = "vertex A 1\nvertex B 2\nedge A B";
+
+    const lexer = new Lexer();
+
     const want: Token[] = [
-      {
-        kind: "VERTEX",
-      },
-      {
-        kind: "STRING",
-        literal: "A",
-      },
-      {
-        kind: "NUMBER",
-        literal: 1,
-      },
-      {
-        kind: "VERTEX",
-      },
-      {
-        kind: "STRING",
-        literal: "B",
-      },
-      {
-        kind: "NUMBER",
-        literal: 2,
-      },
-      {
-        kind: "EDGE",
-      },
-      {
-        kind: "STRING",
-        literal: "A",
-      },
-      {
-        kind: "STRING",
-        literal: "B",
-      },
-      {
-        kind: "EOF",
-      },
+      new Token("VERTEX", "vertex", undefined, 0),
+      new Token("STRING", "A", "A", 0),
+      new Token("NUMBER", "1", 1, 0),
+
+      new Token("VERTEX", "vertex", undefined, 1),
+      new Token("STRING", "B", "B", 1),
+      new Token("NUMBER", "2", 2, 1),
+
+      new Token("EDGE", "edge", undefined, 2),
+      new Token("STRING", "A", "A", 2),
+      new Token("STRING", "B", "B", 2),
     ];
 
+    // act
     lexer.load(source);
     const got = lexer.scanTokens();
 
+    // assert
     expect(got).toEqual(want);
   });
 });
