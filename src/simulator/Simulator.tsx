@@ -4,8 +4,8 @@ import styles from "./Simulator.module.css";
 import { Edge } from "./components/Edge";
 import { Vertex } from "./components/Vertex";
 import { distributeEdges, groupEdges, sortEdges } from "./util/distributeEdges";
+import { Position } from "./model/position";
 
-export type Position = [x: number, y: number];
 export type Arrangement = { [key: string]: Position };
 
 export interface SimulatorProps {
@@ -31,6 +31,7 @@ export const Simulator = (props: SimulatorProps) => {
         const [edge, position] = positionedEdge;
         const [x, y] = arrangement[edge.a.id] ?? [0, 0];
         const [dx, dy] = arrangement[edge.b.id] ?? [0, 0];
+        const circular = edge.a.id === edge.b.id;
 
         return (
           <Edge
@@ -41,6 +42,7 @@ export const Simulator = (props: SimulatorProps) => {
             dx={dx}
             dy={dy}
             directed={edge.directed}
+            circular={circular}
           />
         );
       });
