@@ -11,17 +11,17 @@
   justify-content: center;
   height: 100%;
   width: 8px;
-  background-color: rgb(222, 222, 222);
+  transform: translateX(50%);
 }
 
-.resizeIcon {
-  user-select: none;
+.resize:hover {
+  background-color: rgba(222, 222, 222, 0.5);
 }
 
 .resize:hover,
 .resizeActive {
   cursor: col-resize;
-  background-color: #3b82f7;
+  background-color: rgba(222, 222, 222, 0.5);
 }
 
 .resize:hover .resizeIcon,

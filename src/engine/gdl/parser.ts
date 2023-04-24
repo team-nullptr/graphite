@@ -41,6 +41,13 @@ export class Parser {
   private vertexStmt(): Stmt {
     const id = this.expression();
     const value = this.expression();
+
+    if (!this.check("VERTEX") && !this.check("EDGE")) {
+      throw new Error(
+        "Unexpected expression. Expected vertex of edge statement."
+      );
+    }
+
     return new VertexStmt(id, value);
   }
 

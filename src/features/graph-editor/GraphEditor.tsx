@@ -11,27 +11,6 @@ import styles from "./GraphEditor.module.css";
 import { TextNode } from "lexical";
 import { useEffect } from "react";
 
-const editorConfig: InitialConfigType = {
-  namespace: "GraphEditor",
-  onError: (e) => console.error(e),
-};
-
-export const GraphEditor = () => {
-  return (
-    <LexicalComposer initialConfig={editorConfig}>
-      <div className={styles.editor}>
-        <GDLHighlightPlugin />
-        <HistoryPlugin />
-        <PlainTextPlugin
-          contentEditable={<ContentEditable className={styles.editorInput} />}
-          placeholder={null}
-          ErrorBoundary={LexicalErrorBoundary}
-        />
-      </div>
-    </LexicalComposer>
-  );
-};
-
 const theme = new Map<string, string>([
   ["vertex", "F09552"],
   ["edge", "6EB2D0"],
@@ -56,4 +35,25 @@ const GDLHighlightPlugin = () => {
   );
 
   return null;
+};
+
+const editorConfig: InitialConfigType = {
+  namespace: "GraphEditor",
+  onError: (e) => console.error(e),
+};
+
+export const GraphEditor = () => {
+  return (
+    <LexicalComposer initialConfig={editorConfig}>
+      <div className={styles.editor}>
+        <GDLHighlightPlugin />
+        <HistoryPlugin />
+        <PlainTextPlugin
+          contentEditable={<ContentEditable className={styles.editorInput} />}
+          placeholder={null}
+          ErrorBoundary={LexicalErrorBoundary}
+        />
+      </div>
+    </LexicalComposer>
+  );
 };
