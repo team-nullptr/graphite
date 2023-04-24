@@ -1,9 +1,8 @@
-import styles from "./Sidebar.module.css";
-
 import { useEffect, useState } from "react";
-
-import ResizeIcon from "../../assets/more_vert_FILL0_wght200_GRAD0_opsz24.svg";
 import ExpandIcon from "../../assets/keyboard_double_arrow_right_FILL0_wght200_GRAD0_opsz24.svg";
+import ResizeIcon from "../../assets/more_vert_FILL0_wght200_GRAD0_opsz24.svg";
+import { GraphEditor } from "../../features/graph-editor/GraphEditor";
+import styles from "./Sidebar.module.css";
 
 export const Sidebar = () => {
   const [width, setWidth] = useState(300);
@@ -49,7 +48,9 @@ export const Sidebar = () => {
             style={{
               width: Math.max(width, 350),
             }}
-          />
+          >
+            <GraphEditor></GraphEditor>
+          </div>
           <div
             className={`${styles.resize} ${
               isResizing ? styles.resizeActive : ""
