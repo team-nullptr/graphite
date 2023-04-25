@@ -4,6 +4,21 @@ import styles from "./Edge.module.css";
 
 const vertexRadius = 19;
 
+export interface EdgeProps {
+  x: number;
+  y: number;
+  dx: number;
+  dy: number;
+  directed?: boolean;
+  position?: number;
+  circular?: boolean;
+}
+
+export const Edge = (props: EdgeProps) => {
+  if (props.circular) return <CircularEdge {...props} />;
+  return <StraightEdge {...props} />;
+};
+
 const StraightEdge = (props: EdgeProps) => {
   const width = props.dx - props.x;
   const height = props.dy - props.y;
@@ -33,39 +48,27 @@ const StraightEdge = (props: EdgeProps) => {
 };
 
 const CircularEdge = (props: EdgeProps) => {
-  const position = (props.position ?? 0) + 3;
-  const angle = position * 0.16;
+  const position = props.position ?? 0;
+  const radius = 6 * position + 15;
 
-  const start = rotatePosition([vertexRadius, 0], -angle);
-  const end = rotatePosition([vertexRadius, 0], angle);
+  const [cx, cy] = [vertexRadius, 0];
 
-  const mx = vertexRadius + 10 * position;
-  const my = Math.tan(angle) * mx;
+  // Intersection of two rounds - the vertex and the edge
+  const arrowX = vertexRadius - radius ** 2 / (2 * vertexRadius);
+  const arrowY = Math.sqrt(vertexRadius ** 2 - arrowX ** 2);
+  const arrowPostion: Position = [arrowX, arrowY];
+  // TODO: Replace 1.2 with actual calculations, to determine the right angle
+  // This is due to how arrows are drawn (rotated)
+  const arrowAngle = Math.atan2(cy - arrowY, cx - arrowX) * 1.2 - Math.PI / 2;
 
   const transform = `translate(${props.x} ${props.y}) rotate(45)`;
-  const path = getLinePath(start, end, [mx, -my], [mx, my]);
 
   return (
     <g transform={transform}>
-      <path className={styles.line} d={path} />
-      {props.directed && <Arrow position={start} angle={Math.PI - angle} />}
+      <circle className={styles.line} cx={cx} cy={cy} r={radius} />
+      {props.directed && <Arrow position={arrowPostion} angle={arrowAngle} />}
     </g>
   );
-};
-
-export interface EdgeProps {
-  x: number;
-  y: number;
-  dx: number;
-  dy: number;
-  directed?: boolean;
-  position?: number;
-  circular?: boolean;
-}
-
-export const Edge = (props: EdgeProps) => {
-  if (props.circular) return <CircularEdge {...props} />;
-  return <StraightEdge {...props} />;
 };
 
 const getLinePath = (

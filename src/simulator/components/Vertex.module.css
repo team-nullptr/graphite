@@ -3,7 +3,7 @@
 }
 
 .vertex circle {
-  fill: transparent;
+  fill: rgba(247, 247, 247);
   stroke: rgba(175, 175, 175);
   stroke-width: 0.83px;
 }

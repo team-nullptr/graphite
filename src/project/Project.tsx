@@ -22,13 +22,16 @@ const buildGraph = (): Graph => {
   graph.addEdge(v3, v4, 20, true);
   graph.addEdge(v4, v5, 10, true);
   graph.addEdge(v4, v2, 10, true);
+  graph.addEdge(v4, v2, 10, true);
+  graph.addEdge(v4, v2, 10, true);
+  graph.addEdge(v4, v2, 10, true);
+  graph.addEdge(v4, v2, 10, true);
+  graph.addEdge(v4, v2, 10, true);
   graph.addEdge(v5, v1, 100, true);
   graph.addEdge(v5, v1, 100, true);
-  graph.addEdge(v5, v1, 100, true);
-  graph.addEdge(v5, v1, 100, true);
-  graph.addEdge(v5, v1, 100, true);
-  graph.addEdge(v5, v1, 100, true);
-  graph.addEdge(v5, v1, 100, true);
+  // graph.addEdge(v3, v3, 30, true);
+  graph.addEdge(v3, v3, 30, true);
+  graph.addEdge(v3, v3, 30, true);
 
   return graph;
 };
