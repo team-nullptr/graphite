@@ -7,7 +7,7 @@ import styles from "./Sidebar.module.css";
 
 /** Internal hook that simplifies Sidebar component a little. */
 const useSidebar = () => {
-  const [width, setWidth] = useState(300);
+  const [width, setWidth] = useState(600);
   const [isResizing, setIsResizing] = useState(false);
 
   useEffect(() => {

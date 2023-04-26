@@ -1,53 +1,30 @@
+import { useEffect, useRef, useState } from "react";
 import styles from "./CodeEdtor.module.css";
-import { defaultKeymap } from "@codemirror/commands";
-import { HighlightStyle, syntaxHighlighting } from "@codemirror/language";
-import { EditorState } from "@codemirror/state";
-import { EditorView, keymap } from "@codemirror/view";
-import { tags } from "@lezer/highlight";
-import { useEffect, useRef } from "react";
-import { GDL } from "../../engine/gdl/code-mirror";
 import "./editor-styles.css";
+import { editorOnChange, useEditor } from "./hooks/useEditor";
 
-const GDLHighlightStyle = HighlightStyle.define([
-  {
-    tag: tags.keyword,
-    // color: "#75C0F9",
-    color: "#F09552",
-  },
-  {
-    tag: tags.string,
-    color: "#90b735",
-  },
-  {
-    tag: tags.comment,
-    color: "#6A6A71",
-  },
-]);
-
-const GDLEditorInitialState = EditorState.create({
-  doc: "// Define your graph here",
-  extensions: [
-    GDL(),
-    keymap.of(defaultKeymap),
-    syntaxHighlighting(GDLHighlightStyle, { fallback: true }),
-    // lineNumbers(), // TODO: Do we want to have line numbers?
-  ],
-});
-
-/** GDL code editor. */
 export const CodeEditor = () => {
-  const editorRef = useRef<HTMLDivElement>(null);
+  const [value, setValue] = useState("// Declare your graph here");
+
+  const { editor, ref } = useEditor<HTMLDivElement>([
+    editorOnChange((value) => setValue(value)),
+  ]);
 
   useEffect(() => {
-    if (!editorRef.current) return;
+    if (!editor) return;
 
-    const view = new EditorView({
-      state: GDLEditorInitialState,
-      parent: editorRef.current,
+    const currentValue = editor.state.doc.toString();
+
+    if (value === currentValue) return;
+
+    editor.dispatch({
+      changes: {
+        from: 0,
+        to: currentValue.length,
+        insert: value,
+      },
     });
+  }, [editor, value]);
 
-    return () => view.destroy();
-  }, [editorRef]);
-
-  return <div className={styles.editorWrapper} ref={editorRef}></div>;
+  return <div className={styles.editorWrapper} ref={ref} />;
 };
