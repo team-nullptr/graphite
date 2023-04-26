@@ -1,0 +1,16 @@
+.cm-editor.ͼ1.cm-focused {
+  outline: none;
+}
+
+.cm-editor * {
+  font-family: "JetBrains";
+}
+
+.cm-editor {
+  padding: 8px;
+}
+
+.cm-scroller {
+  overflow: auto;
+  min-height: 350px;
+}

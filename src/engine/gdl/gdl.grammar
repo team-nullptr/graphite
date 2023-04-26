@@ -1,0 +1,19 @@
+@top Program { statement+ }
+
+@skip { space | LineComment }
+
+statement { Vertex | Edge }
+
+Vertex { "vertex" Id Value }
+
+Edge { "edge" Id Id }
+
+@tokens {
+  Id { @asciiLetter+ }
+
+  Value { @digit+ }
+
+  space { $[ \t\n\r]+ }
+
+  LineComment { "//" ![\n]* }
+}

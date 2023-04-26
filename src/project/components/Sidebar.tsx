@@ -1,7 +1,9 @@
 import { useEffect, useState, useMemo } from "react";
 import ExpandIcon from "../../assets/keyboard_double_arrow_right_FILL0_wght200_GRAD0_opsz24.svg";
-import { GraphEditor } from "../../features/graph-editor/GraphEditor";
+import { CodeEditor } from "../../features/code-editor/CodeEditor";
 import styles from "./Sidebar.module.css";
+
+// TODO: Make sections resizable (Like editor section / algorithm picker section)
 
 /** Internal hook that simplifies Sidebar component a little. */
 const useSidebar = () => {
@@ -74,7 +76,7 @@ export const Sidebar = () => {
               width: Math.max(width, 350),
             }}
           >
-            <GraphEditor></GraphEditor>
+            <CodeEditor></CodeEditor>
           </div>
           <SidebarHandle
             isResizing={isResizing}
