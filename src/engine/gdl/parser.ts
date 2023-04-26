@@ -13,9 +13,11 @@ export class Parser {
   private tokens: Token[] = [];
   private current = 0;
 
-  load(tokens: Token[]) {
+  load(tokens: Token[]): Parser {
     this.tokens = tokens;
     this.current = 0;
+
+    return this;
   }
 
   parse(): Stmt[] {

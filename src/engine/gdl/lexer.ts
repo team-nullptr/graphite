@@ -8,11 +8,13 @@ export class Lexer {
   private tokens: Token[] = [];
 
   /** Loads new source code so that it can be parsed. */
-  load(source: string) {
+  load(source: string): Lexer {
     this.source = source;
     this.start = 0;
     this.line = 0;
     this.current = 0;
+
+    return this;
   }
 
   scanTokens(): Token[] {

@@ -1,15 +1,15 @@
 import {
-  LexicalComposer,
   InitialConfigType,
+  LexicalComposer,
 } from "@lexical/react/LexicalComposer";
-import { PlainTextPlugin } from "@lexical/react/LexicalPlainTextPlugin";
-import { ContentEditable } from "@lexical/react/LexicalContentEditable";
-import { HistoryPlugin } from "@lexical/react/LexicalHistoryPlugin";
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
+import { ContentEditable } from "@lexical/react/LexicalContentEditable";
 import LexicalErrorBoundary from "@lexical/react/LexicalErrorBoundary";
-import styles from "./GraphEditor.module.css";
+import { HistoryPlugin } from "@lexical/react/LexicalHistoryPlugin";
+import { PlainTextPlugin } from "@lexical/react/LexicalPlainTextPlugin";
 import { TextNode } from "lexical";
 import { useEffect } from "react";
+import styles from "./GraphEditor.module.css";
 
 const theme = new Map<string, string>([
   ["vertex", "F09552"],
@@ -22,14 +22,19 @@ const GDLHighlightPlugin = () => {
   useEffect(
     () =>
       editor.registerNodeTransform(TextNode, (node) => {
-        console.log(node.getTextContent());
+        const nodeContent = node.getTextContent();
 
-        if (theme.has(node.getTextContent())) {
-          console.log("COLORING", theme.get(node.getTextContent()));
-          node.__style = `color: #${theme.get(node.getTextContent())}`;
-        } else {
-          node.__style = `color: #000000`;
+        if (!theme.has(nodeContent)) {
+          return;
         }
+
+        const style = `color: #${theme.get(node.getTextContent())}`;
+
+        if (node.getStyle() === style) {
+          return;
+        }
+
+        node.setStyle(style);
       }),
     [editor]
   );
@@ -46,13 +51,13 @@ export const GraphEditor = () => {
   return (
     <LexicalComposer initialConfig={editorConfig}>
       <div className={styles.editor}>
-        <GDLHighlightPlugin />
         <HistoryPlugin />
         <PlainTextPlugin
           contentEditable={<ContentEditable className={styles.editorInput} />}
           placeholder={null}
           ErrorBoundary={LexicalErrorBoundary}
         />
+        <GDLHighlightPlugin />
       </div>
     </LexicalComposer>
   );
