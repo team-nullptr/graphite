@@ -1,0 +1,32 @@
+.cm-editor.cm-focused {
+  outline: none;
+}
+
+.cm-editor * {
+  font-family: "JetBrains";
+}
+
+.cm-editor {
+  padding: 8px;
+}
+
+.cm-scroller {
+  overflow: auto;
+  min-height: 350px;
+  max-height: 350px;
+}
+
+.cm-editor .cm-tooltip {
+  border: 1px solid rgb(222, 222, 222);
+  background: rgb(247, 247, 247);
+  max-width: 250px;
+}
+
+.cm-editor .cm-diagnostic-error {
+  color: #f6511d;
+  font-size: 14px;
+}
+
+.cm-editor .cm-lintPoint:after {
+  border-bottom: 4px solid #f6511d;
+}

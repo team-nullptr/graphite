@@ -1,35 +1,61 @@
+import { useEffect, useState, useMemo } from "react";
+import ExpandIcon from "../../assets/keyboard_double_arrow_right_FILL0_wght200_GRAD0_opsz24.svg";
+import { CodeEditor } from "../../features/code-editor/CodeEditor";
 import styles from "./Sidebar.module.css";
 
-import { useEffect, useState } from "react";
+// TODO: Make sections resizable (Like editor section / algorithm picker section)
 
-import ResizeIcon from "../../assets/more_vert_FILL0_wght200_GRAD0_opsz24.svg";
-import ExpandIcon from "../../assets/keyboard_double_arrow_right_FILL0_wght200_GRAD0_opsz24.svg";
-
-export const Sidebar = () => {
-  const [width, setWidth] = useState(300);
+/** Internal hook that simplifies Sidebar component a little. */
+const useSidebar = () => {
+  const [width, setWidth] = useState(600);
   const [isResizing, setIsResizing] = useState(false);
 
   useEffect(() => {
-    const stopResizing = () => setIsResizing(false);
-    document.addEventListener("mouseup", stopResizing);
+    const stopResizing = () => {
+      setIsResizing(false);
+    };
 
+    document.addEventListener("mouseup", stopResizing);
     return () => document.removeEventListener("mouseup", stopResizing);
   }, []);
 
-  const handleResize = (e: MouseEvent) => {
-    if (!isResizing) return;
-    setWidth(e.clientX);
-  };
-
   useEffect(() => {
-    document.addEventListener("mousemove", handleResize);
-
-    return () => {
-      document.removeEventListener("mousemove", handleResize);
+    const handleResize = (e: MouseEvent) => {
+      if (!isResizing) return;
+      // TODO: Make this work on different screen sizes
+      setWidth(Math.min(e.clientX, 600));
     };
+
+    document.addEventListener("mousemove", handleResize);
+    return () => document.removeEventListener("mousemove", handleResize);
   }, [isResizing]);
 
   const handleExpand = () => setWidth(400);
+
+  return {
+    width,
+    isResizing,
+    setIsResizing,
+    handleExpand,
+  };
+};
+
+type SidebarHandleProps = {
+  isResizing: boolean;
+  onResize: () => void;
+};
+
+const SidebarHandle = (props: SidebarHandleProps) => {
+  const handleStyles = useMemo(
+    () => `${styles.resize} ${props.isResizing ? styles.resizeActive : ""}`,
+    [props.isResizing]
+  );
+
+  return <div className={handleStyles} onMouseDown={() => props.onResize()} />;
+};
+
+export const Sidebar = () => {
+  const { width, isResizing, setIsResizing, handleExpand } = useSidebar();
 
   return (
     <div className={styles.sidebar}>
@@ -49,21 +75,13 @@ export const Sidebar = () => {
             style={{
               width: Math.max(width, 350),
             }}
-          />
-          <div
-            className={`${styles.resize} ${
-              isResizing ? styles.resizeActive : ""
-            }`}
-            onMouseDown={() => setIsResizing(true)}
           >
-            <img
-              className={styles.resizeIcon}
-              src={ResizeIcon}
-              alt="resize"
-              style={{ width: 24, height: 24 }}
-              draggable="false"
-            />
+            <CodeEditor></CodeEditor>
           </div>
+          <SidebarHandle
+            isResizing={isResizing}
+            onResize={() => setIsResizing(true)}
+          />
         </>
       )}
     </div>

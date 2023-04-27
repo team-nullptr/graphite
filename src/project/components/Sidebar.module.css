@@ -1,32 +1,29 @@
 .sidebar {
   grid-area: sidebar;
-  border-right: 1px solid rgb(222, 222, 222);
   display: flex;
 }
 
 .resize {
   display: flex;
+  background-color: rgb(222, 222, 222);
   flex-direction: column;
   align-items: center;
   justify-content: center;
   height: 100%;
-  width: 8px;
-  background-color: rgb(222, 222, 222);
+  width: 1px;
 }
 
-.resizeIcon {
-  user-select: none;
-}
-
-.resize:hover,
-.resizeActive {
+.resize:hover {
   cursor: col-resize;
-  background-color: #3b82f7;
 }
 
-.resize:hover .resizeIcon,
-.resizeActive .resizeIcon {
-  filter: invert();
+.resize:hover::after {
+  content: "";
+  display: block;
+  height: 100%;
+  width: 8px;
+  background-color: rgba(222, 222, 222, 0.25);
+  position: relative;
 }
 
 .sidebarContent {
