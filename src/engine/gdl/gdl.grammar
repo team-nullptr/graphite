@@ -1,8 +1,8 @@
-@top Program { statement+ }
+@top Program { statement* }
 
 @skip { space | LineComment }
 
-statement { Vertex | Edge }
+statement[@isGroup=Statement] { Vertex | Edge }
 
 Vertex { "vertex" Id Value }
 
@@ -13,7 +13,7 @@ Edge { "edge" Id Id }
 
   Value { @digit+ }
 
-  space { $[ \t\n\r]+ }
+  space { @whitespace+ }
 
   LineComment { "//" ![\n]* }
 }

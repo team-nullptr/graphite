@@ -1,10 +1,10 @@
-import { defaultKeymap } from "@codemirror/commands";
+import { defaultKeymap, history } from "@codemirror/commands";
 import { HighlightStyle, syntaxHighlighting } from "@codemirror/language";
 import { EditorState, Extension } from "@codemirror/state";
 import { EditorView, ViewUpdate, keymap } from "@codemirror/view";
 import { tags } from "@lezer/highlight";
 import { useEffect, useRef, useState } from "react";
-import { GDL } from "../../../engine/gdl/code-mirror";
+import { gdl, gdlLinter } from "../../../engine/gdl/code-mirror";
 
 export const editorOnChange = (cb: (value: string) => void) => {
   return EditorView.updateListener.of((it: ViewUpdate) => {
@@ -17,11 +17,11 @@ export const editorOnChange = (cb: (value: string) => void) => {
 const GDLHighlightStyle = HighlightStyle.define([
   {
     tag: tags.keyword,
-    color: "#F09552",
+    color: "#4ea5ff",
   },
   {
     tag: tags.string,
-    color: "#90b735",
+    color: "#207bff",
   },
   {
     tag: tags.comment,
@@ -31,7 +31,7 @@ const GDLHighlightStyle = HighlightStyle.define([
 
 export const useEditor = <T extends HTMLElement>(extensions: Extension[]) => {
   const ref = useRef<T>(null);
-  const [editor, setEditor] = useState<EditorView>();
+  const [view, setView] = useState<EditorView>();
 
   useEffect(() => {
     if (!ref.current) return;
@@ -39,8 +39,10 @@ export const useEditor = <T extends HTMLElement>(extensions: Extension[]) => {
     const view = new EditorView({
       state: EditorState.create({
         extensions: [
-          GDL(),
+          gdl,
+          gdlLinter,
           syntaxHighlighting(GDLHighlightStyle, { fallback: true }),
+          history(),
           keymap.of(defaultKeymap),
           ...extensions,
         ],
@@ -48,13 +50,13 @@ export const useEditor = <T extends HTMLElement>(extensions: Extension[]) => {
       parent: ref.current,
     });
 
-    setEditor(view);
+    setView(view);
 
     return () => {
       view.destroy();
-      setEditor(undefined);
+      setView(undefined);
     };
   }, [ref]);
 
-  return { editor, ref };
+  return { view, ref };
 };

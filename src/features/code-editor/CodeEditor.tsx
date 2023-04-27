@@ -1,30 +1,30 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import styles from "./CodeEdtor.module.css";
 import "./editor-styles.css";
 import { editorOnChange, useEditor } from "./hooks/useEditor";
 
 export const CodeEditor = () => {
-  const [value, setValue] = useState("// Declare your graph here");
+  const [value, setValue] = useState("// Write your code here");
 
-  const { editor, ref } = useEditor<HTMLDivElement>([
+  const { view, ref } = useEditor<HTMLDivElement>([
     editorOnChange((value) => setValue(value)),
   ]);
 
   useEffect(() => {
-    if (!editor) return;
+    if (!view) return;
 
-    const currentValue = editor.state.doc.toString();
+    const currentValue = view.state.doc.toString();
 
     if (value === currentValue) return;
 
-    editor.dispatch({
+    view.dispatch({
       changes: {
         from: 0,
         to: currentValue.length,
         insert: value,
       },
     });
-  }, [editor, value]);
+  }, [view, value]);
 
   return <div className={styles.editorWrapper} ref={ref} />;
 };

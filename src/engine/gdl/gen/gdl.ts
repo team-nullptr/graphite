@@ -3,15 +3,16 @@ import { LRParser } from "@lezer/lr";
 export const parser = LRParser.deserialize({
   version: 14,
   states:
-    "!dOYQPOOObQQO'#C_OgQQO'#CbOOQO'#Cg'#CgOOQO'#Cc'#CcQYQPOOOlQPO,58yOqQQO,58|OOQO-E6a-E6aOOQO1G.e1G.eOOQO1G.h1G.h",
+    "!dQYQPOOObQQO'#C_OgQQO'#CbOOQO'#Cg'#CgOOQO'#Cc'#CcQYQPOOOlQPO,58yOqQQO,58|OOQO-E6a-E6aOOQO1G.e1G.eOOQO1G.h1G.h",
   stateData: "v~OYOSPOS~O[PO]QO~OSUO~OSVO~OTXO~OSYO~O",
   goto: "k[PPP]PP]aPPPgTROTQTORWTTSOT",
   nodeNames: "⚠ LineComment Program Vertex Id Value Edge",
   maxTerm: 13,
+  nodeProps: [["group", -2, 3, 6, "Statement"]],
   skippedNodes: [0, 1],
   repeatNodeCount: 1,
   tokenData:
-    "&t~R[XYwYZw]^wpqw!P!Q!Y!Q![!w!c!}#P#T#X#P#X#Y#[#Y#j#P#j#k$n#k#o#P~|SY~XYwYZw]^wpqw~!]P!P!Q!`~!eSP~OY!`Z;'S!`;'S;=`!q<%lO!`~!tP;=`<%l!`~!|PT~!Q![!wQ#UQSQ!c!}#P#T#o#PR#aSSQ!c!}#P#T#W#P#W#X#m#X#o#PR#rSSQ!c!}#P#T#Z#P#Z#[$O#[#o#PR$TSSQ!c!}#P#T#X#P#X#Y$a#Y#o#PR$hQ]PSQ!c!}#P#T#o#PR$sSSQ!c!}#P#T#X#P#X#Y%P#Y#o#PR%USSQ!c!}#P#T#f#P#f#g%b#g#o#PR%gSSQ!c!}#P#T#h#P#h#i%s#i#o#PR%xSSQ!c!}#P#T#X#P#X#Y&U#Y#o#PR&ZSSQ!c!}#P#T#l#P#l#m&g#m#o#PR&nQ[PSQ!c!}#P#T#o#P",
+    "'j~RbX^!Zpq!Z!P!Q#O!Q![#m!c!}#u#T#X#u#X#Y$Q#Y#j#u#j#k%d#k#o#u#y#z!Z$f$g!Z#BY#BZ!Z$IS$I_!Z$I|$JO!Z$JT$JU!Z$KV$KW!Z&FU&FV!Z~!`YY~X^!Zpq!Z#y#z!Z$f$g!Z#BY#BZ!Z$IS$I_!Z$I|$JO!Z$JT$JU!Z$KV$KW!Z&FU&FV!Z~#RP!P!Q#U~#ZSP~OY#UZ;'S#U;'S;=`#g<%lO#U~#jP;=`<%l#U~#rPT~!Q![#mQ#zQSQ!c!}#u#T#o#uR$VSSQ!c!}#u#T#W#u#W#X$c#X#o#uR$hSSQ!c!}#u#T#Z#u#Z#[$t#[#o#uR$ySSQ!c!}#u#T#X#u#X#Y%V#Y#o#uR%^Q]PSQ!c!}#u#T#o#uR%iSSQ!c!}#u#T#X#u#X#Y%u#Y#o#uR%zSSQ!c!}#u#T#f#u#f#g&W#g#o#uR&]SSQ!c!}#u#T#h#u#h#i&i#i#o#uR&nSSQ!c!}#u#T#X#u#X#Y&z#Y#o#uR'PSSQ!c!}#u#T#l#u#l#m']#m#o#uR'dQ[PSQ!c!}#u#T#o#u",
   tokenizers: [0, 1],
   topRules: { Program: [0, 2] },
   tokenPrec: 0,

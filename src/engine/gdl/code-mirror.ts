@@ -1,23 +1,54 @@
+import { LRLanguage, LanguageSupport, syntaxTree } from "@codemirror/language";
+import { Diagnostic, linter } from "@codemirror/lint";
+import { styleTags, tags } from "@lezer/highlight";
 import { parser } from "./gen/gdl";
-import { styleTags, tags as t } from "@lezer/highlight";
-import { LRLanguage, LanguageSupport } from "@codemirror/language";
 
 /** Extends generated parser with some metadata used for highlighting. */
-const GDLParser = parser.configure({
+export const gdlParser = parser.configure({
   props: [
     styleTags({
-      Vertex: t.keyword,
-      Edge: t.keyword,
-      Id: t.string,
-      Value: t.number,
-      LineComment: t.lineComment,
+      Vertex: tags.keyword,
+      Edge: tags.keyword,
+      Id: tags.string,
+      Value: tags.number,
+      LineComment: tags.lineComment,
     }),
   ],
 });
 
-/** GDL language extension for code mirror. */
-const GDLLanguage = LRLanguage.define({
-  parser: GDLParser,
+/**
+ * Very basic linter that just informs user about a syntax error somewhere in his definition.
+ * It is harder to get something better than this using an LR parser.
+ */
+export const gdlLinter = linter((view): Diagnostic[] => {
+  const state = view.state;
+  const tree = syntaxTree(state);
+
+  // We don't want to process partial parses.
+  // https://discuss.codemirror.net/t/show-syntax-error-from-lezer-parse/5346
+  if (tree.length !== state.doc.length) {
+    return [];
+  }
+
+  let diagnostic: Diagnostic | undefined;
+
+  tree.cursor().iterate((n) => {
+    if (!diagnostic && n.type.isError) {
+      diagnostic = {
+        from: n.node.from,
+        to: n.node.to,
+        severity: "error",
+        message: "Syntax error.",
+      };
+    }
+  });
+
+  return diagnostic ? [diagnostic] : [];
 });
 
-export const GDL = () => new LanguageSupport(GDLLanguage);
+/** Gdl language support for codemirror editor. */
+export const gdl = new LanguageSupport(
+  LRLanguage.define({
+    parser: gdlParser,
+  })
+);
