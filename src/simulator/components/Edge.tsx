@@ -1,4 +1,5 @@
-import { Position } from "../Simulator";
+import { Position, rotatePosition } from "../model/position";
+import { Arrow } from "./Arrow";
 import styles from "./Edge.module.css";
 
 const vertexRadius = 19;
@@ -10,75 +11,80 @@ export interface EdgeProps {
   dy: number;
   directed?: boolean;
   position?: number;
+  circular?: boolean;
 }
 
 export const Edge = (props: EdgeProps) => {
+  if (props.circular) return <CircularEdge {...props} />;
+  return <StraightEdge {...props} />;
+};
+
+const StraightEdge = (props: EdgeProps) => {
   const width = props.dx - props.x;
   const height = props.dy - props.y;
-
-  const angle = (props.position ?? 0) * 0.35;
   const length = Math.sqrt(Math.pow(width, 2) + Math.pow(height, 2));
 
-  const start = rotate([vertexRadius, 0], angle);
-  const end = rotate([length - vertexRadius - 2, 0], -angle, [length, 0]);
+  const position = props.position ?? 0;
+  const angle = position * 0.25;
 
-  const linePath = getLinePath(start, end, angle);
-  // prettier-ignore
-  const arrowPath = getArrowPath([length - vertexRadius, 0], [length, 0], -angle, true);
+  const start = rotatePosition([vertexRadius, 0], angle);
+  const end = rotatePosition([length - vertexRadius, 0], -angle, [length, 0]);
+
+  const mx = (start[0] + end[0]) / 2;
+  const my = Math.tan(angle) * mx;
 
   const rad = Math.atan2(height, width);
   const deg = (rad * 180) / Math.PI;
 
   const transform = `translate(${props.x} ${props.y}) rotate(${deg})`;
+  const path = getLinePath(start, end, [mx, my]);
 
   return (
     <g transform={transform}>
-      <path className={styles.line} d={linePath} />
-      {props.directed && <path className={styles.arrow} d={arrowPath} />}
+      <path className={styles.line} d={path} />
+      {props.directed && <Arrow position={end} angle={-angle} />}
     </g>
   );
 };
 
-const getArrowPath = (
+const CircularEdge = (props: EdgeProps) => {
+  const position = props.position ?? 0;
+  const radius = 6 * position + 15;
+
+  const [cx, cy] = [vertexRadius, 0];
+
+  // Intersection of two rounds - the vertex and the edge
+  const arrowX = vertexRadius - radius ** 2 / (2 * vertexRadius);
+  const arrowY = Math.sqrt(vertexRadius ** 2 - arrowX ** 2);
+  const arrowPostion: Position = [arrowX, arrowY];
+  // TODO: Replace 1.2 with actual calculations, to determine the right angle
+  // This is due to how arrows are drawn (rotated)
+  const arrowAngle = Math.atan2(cy - arrowY, cx - arrowX) * 1.2 - Math.PI / 2;
+
+  const transform = `translate(${props.x} ${props.y}) rotate(45)`;
+
+  return (
+    <g transform={transform}>
+      <circle className={styles.line} cx={cx} cy={cy} r={radius} />
+      {props.directed && <Arrow position={arrowPostion} angle={arrowAngle} />}
+    </g>
+  );
+};
+
+const getLinePath = (
   start: Position,
-  origin: Position,
-  angle: number,
-  reversed: boolean = false
+  end: Position,
+  a: Position,
+  b?: Position
 ): string => {
-  const deltaX = reversed ? -6 : 6;
-
-  const [sx, sy] = start; // Arrow start point
-  const [mx, my] = rotate([sx, sy], angle, origin); // Rotated start point
-  const [ax, ay] = rotate([sx + deltaX, sy - 4], angle, origin); // End of the left arm
-  const [bx, by] = rotate([sx + deltaX, sy + 4], angle, origin); // End of the right arm
-
-  // Move to start -> line to left end -> line to right end -> line to start
-  return `M ${mx} ${my} L ${ax} ${ay} L ${bx} ${by} L ${mx} ${my}`;
-};
-
-const getLinePath = (a: Position, b: Position, angle: number): string => {
+  const [sx, sy] = start;
+  const [ex, ey] = end;
   const [ax, ay] = a;
+
+  if (!b) {
+    return `M${sx} ${sy}Q${ax} ${ay} ${ex} ${ey}`;
+  }
+
   const [bx, by] = b;
-
-  const hx = (ax + bx) / 2;
-  const hy = Math.tan(angle) * hx;
-
-  return `M${ax} ${ay}Q${hx} ${hy} ${bx} ${by}`;
-};
-
-const rotate = (
-  point: Position,
-  angle: number,
-  origin: Position = [0, 0]
-): Position => {
-  const sin = Math.sin(angle);
-  const cos = Math.cos(angle);
-
-  let [px, py] = point;
-  let [ox, oy] = origin;
-
-  const x = (px - ox) * cos - (py - oy) * sin;
-  const y = (px - ox) * sin + (py - oy) * cos;
-
-  return [x + ox, y + oy];
+  return `M${sx} ${sy}C${ax} ${ay},${bx} ${by},${ex} ${ey}`;
 };
