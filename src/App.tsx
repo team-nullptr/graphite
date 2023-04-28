@@ -1,9 +1,9 @@
-import { Project } from "./project/Project";
+import { Editor } from "./features/editor/Editor";
 
 export const App = () => {
   return (
     <>
-      <Project id="p=1"></Project>
+      <Editor id="p=1"></Editor>
     </>
   );
 };
