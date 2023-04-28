@@ -1,5 +1,6 @@
 import { useMemo } from "react";
 import { Position, rotatePosition } from "../model/position";
+import styles from "./Arrow.module.css";
 
 interface ArrowProps {
   position: Position;
@@ -19,7 +20,7 @@ export const Arrow = (props: ArrowProps) => {
       ? `hsl(${props.hue}, 50%, 65%)`
       : "rgb(175, 175, 175)";
 
-  return <path style={{ fill }} d={path} />;
+  return <path className={styles.arrow} d={path} style={{ fill }} />;
 };
 
 const buildArrowPath = (position: Position, angle: number) => {

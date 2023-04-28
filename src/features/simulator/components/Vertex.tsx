@@ -24,20 +24,30 @@ export const Vertex = (props: VertexProps) => {
     props.onMouseDown?.(offset);
   };
 
-  // prettier-ignore
-  const fill =
+  const fillColor =
     props.hue !== undefined
       ? `hsl(${props.hue}, 50%, 90%)`
       : "rgb(247, 247, 247)";
-  const stroke =
+  const strokeColor =
     props.hue !== undefined
       ? `hsl(${props.hue}, 50%, 65%)`
       : "rgb(175, 175, 175)";
+  // prettier-ignore
+  const textColor =
+    props.hue !== undefined
+      ? `hsl(${props.hue}, 50%, 30%)`
+      : "rgb(0, 0, 0)";
 
   return (
     <g ref={ref} className={styles.vertex} onMouseDown={mouseDownHandler}>
-      <circle cx={props.cx} cy={props.cy} r={19} fill={fill} stroke={stroke} />
-      <text x={props.cx} y={props.cy}>
+      <circle
+        cx={props.cx}
+        cy={props.cy}
+        r={19}
+        fill={fillColor}
+        stroke={strokeColor}
+      />
+      <text x={props.cx} y={props.cy} fill={textColor}>
         {props.value}
       </text>
     </g>

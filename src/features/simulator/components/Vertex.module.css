@@ -4,9 +4,11 @@
 
 .vertex circle {
   stroke-width: 0.83px;
+  transition: 0.6s stroke ease-out, 0.6s fill ease-out;
 }
 
 .vertex text {
   text-anchor: middle;
   dominant-baseline: central;
+  transition: 0.6s fill ease-out;
 }
