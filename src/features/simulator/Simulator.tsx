@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Vertex as IVertex } from "../engine/graph";
+import { Vertex as IVertex } from "../../engine/graph";
 import styles from "./Simulator.module.css";
 import { Edge } from "./components/Edge";
 import { Vertex } from "./components/Vertex";
@@ -10,7 +10,7 @@ import {
   groupEdges,
   sortEdges,
 } from "./util/distributeEdges";
-import { useProjectStore } from "../store/project";
+import { useProjectStore } from "../../store/project";
 
 export type Arrangement = { [key: string]: Position };
 

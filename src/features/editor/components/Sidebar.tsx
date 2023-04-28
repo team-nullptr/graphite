@@ -1,6 +1,6 @@
 import { useEffect, useState, useMemo } from "react";
-import ExpandIcon from "../../assets/keyboard_double_arrow_right_FILL0_wght200_GRAD0_opsz24.svg";
-import { CodeEditor } from "../../features/code-editor/CodeEditor";
+import ExpandIcon from "../../../assets/keyboard_double_arrow_right_FILL0_wght200_GRAD0_opsz24.svg";
+import { CodeEditor } from "../../code-editor/CodeEditor";
 import styles from "./Sidebar.module.css";
 
 // TODO: Make sections resizable (Like editor section / algorithm picker section)

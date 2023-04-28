@@ -1,17 +1,17 @@
 import { useEffect, useState } from "react";
 import { Simulator } from "../simulator/Simulator";
-import styles from "./Project.module.css";
+import styles from "./Editor.module.css";
 import { Header } from "./components/Header";
 import { Sidebar } from "./components/Sidebar";
 import { Timeline } from "./components/Timeline";
 
-export interface ProjectProps {
+export interface EditorProps {
   readonly id: string;
 }
 
 const stepCount = 7;
 
-export const Project = (props: ProjectProps) => {
+export const Editor = (props: EditorProps) => {
   const [projectName, setProjectName] = useState("");
   const [playing, setPlaying] = useState(false);
   const [currentStep, setCurrentStep] = useState(1);

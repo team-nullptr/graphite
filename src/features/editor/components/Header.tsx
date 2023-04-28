@@ -1,8 +1,8 @@
-import { Controls } from "../../core/components/Controls";
-import { Editable } from "../../core/components/Editable";
+import { Controls } from "../../../shared/Controls";
+import { Editable } from "../../../shared/Editable";
 import styles from "./Header.module.css";
 
-import BackIcon from "../../assets/arrow_back_FILL0_wght200_GRAD0_opsz24.svg";
+import BackIcon from "../../../assets/arrow_back_FILL0_wght200_GRAD0_opsz24.svg";
 
 export interface HeaderProps {
   name: string;

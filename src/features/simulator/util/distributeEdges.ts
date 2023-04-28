@@ -1,4 +1,4 @@
-import { Edge } from "../../engine/graph";
+import { Edge } from "../../../engine/graph";
 
 export type Connection = [vertex: string, edge: Edge[]];
 
