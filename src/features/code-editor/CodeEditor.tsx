@@ -3,15 +3,14 @@ import styles from "./CodeEdtor.module.css";
 import "./editor-styles.css";
 import { editorOnChange, useEditor } from "./hooks/useEditor";
 import { useProjectStore } from "../../store/project";
-import { graphFromSource } from "../../engine/graph";
+import { graphFromSource } from "../../engine/gdl/graph-util";
 
 export const CodeEditor = () => {
   const setGraph = useProjectStore((state) => state.setGraph);
   const [value, setValue] = useState("// Write your code here");
 
-  const { view, ref } = useEditor<HTMLDivElement>([
-    editorOnChange((value) => setValue(value)),
-  ]);
+  const onChange = editorOnChange((value) => setValue(value));
+  const { view, ref } = useEditor<HTMLDivElement>([onChange]);
 
   useEffect(() => {
     if (!view) return;
@@ -34,7 +33,6 @@ export const CodeEditor = () => {
 
     try {
       const graph = graphFromSource(view.state);
-      console.log(graph);
       setGraph(graph);
     } catch (err) {
       console.error(err);

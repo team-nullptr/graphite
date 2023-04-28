@@ -1,19 +1,18 @@
 @top Program { statement* }
-
 @skip { space | LineComment }
 
-statement[@isGroup=Statement] { Vertex | Edge }
+statement[@isGroup=Statement] { Vertex | Edge | WeightedEdge | DirectedEdge | WeightedDirectedEdge }
 
-Vertex { "vertex" Id Value }
-
-Edge { "edge" Id Id }
+Vertex { Id Value }
+Edge { Id "->" Id }
+WeightedEdge { Id "[" Value "]->" Id }
+DirectedEdge { Id "<->" Id }
+WeightedDirectedEdge { Id "[" Value "]<->" Id }
 
 @tokens {
   Id { @asciiLetter+ }
-
   Value { @digit+ }
+  LineComment { "//" ![\n]* }
 
   space { @whitespace+ }
-
-  LineComment { "//" ![\n]* }
 }

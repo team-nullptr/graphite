@@ -27,6 +27,10 @@ const GDLHighlightStyle = HighlightStyle.define([
     tag: tags.comment,
     color: "#6A6A71",
   },
+  {
+    tag: tags.number,
+    color: "#F1A26F",
+  },
 ]);
 
 export const useEditor = <T extends HTMLElement>(extensions: Extension[]) => {
