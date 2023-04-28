@@ -12,6 +12,7 @@ export interface EdgeProps {
   directed?: boolean;
   position?: number;
   circular?: boolean;
+  hue?: number;
 }
 
 export const Edge = (props: EdgeProps) => {
@@ -39,10 +40,17 @@ const StraightEdge = (props: EdgeProps) => {
   const transform = `translate(${props.x} ${props.y}) rotate(${deg})`;
   const path = getLinePath(start, end, [mx, my]);
 
+  const stroke =
+    props.hue !== undefined
+      ? `hsl(${props.hue}, 50%, 65%)`
+      : "rgb(175, 175, 175)";
+
   return (
     <g transform={transform}>
-      <path className={styles.line} d={path} />
-      {props.directed && <Arrow position={end} angle={-angle} />}
+      <path className={styles.line} d={path} stroke={stroke} />
+      {props.directed && (
+        <Arrow position={end} angle={-angle} hue={props.hue} />
+      )}
     </g>
   );
 };
@@ -63,10 +71,23 @@ const CircularEdge = (props: EdgeProps) => {
 
   const transform = `translate(${props.x} ${props.y}) rotate(45)`;
 
+  const stroke =
+    props.hue !== undefined
+      ? `hsl(${props.hue}, 50%, 65%)`
+      : "rgb(175, 175, 175)";
+
   return (
     <g transform={transform}>
-      <circle className={styles.line} cx={cx} cy={cy} r={radius} />
-      {props.directed && <Arrow position={arrowPostion} angle={arrowAngle} />}
+      <circle
+        className={styles.line}
+        cx={cx}
+        cy={cy}
+        r={radius}
+        stroke={stroke}
+      />
+      {props.directed && (
+        <Arrow position={arrowPostion} angle={arrowAngle} hue={props.hue} />
+      )}
     </g>
   );
 };

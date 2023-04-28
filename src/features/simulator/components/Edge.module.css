@@ -1,9 +1,4 @@
 .line {
-  stroke: rgb(175, 175, 175);
   stroke-width: 0.83;
   fill: none;
-}
-
-.arrow {
-  fill: rgb(175, 175, 175);
 }

@@ -4,6 +4,7 @@ import { Position, rotatePosition } from "../model/position";
 interface ArrowProps {
   position: Position;
   angle: number;
+  hue?: number;
 }
 
 export const Arrow = (props: ArrowProps) => {
@@ -13,7 +14,12 @@ export const Arrow = (props: ArrowProps) => {
     return buildArrowPath(position, angle);
   }, [position, angle]);
 
-  return <path style={{ fill: "rgb(175, 175, 175)" }} d={path} />;
+  const fill =
+    props.hue !== undefined
+      ? `hsl(${props.hue}, 50%, 65%)`
+      : "rgb(175, 175, 175)";
+
+  return <path style={{ fill }} d={path} />;
 };
 
 const buildArrowPath = (position: Position, angle: number) => {

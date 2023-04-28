@@ -7,6 +7,7 @@ export interface VertexProps {
   cy: number;
   value: string;
   onMouseDown?: (offset: Position) => void;
+  hue?: number;
 }
 
 export const Vertex = (props: VertexProps) => {
@@ -23,9 +24,19 @@ export const Vertex = (props: VertexProps) => {
     props.onMouseDown?.(offset);
   };
 
+  // prettier-ignore
+  const fill =
+    props.hue !== undefined
+      ? `hsl(${props.hue}, 50%, 90%)`
+      : "rgb(247, 247, 247)";
+  const stroke =
+    props.hue !== undefined
+      ? `hsl(${props.hue}, 50%, 65%)`
+      : "rgb(175, 175, 175)";
+
   return (
     <g ref={ref} className={styles.vertex} onMouseDown={mouseDownHandler}>
-      <circle cx={props.cx} cy={props.cy} r={19} />
+      <circle cx={props.cx} cy={props.cy} r={19} fill={fill} stroke={stroke} />
       <text x={props.cx} y={props.cy}>
         {props.value}
       </text>
