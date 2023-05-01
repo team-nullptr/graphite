@@ -3,7 +3,7 @@ import styles from "./CodeEdtor.module.css";
 import "./editor-styles.css";
 import { editorOnChange, useEditor } from "./hooks/useEditor";
 import { useProjectStore } from "../../store/project";
-import { graphFromSource } from "../../engine/gdl/graph-util";
+import { GraphParser } from "../../engine/gdl/graph-parser";
 
 export const CodeEditor = () => {
   const setGraph = useProjectStore((state) => state.setGraph);
@@ -32,8 +32,8 @@ export const CodeEditor = () => {
     if (!view) return;
 
     try {
-      const graph = graphFromSource(view.state);
-      setGraph(graph);
+      const parser = new GraphParser(view.state);
+      setGraph(parser.parse());
     } catch (err) {
       console.error(err);
     }

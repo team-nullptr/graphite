@@ -19,32 +19,21 @@ type SelectedVertex = {
   offset: Position;
 };
 
-export interface SimulatorProps {
-  onRearrange?: (newArrangement: Arrangement) => void;
-}
-
-export const Simulator = (props: SimulatorProps) => {
+const useArrangement = () => {
   const [arrangement, setArrangement] = useState({});
-  const selectedVertex = useRef<SelectedVertex>();
   const svgRef = useRef<SVGSVGElement>(null);
-  const graph = useProjectStore((store) => store.graph);
+  const selectedVertexRef = useRef<SelectedVertex>();
 
-  const positionedEdges = useMemo(() => {
-    const connections = groupEdges(graph.edges);
-
-    return connections.map((connection) => {
-      const [vertex, edges] = connection;
-      const sortedEdges = sortEdges(edges, vertex);
-      return distributeEdges(sortedEdges, vertex);
-    });
-  }, [graph]);
+  const vertexMouseDownHandler = (vertex: IVertex, offset: Position) => {
+    selectedVertexRef.current = { id: vertex.id, offset };
+  };
 
   useEffect(() => {
     const mouseMoveHandler = (event: MouseEvent) => {
       const boundingBox = svgRef.current?.getBoundingClientRect();
       if (!boundingBox) return;
 
-      const vertex = selectedVertex.current;
+      const vertex = selectedVertexRef.current;
       if (!vertex) return;
 
       const [ox, oy] = vertex.offset;
@@ -57,7 +46,7 @@ export const Simulator = (props: SimulatorProps) => {
     };
 
     const mouseUpHandler = () => {
-      selectedVertex.current = undefined;
+      selectedVertexRef.current = undefined;
     };
 
     addEventListener("mousemove", mouseMoveHandler);
@@ -69,19 +58,37 @@ export const Simulator = (props: SimulatorProps) => {
     };
   }, []);
 
-  const vertexMouseDownHandler = (vertex: IVertex, offset: Position) => {
-    selectedVertex.current = { id: vertex.id, offset };
+  return {
+    arrangement,
+    vertexMouseDownHandler,
+    svgRef,
+    selectedVertexRef,
   };
+};
+
+export interface SimulatorProps {
+  onRearrange?: (newArrangement: Arrangement) => void;
+}
+
+export const Simulator = (props: SimulatorProps) => {
+  const graph = useProjectStore((store) => store.graph);
+  const { arrangement, vertexMouseDownHandler, svgRef } = useArrangement();
+
+  const positionedEdges = useMemo(() => {
+    const connections = groupEdges(graph.getEdges());
+
+    return connections.map((connection) => {
+      const [vertex, edges] = connection;
+      const sortedEdges = sortEdges(edges, vertex);
+      return distributeEdges(sortedEdges, vertex);
+    });
+  }, [graph]);
 
   return (
     <svg ref={svgRef} className={styles.simulator}>
-      {/* prettier-ignore */}
-      <Edges
-        edges={positionedEdges.flat()}
-        arrangement={arrangement}
-      />
+      <Edges edges={positionedEdges.flat()} arrangement={arrangement} />
       <Vertices
-        vertices={graph.vertices}
+        vertices={graph.getVertices()}
         arrangement={arrangement}
         onMouseDown={vertexMouseDownHandler}
       />
@@ -104,7 +111,7 @@ const Vertices = (props: VerticesProps) => {
         key={id}
         cx={x}
         cy={y}
-        value={value as any}
+        value={value.toString()}
         onMouseDown={(offset) => props.onMouseDown(vertex, offset)}
       />
     );
@@ -121,9 +128,9 @@ interface EdgesProps {
 const Edges = (props: EdgesProps) => {
   const renderedEdges = props.edges.map((positionedEdge) => {
     const [edge, position] = positionedEdge;
-    const [x, y] = props.arrangement[edge.from.id] ?? [0, 0];
-    const [dx, dy] = props.arrangement[edge.to.id] ?? [0, 0];
-    const circular = edge.from.id === edge.to.id;
+    const [x, y] = props.arrangement[edge.from] ?? [0, 0];
+    const [dx, dy] = props.arrangement[edge.to] ?? [0, 0];
+    const circular = edge.from === edge.to;
 
     return (
       <Edge
