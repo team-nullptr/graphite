@@ -3,6 +3,13 @@ import { Edge, Graph, Vertex } from "../graph";
 import * as terms from "./gen/gdl.terms";
 import { SyntaxNode, TreeCursor } from "@lezer/common";
 import { syntaxTree } from "@codemirror/language";
+import { parser } from "./gen/gdl";
+
+export class ParseError extends Error {
+  constructor(public readonly node: SyntaxNode, message: string) {
+    super(message);
+  }
+}
 
 export class GraphParser {
   private readonly cursor: TreeCursor;
@@ -12,9 +19,11 @@ export class GraphParser {
     this.cursor = root.cursor();
   }
 
+  /**
+   * Parses current syntax tree to construct internal graph representation.
+   * If parse does not succeed throws ParseError. Otherwise, returns the graph.
+   */
   parse(): Graph {
-    const graph = new Graph();
-
     const edges: Edge[] = [];
     const vertices: Vertex[] = [];
 
@@ -40,17 +49,15 @@ export class GraphParser {
       }
     }
 
-    vertices.forEach((it) => graph.addVertex(it));
-    edges.forEach((it) => graph.addEdge(it));
-
-    return graph;
+    return new Graph(vertices, edges);
   }
 
+  /** Parses vertex. */
   private parseVertex(): Vertex {
-    if (!this.match(terms.Id)) throw new Error("Expected Id node");
+    this.expect(terms.Id);
     const id = this.getLexeme(this.cursor.node);
 
-    if (!this.match(terms.Value)) throw new Error("Expected value node");
+    this.expect(terms.Value);
     const value = this.getLexeme(this.cursor.node);
 
     return new Vertex(id, parseFloat(value));
@@ -58,10 +65,10 @@ export class GraphParser {
 
   /** Parses edge. */
   private parseEdge(directed: boolean): Edge {
-    if (!this.match(terms.Id)) throw new Error("Expected Id node");
+    this.expect(terms.Id);
     const aId = this.getLexeme(this.cursor.node);
 
-    if (!this.match(terms.Id)) throw new Error("Expected Id node");
+    this.expect(terms.Id);
     const bId = this.getLexeme(this.cursor.node);
 
     return new Edge(aId, bId, null, directed);
@@ -69,21 +76,27 @@ export class GraphParser {
 
   /** Parses weighted edge. */
   private parseWeightedEdge(directed: boolean): Edge {
-    if (!this.match(terms.Id)) throw new Error("Expected Id node");
+    this.expect(terms.Id);
     const aId = this.getLexeme(this.cursor.node);
 
-    if (!this.match(terms.Value)) throw new Error("Expected Value node");
+    this.expect(terms.Value);
     const value = this.getLexeme(this.cursor.node);
 
-    if (!this.match(terms.Id)) throw new Error("Expected Id node");
+    this.expect(terms.Id);
     const bId = this.getLexeme(this.cursor.node);
 
     return new Edge(aId, bId, parseFloat(value), directed);
   }
 
   /** Checks if the next node is of the given type. */
-  private match(nodeType: number): boolean {
-    return this.cursor.next() && this.cursor.node.type.id === nodeType;
+  private expect(termId: number) {
+    const isValid = this.cursor.next() && this.cursor.node.type.id === termId;
+
+    if (!isValid)
+      throw new ParseError(
+        this.cursor.node,
+        `Expected node type: ${parser.getName(termId)}`
+      );
   }
 
   /** Gets node's lexeme. */

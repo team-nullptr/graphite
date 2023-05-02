@@ -21,10 +21,16 @@ export class Edge {
 }
 
 export class Graph {
-  // TODO: Does graph need to be modifiable? We replace it every time, so ..
+  // TODO: Does graph need to be modifiable? We replace it every time, so .. Maybe for tests?
 
   readonly vertices = new Map<string, Vertex>();
   readonly edges = new Map<string, Edge>();
+
+  constructor(vertices: Vertex[] = [], edges: Edge[] = []) {
+    // TODO: This is a temporary 'hack' there might be a cleaner way to do this.
+    vertices.forEach((it) => this.addVertex(it));
+    edges.forEach((it) => this.addEdge(it));
+  }
 
   getEdges(): Edge[] {
     return [...this.edges.values()];

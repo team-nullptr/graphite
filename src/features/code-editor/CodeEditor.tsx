@@ -12,6 +12,8 @@ export const CodeEditor = () => {
   const onChange = editorOnChange((value) => setValue(value));
   const { view, ref } = useEditor<HTMLDivElement>([onChange]);
 
+  const [error, setError] = useState("");
+
   useEffect(() => {
     if (!view) return;
 
@@ -29,15 +31,33 @@ export const CodeEditor = () => {
   }, [view, value]);
 
   useEffect(() => {
+    /* 
+    TODO: Do we want to parse graph here?
+    Or allow parent to pass a callback function that will run on editor value change. 
+    */
+
     if (!view) return;
 
     try {
       const parser = new GraphParser(view.state);
       setGraph(parser.parse());
+      setError("");
     } catch (err) {
-      console.error(err);
+      if (err instanceof Error) setError(err.message);
+      else setError("Unexpected error.");
     }
   }, [value]);
 
-  return <div className={styles.editorWrapper} ref={ref} />;
+  return (
+    <div className={styles.editorWrapper}>
+      <div className={styles.editor} ref={ref} />
+      <div
+        className={`${
+          error ? styles.editorDiagnosticsError : styles.editorDiagnosticsOk
+        } ${styles.editorDiagnostics}`}
+      >
+        {error ? error : "There are no errors!"}
+      </div>
+    </div>
+  );
 };

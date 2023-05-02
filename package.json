@@ -10,7 +10,7 @@
     "prepare": "husky install",
     "test": "vitest",
     "coverage": "vitest --coverage",
-    "gdl-generate": "lezer-generator ./src/engine/gdl/gdl.grammar -o ./src/engine/gdl/gen/gdl.ts && prettier ./src/engine/gdl/gen/**/* --write"
+    "gdl-generate": "lezer-generator ./src/engine/gdl/gdl.grammar --names -o ./src/engine/gdl/gen/gdl.ts && prettier ./src/engine/gdl/gen/**/* --write"
   },
   "dependencies": {
     "@codemirror/commands": "^6.2.3",
