@@ -7,8 +7,8 @@ import { GraphParser } from "../../engine/gdl/graph-parser";
 
 export const CodeEditor = () => {
   const setGraph = useProjectStore((state) => state.setGraph);
-  const [value, setValue] = useState("// Write your code here");
 
+  const [value, setValue] = useState("// Write your code here");
   const onChange = editorOnChange((value) => setValue(value));
   const { view, ref } = useEditor<HTMLDivElement>([onChange]);
 
@@ -35,11 +35,8 @@ export const CodeEditor = () => {
     TODO: Do we want to parse graph here?
     Or allow parent to pass a callback function that will run on editor value change. 
     */
-
-    if (!view) return;
-
     try {
-      const parser = new GraphParser(view.state);
+      const parser = new GraphParser(value);
       setGraph(parser.parse());
       setError("");
     } catch (err) {

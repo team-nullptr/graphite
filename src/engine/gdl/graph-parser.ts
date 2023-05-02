@@ -14,8 +14,9 @@ export class ParseError extends Error {
 export class GraphParser {
   private readonly cursor: TreeCursor;
 
-  constructor(private readonly state: EditorState) {
-    const root = syntaxTree(state);
+  constructor(private readonly source: string) {
+    // TODO: learn more about syntaxTree() and if it should be used here.
+    const root = parser.parse(source);
     this.cursor = root.cursor();
   }
 
@@ -101,6 +102,6 @@ export class GraphParser {
 
   /** Gets node's lexeme. */
   private getLexeme(node: SyntaxNode): string {
-    return this.state.sliceDoc(node.from, node.to);
+    return this.source.slice(node.from, node.to);
   }
 }
