@@ -3,15 +3,16 @@ import styles from "./CodeEdtor.module.css";
 import "./editor-styles.css";
 import { editorOnChange, useEditor } from "./hooks/useEditor";
 import { useProjectStore } from "../../store/project";
-import { graphFromSource } from "../../engine/graph";
+import { GraphParser } from "../../engine/gdl/graph-parser";
 
 export const CodeEditor = () => {
   const setGraph = useProjectStore((state) => state.setGraph);
-  const [value, setValue] = useState("// Write your code here");
 
-  const { view, ref } = useEditor<HTMLDivElement>([
-    editorOnChange((value) => setValue(value)),
-  ]);
+  const [value, setValue] = useState("// Write your code here");
+  const onChange = editorOnChange((value) => setValue(value));
+  const { view, ref } = useEditor<HTMLDivElement>([onChange]);
+
+  const [error, setError] = useState("");
 
   useEffect(() => {
     if (!view) return;
@@ -30,16 +31,30 @@ export const CodeEditor = () => {
   }, [view, value]);
 
   useEffect(() => {
-    if (!view) return;
-
+    /* 
+    TODO: Do we want to parse graph here?
+    Or allow parent to pass a callback function that will run on editor value change. 
+    */
     try {
-      const graph = graphFromSource(view.state);
-      console.log(graph);
-      setGraph(graph);
+      const parser = new GraphParser(value);
+      setGraph(parser.parse());
+      setError("");
     } catch (err) {
-      console.error(err);
+      if (err instanceof Error) setError(err.message);
+      else setError("Unexpected error.");
     }
   }, [value]);
 
-  return <div className={styles.editorWrapper} ref={ref} />;
+  return (
+    <div className={styles.editorWrapper}>
+      <div className={styles.editor} ref={ref} />
+      <div
+        className={`${
+          error ? styles.editorDiagnosticsError : styles.editorDiagnosticsOk
+        } ${styles.editorDiagnostics}`}
+      >
+        {error ? error : "There are no errors!"}
+      </div>
+    </div>
+  );
 };

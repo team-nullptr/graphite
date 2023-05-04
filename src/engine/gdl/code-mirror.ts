@@ -8,7 +8,10 @@ export const gdlParser = parser.configure({
   props: [
     styleTags({
       Vertex: tags.keyword,
+      DirectedEdge: tags.keyword,
+      WeightedDirectedEdge: tags.keyword,
       Edge: tags.keyword,
+      WeightedEdge: tags.keyword,
       Id: tags.string,
       Value: tags.number,
       LineComment: tags.lineComment,
