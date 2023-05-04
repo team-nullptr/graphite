@@ -1,8 +1,6 @@
-import { EditorState } from "@codemirror/state";
 import { Edge, Graph, Vertex } from "../graph";
 import * as terms from "./gen/gdl.terms";
 import { SyntaxNode, TreeCursor } from "@lezer/common";
-import { syntaxTree } from "@codemirror/language";
 import { parser } from "./gen/gdl";
 
 export class ParseError extends Error {
