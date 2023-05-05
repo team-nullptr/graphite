@@ -4,10 +4,10 @@
 statement[@isGroup=Statement] { Vertex | Edge | WeightedEdge | DirectedEdge | WeightedDirectedEdge }
 
 Vertex { Id Value }
-Edge { Id "->" Id }
-WeightedEdge { Id "[" Value "]->" Id }
-DirectedEdge { Id "<->" Id }
-WeightedDirectedEdge { Id "[" Value "]<->" Id }
+Edge { Id "<->" Id }
+WeightedEdge { Id "[" Value "]<->" Id }
+DirectedEdge { Id "->" Id }
+WeightedDirectedEdge { Id "[" Value "]->" Id }
 
 @tokens {
   Id { @asciiLetter+ }

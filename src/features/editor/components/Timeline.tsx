@@ -1,13 +1,15 @@
 import { ChangeEvent } from "react";
 
-import { Controls } from "../../../shared/Controls";
+import { Controls, ControlsButton } from "../../../shared/Controls";
 import styles from "./Timeline.module.css";
 
-import BackIcon from "../../../assets/arrow_back_FILL0_wght200_GRAD0_opsz24.svg";
-import ForwardIcon from "../../../assets/arrow_forward_FILL0_wght200_GRAD0_opsz24.svg";
-import PlayIcon from "../../../assets/play_arrow_FILL0_wght100_GRAD0_opsz24.svg";
-import RestartIcon from "../../../assets/replay_FILL0_wght200_GRAD0_opsz24.svg";
-import StopIcon from "../../../assets/stop_FILL0_wght100_GRAD0_opsz24.svg";
+import {
+  PlayIcon,
+  StopIcon,
+  ArrowPathIcon,
+  ArrowRightIcon,
+  ArrowLeftIcon,
+} from "@heroicons/react/24/outline";
 
 export interface TimelineProps {
   playing: boolean;
@@ -39,49 +41,41 @@ export const Timeline = (props: TimelineProps) => {
   };
 
   return (
-    <Controls className={styles.container}>
-      <ul className={styles["timeline-controls"]}>
-        <li>
-          {props.playing ? (
-            <button onClick={stopHandler}>
-              <img
-                src={StopIcon}
-                alt="stop"
-                style={{ width: 29, height: 29 }}
-              />
-            </button>
-          ) : (
-            <button onClick={startHandler}>
-              <img
-                src={PlayIcon}
-                alt="play"
-                style={{ width: 29, height: 29 }}
-              />
-            </button>
-          )}
-        </li>
-        <li>
-          <button onClick={restartHandler}>
-            <img src={RestartIcon} alt="restart" style={{ width: 19 }} />
-          </button>
-        </li>
-        <li>
-          <button
-            onClick={previousStepHandler}
-            disabled={props.currentStep === 1}
-          >
-            <img src={BackIcon} alt="previous" />
-          </button>
-        </li>
-        <li>
-          <button
-            onClick={nextStepHandler}
-            disabled={props.currentStep === props.stepCount}
-          >
-            <img src={ForwardIcon} alt="next" />
-          </button>
-        </li>
-      </ul>
+    <Controls>
+      {props.playing ? (
+        <ControlsButton
+          onClick={stopHandler}
+          icon={<StopIcon className="h-5 w-5" />}
+          alt="stop"
+        />
+      ) : (
+        <ControlsButton
+          onClick={startHandler}
+          icon={<PlayIcon className="h-5 w-5" />}
+          alt="play"
+        />
+      )}
+
+      <ControlsButton
+        onClick={restartHandler}
+        icon={<ArrowPathIcon className="h-5 w-5" />}
+        alt="restart"
+      />
+
+      <ControlsButton
+        onClick={previousStepHandler}
+        disabled={props.currentStep === 1}
+        icon={<ArrowLeftIcon className="h-5 w-5" />}
+        alt="previous"
+      />
+
+      <ControlsButton
+        onClick={nextStepHandler}
+        disabled={props.currentStep === props.stepCount}
+        icon={<ArrowRightIcon className="h-5 w-5" />}
+        alt="next"
+      />
+
       <input
         className={styles.slider}
         type="range"

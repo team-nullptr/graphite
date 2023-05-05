@@ -1,9 +1,8 @@
 import { useEffect, useState } from "react";
-import styles from "./CodeEdtor.module.css";
+import { GraphParser } from "../../engine/gdl/graph-parser";
+import { useProjectStore } from "../../store/project";
 import "./editor-styles.css";
 import { editorOnChange, useEditor } from "./hooks/useEditor";
-import { useProjectStore } from "../../store/project";
-import { GraphParser } from "../../engine/gdl/graph-parser";
 
 export const CodeEditor = () => {
   const setGraph = useProjectStore((state) => state.setGraph);
@@ -46,12 +45,12 @@ export const CodeEditor = () => {
   }, [value]);
 
   return (
-    <div className={styles.editorWrapper}>
-      <div className={styles.editor} ref={ref} />
+    <div className="w-full border-b border-base-300">
+      <div className="border-b border-base-300" ref={ref} />
       <div
         className={`${
-          error ? styles.editorDiagnosticsError : styles.editorDiagnosticsOk
-        } ${styles.editorDiagnostics}`}
+          error ? "text-diagnostic-error" : "text-diagnostic-ok"
+        } p-3`}
       >
         {error ? error : "There are no errors!"}
       </div>

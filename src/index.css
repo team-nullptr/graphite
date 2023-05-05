@@ -1,19 +1,14 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 @font-face {
   font-family: "JetBrains";
-  src: url("./assets/fonts/JetBrainsMono-Regular.woff2");
-}
-
-* {
-  box-sizing: border-box;
+  src: url("./assets/fonts/JetBrainsMonoNL-Regular.woff2");
 }
 
 html,
 body,
 #root {
-  height: 100%;
-}
-
-body {
-  background-color: rgba(247, 247, 247);
-  margin: 0;
+  @apply h-full;
 }

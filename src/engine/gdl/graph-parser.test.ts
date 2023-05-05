@@ -21,19 +21,19 @@ c 3`;
   test.each([
     {
       edgeStmt: "a -> b",
-      expected: { directed: false, weight: null },
-    },
-    {
-      edgeStmt: "a [10]-> b",
-      expected: { directed: false, weight: 10 },
-    },
-    {
-      edgeStmt: "a <-> b",
       expected: { directed: true, weight: null },
     },
     {
-      edgeStmt: "a [10]<-> b",
+      edgeStmt: "a [10]-> b",
       expected: { directed: true, weight: 10 },
+    },
+    {
+      edgeStmt: "a <-> b",
+      expected: { directed: false, weight: null },
+    },
+    {
+      edgeStmt: "a [10]<-> b",
+      expected: { directed: false, weight: 10 },
     },
   ])("parses $edge edge correctly", ({ edgeStmt, expected }) => {
     // arrange

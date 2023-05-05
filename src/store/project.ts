@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { Graph } from "../engine/graph";
+import { Graph } from "../engine/runner/graph";
 import { devtools } from "zustand/middleware";
 
 export type ProjectStore = {

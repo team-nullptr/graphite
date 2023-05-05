@@ -1,6 +1,5 @@
 import { MouseEvent, useRef } from "react";
 import { Position } from "../model/position";
-import styles from "./Vertex.module.css";
 
 export interface VertexProps {
   cx: number;
@@ -28,26 +27,31 @@ export const Vertex = (props: VertexProps) => {
     props.hue !== undefined
       ? `hsl(${props.hue}, 50%, 90%)`
       : "rgb(247, 247, 247)";
+
   const strokeColor =
     props.hue !== undefined
       ? `hsl(${props.hue}, 50%, 65%)`
       : "rgb(175, 175, 175)";
-  // prettier-ignore
+
   const textColor =
-    props.hue !== undefined
-      ? `hsl(${props.hue}, 50%, 30%)`
-      : "rgb(0, 0, 0)";
+    props.hue !== undefined ? `hsl(${props.hue}, 50%, 30%)` : "rgb(0, 0, 0)";
 
   return (
-    <g ref={ref} className={styles.vertex} onMouseDown={mouseDownHandler}>
+    <g ref={ref} className="font-[JetBrains]" onMouseDown={mouseDownHandler}>
       <circle
+        className="stroke-1 transition-[fill,_stroke]"
         cx={props.cx}
         cy={props.cy}
         r={19}
         fill={fillColor}
         stroke={strokeColor}
       />
-      <text x={props.cx} y={props.cy} fill={textColor}>
+      <text
+        className="transition-[fill] [dominant-baseline:central] [text-anchor:middle]"
+        x={props.cx}
+        y={props.cy}
+        fill={textColor}
+      >
         {props.value}
       </text>
     </g>
