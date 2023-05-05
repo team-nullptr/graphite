@@ -9,6 +9,8 @@ export default {
       black: "#000000",
       "base-200": "#f5f5f5",
       "base-300": "#e5e5e5",
+      "diagnostic-error": "#fb8500",
+      "diagnostic-ok": "#a7c957",
     },
     extend: {},
   },

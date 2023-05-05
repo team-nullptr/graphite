@@ -18,7 +18,7 @@ export const Header = (props: HeaderProps) => {
   };
 
   return (
-    <nav className="col-span-2 flex w-full items-center justify-center border-b border-base-300 p-2">
+    <nav className="flex w-full items-center justify-center border-b border-base-300 p-2">
       <button onClick={navigateBackHandler} className="aspect-square h-full">
         <ArrowLeftIcon className="w-5" />
       </button>

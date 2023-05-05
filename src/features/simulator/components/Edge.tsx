@@ -1,6 +1,5 @@
 import { Position, rotatePosition } from "../model/position";
 import { Arrow } from "./Arrow";
-import styles from "./Edge.module.css";
 
 const vertexRadius = 19;
 
@@ -47,7 +46,11 @@ const StraightEdge = (props: EdgeProps) => {
 
   return (
     <g transform={transform}>
-      <path className={styles.line} d={path} stroke={stroke} />
+      <path
+        className="fill-none stroke-1 transition-[stroke]"
+        d={path}
+        stroke={stroke}
+      />
       {props.directed && (
         <Arrow position={end} angle={-angle} hue={props.hue} />
       )}
@@ -79,7 +82,7 @@ const CircularEdge = (props: EdgeProps) => {
   return (
     <g transform={transform}>
       <circle
-        className={styles.line}
+        className="fill-none stroke-1 transition-[stroke]"
         cx={cx}
         cy={cy}
         r={radius}

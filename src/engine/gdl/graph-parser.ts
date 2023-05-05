@@ -1,4 +1,4 @@
-import { Edge, Graph, Vertex } from "../graph";
+import { Edge, Graph, Vertex } from "../runner/graph";
 import * as terms from "./gen/gdl.terms";
 import { SyntaxNode, TreeCursor } from "@lezer/common";
 import { parser } from "./gen/gdl";
