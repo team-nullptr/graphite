@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { Simulator } from "../simulator/Simulator";
-import styles from "./Editor.module.css";
 import { Header } from "./components/Header";
 import { Sidebar } from "./components/Sidebar";
 import { Timeline } from "./components/Timeline";
@@ -42,9 +41,9 @@ export const Editor = (props: EditorProps) => {
   };
 
   return (
-    <main className={styles.container}>
-      <Sidebar />
+    <main className="grid h-full grid-cols-[auto_1fr] grid-rows-[auto_auto_1fr]">
       <Header name={projectName} onRename={setProjectName} />
+      <Sidebar />
       <Timeline
         playing={playing}
         currentStep={currentStep}
@@ -53,15 +52,7 @@ export const Editor = (props: EditorProps) => {
         onStart={startHandler}
         onStop={stopHandler}
       />
-      <Simulator
-      // arrangement={{
-      //   "v-0": [300, 200],
-      //   "v-1": [400, 200],
-      //   "v-2": [400, 400],
-      //   "v-3": [250, 300],
-      //   "v-4": [200, 200],
-      // }}
-      />
+      <Simulator />
     </main>
   );
 };

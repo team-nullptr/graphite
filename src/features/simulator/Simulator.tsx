@@ -85,7 +85,7 @@ export const Simulator = (props: SimulatorProps) => {
   }, [graph]);
 
   return (
-    <svg ref={svgRef} className={styles.simulator}>
+    <svg ref={svgRef} className="h-full w-full">
       <Edges edges={positionedEdges.flat()} arrangement={arrangement} />
       <Vertices
         vertices={graph.getVertices()}

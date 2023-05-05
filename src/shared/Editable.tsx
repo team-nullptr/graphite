@@ -8,6 +8,7 @@ export interface EditableProps {
   onChange?: (value: string) => void;
 }
 
+// TODO: What is the purpouse of this component exactly?
 export const Editable = (props: EditableProps) => {
   const [value, setValue] = useState(props.value);
   const active = useRef<boolean>(false);

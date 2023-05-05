@@ -1,8 +1,5 @@
-import { Controls } from "../../../shared/Controls";
 import { Editable } from "../../../shared/Editable";
-import styles from "./Header.module.css";
-
-import BackIcon from "../../../assets/arrow_back_FILL0_wght200_GRAD0_opsz24.svg";
+import { ArrowLeftIcon } from "@heroicons/react/24/outline";
 
 export interface HeaderProps {
   name: string;
@@ -21,17 +18,17 @@ export const Header = (props: HeaderProps) => {
   };
 
   return (
-    <Controls className={styles.header}>
-      <button onClick={navigateBackHandler}>
-        <img src={BackIcon} alt="back to project list" />
+    <nav className="col-span-2 flex w-full items-center justify-center border-b border-base-300 p-2">
+      <button onClick={navigateBackHandler} className="aspect-square h-full">
+        <ArrowLeftIcon className="w-5" />
       </button>
       <Editable
-        className={styles.input}
+        className="ml-3 h-[28px] w-96 rounded-md border border-base-300 text-center"
         placeholder="Project"
         value={props.name}
         onChange={editableChangeHandler}
         disabled={props.disabled}
-      />
-    </Controls>
+      ></Editable>
+    </nav>
   );
 };

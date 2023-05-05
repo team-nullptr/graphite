@@ -27,7 +27,7 @@ export class Graph {
   readonly edges = new Map<string, Edge>();
 
   constructor(vertices: Vertex[] = [], edges: Edge[] = []) {
-    // TODO: This is a temporary 'hack' there might be a cleaner way to do this.
+    // TODO: This is a temporary 'hack' there for sure is a cleaner way to do this.
     vertices.forEach((it) => this.addVertex(it));
     edges.forEach((it) => this.addEdge(it));
   }

@@ -1,44 +1,8 @@
-import { useEffect, useState, useMemo } from "react";
-import ExpandIcon from "../../../assets/keyboard_double_arrow_right_FILL0_wght200_GRAD0_opsz24.svg";
 import { CodeEditor } from "../../code-editor/CodeEditor";
-import styles from "./Sidebar.module.css";
+import { ChevronDoubleRightIcon } from "@heroicons/react/24/outline";
+import { useSidebar } from "../hooks/useSidebar";
 
-// TODO: Make sections resizable (Like editor section / algorithm picker section)
-
-/** Internal hook that simplifies Sidebar component a little. */
-const useSidebar = () => {
-  const [width, setWidth] = useState(600);
-  const [isResizing, setIsResizing] = useState(false);
-
-  useEffect(() => {
-    const stopResizing = () => {
-      setIsResizing(false);
-    };
-
-    document.addEventListener("mouseup", stopResizing);
-    return () => document.removeEventListener("mouseup", stopResizing);
-  }, []);
-
-  useEffect(() => {
-    const handleResize = (e: MouseEvent) => {
-      if (!isResizing) return;
-      // TODO: Make this work on different screen sizes
-      setWidth(Math.min(e.clientX, 600));
-    };
-
-    document.addEventListener("mousemove", handleResize);
-    return () => document.removeEventListener("mousemove", handleResize);
-  }, [isResizing]);
-
-  const handleExpand = () => setWidth(400);
-
-  return {
-    width,
-    isResizing,
-    setIsResizing,
-    handleExpand,
-  };
-};
+// TODO: Abstract this behaviours to make sections resizable (Like editor section / algorithm picker section)
 
 type SidebarHandleProps = {
   isResizing: boolean;
@@ -46,34 +10,32 @@ type SidebarHandleProps = {
 };
 
 const SidebarHandle = (props: SidebarHandleProps) => {
-  const handleStyles = useMemo(
-    () => `${styles.resize} ${props.isResizing ? styles.resizeActive : ""}`,
-    [props.isResizing]
+  return (
+    <div
+      className="flex h-full w-2 flex-col items-center justify-center bg-debug opacity-50 hover:cursor-col-resize"
+      onMouseDown={() => props.onResize()}
+    />
   );
-
-  return <div className={handleStyles} onMouseDown={() => props.onResize()} />;
 };
 
 export const Sidebar = () => {
   const { width, isResizing, setIsResizing, handleExpand } = useSidebar();
 
   return (
-    <div className={styles.sidebar}>
+    <div className="row-span-2 flex border-r border-base-300">
       {width < 100 ? (
-        <div className={styles.sidebarExpand} onClick={handleExpand}>
-          <img
-            className={styles.sidebarExpandIcon}
-            src={ExpandIcon}
-            alt="expand"
-            style={{ width: 24, height: 24 }}
-          />
+        <div
+          className="flex h-full w-[24px] cursor-pointer flex-col items-center justify-center bg-base-200"
+          onClick={handleExpand}
+        >
+          <ChevronDoubleRightIcon />
         </div>
       ) : (
         <>
           <div
-            className={styles.sidebarContent}
+            className="h-full"
             style={{
-              width: Math.max(width, 350),
+              width: width,
             }}
           >
             <CodeEditor></CodeEditor>
