@@ -13,7 +13,7 @@ export const parser = LRParser.deserialize({
   skippedNodes: [0, 1],
   repeatNodeCount: 1,
   tokenData:
-    "%j~RbX^!Zpq!Z}!O#O!P!Q#Z!Q![#x!^!_$Q!c!}$c!}#O$n#P#Q$s#T#o$c#y#z!Z$f$g!Z#BY#BZ!Z$IS$I_!Z$I|$JO!Z$JT$JU!Z$KV$KW!Z&FU&FV!Z~!`Y]~X^!Zpq!Z#y#z!Z$f$g!Z#BY#BZ!Z$IS$I_!Z$I|$JO!Z$JT$JU!Z$KV$KW!Z&FU&FV!Z~#RP!`!a#U~#ZO_~~#^P!P!Q#a~#fSP~OY#aZ;'S#a;'S;=`#r<%lO#a~#uP;=`<%l#a~#}PT~!Q![#x~$TP}!O$W~$ZP!`!a$^~$cOb~~$hQS~!c!}$c#T#o$c~$sO`~~$vQ}!O$|!^!_%X~%PP!`!a%S~%XOa~~%[P}!O%_~%bP!`!a%e~%jOc~",
+    "%j~RbX^!Zpq!Z}!O#O!P!Q#Z!Q![#x!^!_$Q!c!}$c!}#O$n#P#Q$s#T#o$c#y#z!Z$f$g!Z#BY#BZ!Z$IS$I_!Z$I|$JO!Z$JT$JU!Z$KV$KW!Z&FU&FV!Z~!`Y]~X^!Zpq!Z#y#z!Z$f$g!Z#BY#BZ!Z$IS$I_!Z$I|$JO!Z$JT$JU!Z$KV$KW!Z&FU&FV!Z~#RP!`!a#U~#ZOb~~#^P!P!Q#a~#fSP~OY#aZ;'S#a;'S;=`#r<%lO#a~#uP;=`<%l#a~#}PT~!Q![#x~$TP}!O$W~$ZP!`!a$^~$cO_~~$hQS~!c!}$c#T#o$c~$sO`~~$vQ}!O$|!^!_%X~%PP!`!a%S~%XOc~~%[P}!O%_~%bP!`!a%e~%jOa~",
   tokenizers: [0],
   topRules: { Program: [0, 2] },
   tokenPrec: 0,
@@ -33,10 +33,10 @@ export const parser = LRParser.deserialize({
     "12": "%mainskip",
     "13": "space",
     "14": "statement",
-    "15": '"->"',
+    "15": '"<->"',
     "16": '"["',
-    "17": '"]->"',
-    "18": '"<->"',
-    "19": '"]<->"',
+    "17": '"]<->"',
+    "18": '"->"',
+    "19": '"]->"',
   },
 });
