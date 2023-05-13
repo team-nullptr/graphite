@@ -3,7 +3,8 @@ import { Simulator } from "../simulator/Simulator";
 import { Header } from "./components/Header";
 import { Sidebar } from "./components/Sidebar";
 import { Timeline } from "./components/Timeline";
-import { HorizontalSplit } from "../../shared/SplitLayout";
+import { VerticalSplit } from "../../shared/VerticalSplit";
+import { useTheme } from "../../context/theme";
 
 export interface EditorProps {
   stepCount: number;
@@ -13,6 +14,7 @@ export const Editor = ({ stepCount }: EditorProps) => {
   const [projectName, setProjectName] = useState("");
   const [playing, setPlaying] = useState(false);
   const [currentStep, setCurrentStep] = useState(1);
+  const { themeClass } = useTheme();
 
   useEffect(() => {
     if (!playing) {
@@ -40,28 +42,30 @@ export const Editor = ({ stepCount }: EditorProps) => {
   };
 
   return (
-    <div className="flex h-full flex-col">
+    <div className={`flex h-full flex-col ${themeClass}`}>
       <Header name={projectName} onRename={setProjectName} />
-      <main className="flex-grow">
-        <HorizontalSplit
-          left={<Sidebar />}
-          right={
-            <div className="flex h-full flex-col">
-              <Timeline
-                playing={playing}
-                currentStep={currentStep}
-                stepCount={stepCount}
-                onStepChange={stepChangeHandler}
-                onStart={startHandler}
-                onStop={stopHandler}
-              />
-              <div className="flex-grow">
-                <Simulator />
+      <div className="flex-1">
+        <main className="h-full max-h-full">
+          <VerticalSplit
+            left={<Sidebar />}
+            right={
+              <div className="flex h-full flex-col">
+                <Timeline
+                  playing={playing}
+                  currentStep={currentStep}
+                  stepCount={stepCount}
+                  onStepChange={stepChangeHandler}
+                  onStart={startHandler}
+                  onStop={stopHandler}
+                />
+                <div className="flex-grow">
+                  <Simulator />
+                </div>
               </div>
-            </div>
-          }
-        />
-      </main>
+            }
+          />
+        </main>
+      </div>
     </div>
   );
 };

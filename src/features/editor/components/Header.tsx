@@ -1,5 +1,6 @@
 import { Editable } from "../../../shared/Editable";
 import { ArrowLeftIcon } from "@heroicons/react/24/outline";
+import { ThemeToggler } from "../../../shared/ThemeToggler";
 
 export interface HeaderProps {
   name: string;
@@ -18,7 +19,9 @@ export const Header = (props: HeaderProps) => {
   };
 
   return (
-    <nav className="flex w-full items-center justify-center border-b border-base-300 p-2">
+    <nav className="flex w-full items-center justify-center border-b border-base-300 bg-base-200 p-2 dark:border-base-200-dark dark:bg-base-300-dark">
+      {/* This is of course the stupidest place for theme switcher, but it has to be somewhere for now. */}
+      <ThemeToggler />
       <button onClick={navigateBackHandler} className="aspect-square h-full">
         <ArrowLeftIcon className="w-5" />
       </button>
