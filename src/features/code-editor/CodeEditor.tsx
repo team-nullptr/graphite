@@ -51,7 +51,7 @@ export const CodeEditor = () => {
 
   return (
     <HorizontalSplit
-      top={<div ref={ref} />}
+      top={<div className="h-full" ref={ref} />}
       bottom={<DiagnosticsSummary errors={errors} />}
     />
   );

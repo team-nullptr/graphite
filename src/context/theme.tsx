@@ -6,8 +6,8 @@ import {
   useContext,
 } from "react";
 
-type Theme = "light" | "dark";
-type ThemeMode = Theme | "auto";
+export type Theme = "light" | "dark";
+export type ThemeMode = Theme | "auto";
 
 type ThemeContextValue = {
   // Mode decides on the way theme is resolved.
@@ -30,14 +30,10 @@ export const useTheme = () => {
 };
 
 export const ThemeContextProvider = (props: PropsWithChildren) => {
-  const [mode, setMode] = useState<ThemeMode>("auto");
+  const [mode, setMode] = useState<ThemeMode>(
+    (localStorage.getItem("themeMode") as ThemeMode) ?? "auto"
+  );
   const [theme, setTheme] = useState<Theme>("light");
-
-  // Load theme mode from localStorage.
-  useEffect(() => {
-    const theme = localStorage.getItem("themeMode") as ThemeMode;
-    if (theme) setMode(theme);
-  }, []);
 
   // Save theme mode to local storage.
   useEffect(() => {

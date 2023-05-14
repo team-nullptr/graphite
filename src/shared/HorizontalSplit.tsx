@@ -56,7 +56,9 @@ export const HorizontalSplit = ({ top, bottom }: HorizontalSplitProps) => {
 
   return (
     <div className="flex h-full w-full flex-col" ref={ref}>
-      <div style={{ height: `${topShare}%` }}>{top}</div>
+      <div className="overflow-auto" style={{ height: `${topShare}%` }}>
+        {top}
+      </div>
 
       <div
         onMouseDown={() => setIsResizing(true)}
