@@ -4,7 +4,8 @@ import { EditorState, Extension } from "@codemirror/state";
 import { EditorView, ViewUpdate, keymap, lineNumbers } from "@codemirror/view";
 import { tags } from "@lezer/highlight";
 import { useEffect, useRef, useState } from "react";
-import { gdl, gdlLinter } from "../../../engine/gdl/code-mirror";
+import { gdl } from "../../../engine/gdl/code-mirror";
+import { gdlLinter } from "../../../engine/gdl/gdl-linter";
 
 // Creates onChange extension for editor.
 export const editorOnChange = (cb: (value: string) => void) => {

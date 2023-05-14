@@ -4,18 +4,27 @@ import { SyntaxNode, TreeCursor } from "@lezer/common";
 import { parser } from "./gen/gdl";
 
 export class ParseError extends Error {
-  constructor(public readonly node: SyntaxNode, message: string) {
+  constructor(
+    public readonly line: number,
+    public readonly precedingNode: SyntaxNode,
+    public readonly node: SyntaxNode,
+    message: string
+  ) {
     super(message);
   }
 }
 
 export class GraphParser {
   private readonly cursor: TreeCursor;
+  private readonly lineOffsets: number[];
 
   constructor(private readonly source: string) {
     // TODO: learn more about syntaxTree() and if it should be used here.
     const root = parser.parse(source);
     this.cursor = root.cursor();
+
+    // Find line offsets.
+    this.lineOffsets = this.findLinesOffsets();
   }
 
   /**
@@ -89,17 +98,49 @@ export class GraphParser {
 
   /** Checks if the next node is of the given type. */
   private expect(termId: number) {
-    const isValid = this.cursor.next() && this.cursor.node.type.id === termId;
+    const precedingNode = this.cursor.node;
 
-    if (!isValid)
+    if (this.cursor.next() && this.cursor.node.type.id === termId)
       throw new ParseError(
+        this.resolveLine(precedingNode.from),
+        precedingNode,
         this.cursor.node,
-        `Expected node type: ${parser.getName(termId)}`
+        `(${parser.getName(
+          precedingNode.type.id
+        )}) must be followed by (${parser.getName(termId)}).`
       );
   }
 
   /** Gets node's lexeme. */
   private getLexeme(node: SyntaxNode): string {
     return this.source.slice(node.from, node.to);
+  }
+
+  /** Searches for a line the offset is in. */
+  private resolveLine(offset: number) {
+    let left = 0;
+    let right = this.lineOffsets.length - 1;
+
+    while (left < right) {
+      const mid = Math.ceil(left + (right - left) / 2);
+
+      if (offset > this.lineOffsets[mid]) left = mid;
+      else if (offset < this.lineOffsets[mid]) right = mid - 1;
+    }
+
+    return left + 1;
+  }
+
+  /** Generates array of new line indexes which can be used to find out token's line. */
+  private findLinesOffsets() {
+    const linesOffsets = [0];
+
+    for (let i = 0; i < this.source.length; i++) {
+      if (this.source[i] === "\n") {
+        linesOffsets.push(i);
+      }
+    }
+
+    return linesOffsets;
   }
 }

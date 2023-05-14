@@ -13,12 +13,14 @@ export default {
       // Light
       "base-200": "#f5f5f5",
       "base-300": "#e5e5e5",
-      "text-base": "#000000",
+      "text-base": "#222222",
+      "text-dimmed": "#808080",
 
       // Dark
       "base-200-dark": "#323337",
       "base-300-dark": "#1E1F23",
       "text-base-dark": "#FCFBFF",
+      "text-dimmed-dark": "#A0A0A0",
 
       // Editor
       "diagnostic-error": "#fb8500",

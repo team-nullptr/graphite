@@ -1,14 +1,14 @@
 import { useEffect, useState } from "react";
-import { GraphParser } from "../../engine/gdl/graph-parser";
+import { GraphParser, ParseError } from "../../engine/gdl/graph-parser";
 import { useProjectStore } from "../../store/project";
 import "./editor-styles.css";
 import { editorOnChange, useEditor } from "./hooks/useEditor";
 import { HorizontalSplit } from "../../shared/HorizontalSplit";
-import { Tab } from "../../shared/Tab";
+import { DiagnosticsSummary } from "./components/Diagnostics";
 
 export const CodeEditor = () => {
   const [value, setValue] = useState("// Write your code here");
-  const [error, setError] = useState("");
+  const [errors, setErrors] = useState<ParseError[]>([]);
 
   const setGraph = useProjectStore((state) => state.setGraph);
 
@@ -37,33 +37,22 @@ export const CodeEditor = () => {
     TODO: Do we want to parse graph here?
     Or allow parent to pass a callback function that will run on editor value change.
     */
+
+    const parser = new GraphParser(value);
+
     try {
-      const parser = new GraphParser(value);
-      setGraph(parser.parse());
-      setError("");
+      const graph = parser.parse();
+      setGraph(graph);
     } catch (err) {
-      if (err instanceof Error) setError(err.message);
-      else setError("Unexpected error.");
+      if (err instanceof ParseError) setErrors([err]);
+      else console.error("Unexpected error");
     }
   }, [value]);
 
   return (
-    <HorizontalSplit top={<div ref={ref} />} bottom={<DiagnosticsSummary />} />
-  );
-};
-
-const DiagnosticsSummary = () => {
-  return (
-    <Tab label="Diagnostics">
-      <div className="h-full bg-base-200 p-4 text-text-base dark:bg-base-300-dark dark:text-text-base-dark">
-        This is mock diagnostics summary tab This is mock diagnostics summary
-        tab This is mock diagnostics summary tab This is mock diagnostics
-        summary tab This is mock diagnostics summary tab This is mock
-        diagnostics summary tab This is mock diagnostics summary tab This is
-        mock diagnostics summary tab This is mock diagnostics summary tab This
-        is mock diagnostics summary tab This is mock diagnostics summary tab
-        This is mock diagnostics summary tab
-      </div>
-    </Tab>
+    <HorizontalSplit
+      top={<div ref={ref} />}
+      bottom={<DiagnosticsSummary errors={errors} />}
+    />
   );
 };
