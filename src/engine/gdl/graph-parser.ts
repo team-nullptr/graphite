@@ -100,7 +100,7 @@ export class GraphParser {
   private expect(termId: number) {
     const precedingNode = this.cursor.node;
 
-    if (this.cursor.next() && this.cursor.node.type.id === termId)
+    if (!(this.cursor.next() && this.cursor.node.type.id === termId))
       throw new ParseError(
         this.resolveLine(precedingNode.from),
         precedingNode,
