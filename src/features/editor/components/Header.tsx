@@ -26,7 +26,7 @@ export const Header = (props: HeaderProps) => {
         <ArrowLeftIcon className="w-5" />
       </button>
       <Editable
-        className="ml-3 h-[28px] w-96 rounded-md border border-base-300 text-center"
+        className="ml-3 h-[28px] w-96 rounded-md border border-base-300 bg-base-200 text-center text-text-base placeholder:text-text-dimmed dark:border-base-200-dark dark:bg-base-300-dark dark:text-text-base-dark dark:placeholder:text-text-dimmed-dark"
         placeholder="Project"
         value={props.name}
         onChange={editableChangeHandler}

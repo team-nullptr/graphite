@@ -59,7 +59,10 @@ export const Simulator = () => {
     });
 
   return (
-    <svg ref={svgRef} className="h-full w-full">
+    <svg
+      ref={svgRef}
+      className="h-full w-full bg-base-200 dark:bg-base-300-dark"
+    >
       {renderEdges()}
       {renderVertices()}
     </svg>

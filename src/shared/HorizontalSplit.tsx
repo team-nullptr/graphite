@@ -62,7 +62,7 @@ export const HorizontalSplit = ({ top, bottom }: HorizontalSplitProps) => {
 
       <div
         onMouseDown={() => setIsResizing(true)}
-        className={`relative z-[999] w-full border-b border-base-300 before:absolute before:-top-2 before:h-4 before:w-full before:bg-base-300  before:opacity-0 before:transition-opacity hover:cursor-row-resize hover:before:opacity-30 ${
+        className={`relative z-[999] w-full border-b border-base-300 before:absolute before:-top-2 before:h-4 before:w-full before:bg-base-300 before:opacity-0 before:transition-opacity  hover:cursor-row-resize hover:before:opacity-30 dark:border-base-200-dark dark:before:bg-base-200-dark ${
           isResizing && "cursor-col-resize before:opacity-30"
         }`}
       />

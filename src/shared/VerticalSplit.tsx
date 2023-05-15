@@ -62,7 +62,7 @@ export const VerticalSplit = (props: SplitLayoutProps) => {
       </div>
       <div
         onMouseDown={() => setIsResizing(true)}
-        className={`relative z-[999] h-full border-r border-base-300 before:absolute before:-left-2 before:h-full before:w-4 before:bg-base-300  before:opacity-0 before:transition-opacity hover:cursor-col-resize hover:before:opacity-30 ${
+        className={`relative z-[999] h-full border-r border-base-300 before:absolute before:-left-2 before:h-full before:w-4 before:bg-base-300 before:opacity-0 before:transition-opacity  hover:cursor-col-resize hover:before:opacity-30 dark:border-base-200-dark dark:before:bg-base-200-dark ${
           isResizing && "cursor-col-resize before:opacity-30"
         }`}
       />
