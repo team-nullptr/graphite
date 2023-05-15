@@ -40,15 +40,26 @@ const GDLHighlightStyle = HighlightStyle.define([
 const darkTheme = EditorView.theme(
   {
     "&": {
-      color: "black",
       backgroundColor: "#1E1F23",
       height: "100%",
+    },
+    ".cm-gutters": {
+      backgroundColor: "#1E1F23",
     },
   },
   { dark: true }
 );
 
-const lightTheme = EditorView.theme({});
+const lightTheme = EditorView.theme({
+  "&": {
+    backgroundColor: "#f5f5f5",
+    height: "100%",
+  },
+  ".cm-gutters": {
+    border: "none",
+    backgroundColor: "#f5f5f5",
+  },
+});
 
 export const useEditor = <T extends HTMLElement>(extensions: Extension[]) => {
   const ref = useRef<T>(null);

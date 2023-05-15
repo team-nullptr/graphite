@@ -43,6 +43,7 @@ export const CodeEditor = () => {
     try {
       const graph = parser.parse();
       setGraph(graph);
+      setErrors([]);
     } catch (err) {
       if (err instanceof ParseError) setErrors([err]);
       else console.error("Unexpected error");
