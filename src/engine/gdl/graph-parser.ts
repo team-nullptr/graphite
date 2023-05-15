@@ -2,6 +2,7 @@ import { Edge, Graph, Vertex } from "../runner/graph";
 import * as terms from "./gen/gdl.terms";
 import { SyntaxNode, TreeCursor } from "@lezer/common";
 import { parser } from "./gen/gdl";
+import { Parse } from "@lezer/lr/dist/parse";
 
 export class ParseError extends Error {
   constructor(
@@ -54,6 +55,9 @@ export class GraphParser {
           break;
         case terms.Program:
           break;
+        default:
+          break;
+        // TODO: We should report "unexpected" nodes.
       }
     }
 
