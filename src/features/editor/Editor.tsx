@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { HorizontalSplit } from "../../shared/SplitLayout";
 import { useProjectStore } from "../../store/project";
 import { Simulator } from "../simulator/Simulator";
@@ -7,17 +7,33 @@ import { Header } from "./components/Header";
 import { Timeline } from "./components/Timeline";
 import { AlgorithmWithValidator } from "./models/Algorithm";
 import { AlgorithmDetails } from "./components/AlgorithmDetails";
-
-export interface EditorProps {}
+import { useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const algorithms: AlgorithmWithValidator[] = [
   { id: "a-1", name: "DFS", isValid: () => true },
   { id: "a-2", name: "BFS", isValid: () => true },
 ];
 
-export const Editor = ({}: EditorProps) => {
-  const [projectName, setProjectName] = useState("");
-  const graph = useProjectStore((store) => store.graph);
+export const Editor = () => {
+  const { projectId } = useParams();
+
+  const store = useProjectStore();
+  const project = store.projects.get(projectId!);
+
+  if (!project) {
+    return <h1>Project not found</h1>;
+  }
+
+  const navigate = useNavigate();
+
+  const handleNavigateUp = () => {
+    navigate("..");
+  };
+
+  const handleProjectRename = (newProjectName: string) => {
+    store.updateProject({ ...project, name: newProjectName });
+  };
 
   const [selectedAlgorithm, setSelectedAlgorithm] =
     useState<AlgorithmWithValidator | null>(null);
@@ -30,6 +46,7 @@ export const Editor = ({}: EditorProps) => {
     setSelectedAlgorithm(algorithm);
   };
 
+  const graph = project.graph;
   const sidebarContent = selectedAlgorithm ? (
     <AlgorithmDetails
       algorithm={selectedAlgorithm}
@@ -44,28 +61,31 @@ export const Editor = ({}: EditorProps) => {
     />
   );
 
+  const mainContent = (
+    <div className="flex h-full flex-col">
+      <Timeline
+        playing={false}
+        currentStep={0}
+        stepCount={0}
+        onStepChange={() => {}}
+        onStart={() => {}}
+        onStop={() => {}}
+      />
+      <div className="flex-grow">
+        <Simulator />
+      </div>
+    </div>
+  );
+
   return (
     <div className="flex h-full flex-col">
-      <Header name={projectName} onRename={setProjectName} />
+      <Header
+        name={project.name}
+        onRename={handleProjectRename}
+        onNavigateUp={handleNavigateUp}
+      />
       <main className="flex-grow">
-        <HorizontalSplit
-          left={sidebarContent}
-          right={
-            <div className="flex h-full flex-col">
-              <Timeline
-                playing={false}
-                currentStep={0}
-                stepCount={0}
-                onStepChange={() => {}}
-                onStart={() => {}}
-                onStop={() => {}}
-              />
-              <div className="flex-grow">
-                <Simulator />
-              </div>
-            </div>
-          }
-        />
+        <HorizontalSplit left={sidebarContent} right={mainContent} />
       </main>
     </div>
   );
