@@ -1,28 +1,22 @@
 .cm-editor.cm-focused {
-  outline: none;
+  @apply outline-none;
 }
 
 .cm-editor * {
-  font-family: "JetBrains";
+  @apply font-[JetBrains];
 }
 
 .cm-scroller {
-  overflow: auto;
-  min-height: 350px;
-  max-height: 350px;
+  @apply h-full w-full overflow-auto;
 }
 
 .cm-editor .cm-tooltip {
-  border: 1px solid rgb(222, 222, 222);
-  background: rgb(247, 247, 247);
-  max-width: 250px;
+  @apply max-w-full;
 }
 
 .cm-editor .cm-diagnostic-error {
-  color: #f6511d;
-  font-size: 14px;
+  @apply font-medium text-[#f6511d];
 }
 
-.cm-editor .cm-lintPoint:after {
-  border-bottom: 4px solid #f6511d;
-}
+/* .cm-editor .cm-lintPoint:after {
+} */
