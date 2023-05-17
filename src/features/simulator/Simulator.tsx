@@ -5,11 +5,16 @@ import { Vertex } from "./components/Vertex";
 import { useArrangement } from "./hooks/useArrangement";
 import { Position } from "./model/position";
 import { distributeEdges, groupEdges, sortEdges } from "./util/distributeEdges";
+import { Graph } from "../../engine/runner/graph";
 
 export type Arrangement = { [key: string]: Position };
 
-export const Simulator = () => {
-  const graph = useProjectStore((store) => store.graph);
+export interface SimulatorProps {
+  graph: Graph;
+}
+
+export const Simulator = (props: SimulatorProps) => {
+  const { graph } = props;
   const { arrangement, vertexMouseDownHandler, svgRef } = useArrangement();
 
   const positionedEdges = useMemo(() => {
@@ -59,7 +64,10 @@ export const Simulator = () => {
     });
 
   return (
-    <svg ref={svgRef} className="h-full w-full">
+    <svg
+      ref={svgRef}
+      className="h-full w-full bg-base-200 dark:bg-base-300-dark"
+    >
       {renderEdges()}
       {renderVertices()}
     </svg>

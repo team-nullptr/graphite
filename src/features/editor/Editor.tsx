@@ -1,14 +1,14 @@
-import { useEffect, useState } from "react";
-import { HorizontalSplit } from "../../shared/SplitLayout";
+import { useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import { useTheme } from "../../context/theme";
+import { VerticalSplit } from "../../shared/VerticalSplit";
 import { useProjectStore } from "../../store/project";
 import { Simulator } from "../simulator/Simulator";
+import { AlgorithmDetails } from "./components/AlgorithmDetails";
 import { AlgorithmGrid } from "./components/AlgorithmGrid";
 import { Header } from "./components/Header";
 import { Timeline } from "./components/Timeline";
 import { AlgorithmWithValidator } from "./models/Algorithm";
-import { AlgorithmDetails } from "./components/AlgorithmDetails";
-import { useParams } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
 
 const algorithms: AlgorithmWithValidator[] = [
   { id: "a-1", name: "DFS", isValid: () => true },
@@ -17,6 +17,7 @@ const algorithms: AlgorithmWithValidator[] = [
 
 export const Editor = () => {
   const { projectId } = useParams();
+  const { themeClass } = useTheme();
 
   const store = useProjectStore();
   const project = store.projects.get(projectId!);
@@ -72,21 +73,23 @@ export const Editor = () => {
         onStop={() => {}}
       />
       <div className="flex-grow">
-        <Simulator />
+        <Simulator graph={project.graph} />
       </div>
     </div>
   );
 
   return (
-    <div className="flex h-full flex-col">
+    <div className={`flex h-full flex-col ${themeClass}`}>
       <Header
         name={project.name}
         onRename={handleProjectRename}
         onNavigateUp={handleNavigateUp}
       />
-      <main className="flex-grow">
-        <HorizontalSplit left={sidebarContent} right={mainContent} />
-      </main>
+      <div className="flex-1">
+        <main className="h-full max-h-full">
+          <VerticalSplit left={sidebarContent} right={mainContent} />
+        </main>
+      </div>
     </div>
   );
 };

@@ -1,11 +1,14 @@
 import { defaultKeymap, history } from "@codemirror/commands";
 import { HighlightStyle, syntaxHighlighting } from "@codemirror/language";
-import { EditorState, Extension } from "@codemirror/state";
-import { EditorView, ViewUpdate, keymap } from "@codemirror/view";
+import { Compartment, EditorState, Extension } from "@codemirror/state";
+import { EditorView, ViewUpdate, keymap, lineNumbers } from "@codemirror/view";
 import { tags } from "@lezer/highlight";
 import { useEffect, useRef, useState } from "react";
-import { gdl, gdlLinter } from "../../../engine/gdl/code-mirror";
+import { gdl } from "../../../engine/gdl/code-mirror";
+import { gdlLinter } from "../../../engine/gdl/gdl-linter";
+import { Theme, useTheme } from "../../../context/theme";
 
+// Creates onChange extension for editor.
 export const editorOnChange = (cb: (value: string) => void) => {
   return EditorView.updateListener.of((it: ViewUpdate) => {
     if (!it.docChanged) return;
@@ -33,9 +36,42 @@ const GDLHighlightStyle = HighlightStyle.define([
   },
 ]);
 
+// TODO: Make those themes pretty.
+const darkTheme = EditorView.theme(
+  {
+    "&": {
+      backgroundColor: "#1E1F23",
+      height: "100%",
+    },
+    ".cm-gutters": {
+      backgroundColor: "#1E1F23",
+    },
+  },
+  { dark: true }
+);
+
+const lightTheme = EditorView.theme({
+  "&": {
+    backgroundColor: "#f5f5f5",
+    height: "100%",
+  },
+  ".cm-gutters": {
+    border: "none",
+    backgroundColor: "#f5f5f5",
+  },
+});
+
 export const useEditor = <T extends HTMLElement>(extensions: Extension[]) => {
   const ref = useRef<T>(null);
   const [view, setView] = useState<EditorView>();
+
+  const { theme } = useTheme();
+  const themeConfig = useRef(new Compartment());
+
+  const editorThemes: Record<Theme, Extension> = {
+    dark: darkTheme,
+    light: lightTheme,
+  };
 
   useEffect(() => {
     if (!ref.current) return;
@@ -48,6 +84,8 @@ export const useEditor = <T extends HTMLElement>(extensions: Extension[]) => {
           syntaxHighlighting(GDLHighlightStyle, { fallback: true }),
           history(),
           keymap.of(defaultKeymap),
+          lineNumbers(),
+          themeConfig.current.of([darkTheme]),
           ...extensions,
         ],
       }),
@@ -61,6 +99,16 @@ export const useEditor = <T extends HTMLElement>(extensions: Extension[]) => {
       setView(undefined);
     };
   }, [ref]);
+
+  useEffect(() => {
+    // If the view is not initialized or valid theme is used do not change anything.
+    if (!view || themeConfig.current.get(view.state) === editorThemes[theme])
+      return;
+
+    view.dispatch({
+      effects: themeConfig.current.reconfigure(editorThemes[theme]),
+    });
+  }, [theme, view]);
 
   return { view, ref };
 };
