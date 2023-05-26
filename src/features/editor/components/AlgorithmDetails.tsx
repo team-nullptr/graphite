@@ -3,8 +3,6 @@ import { Algorithm } from "../models/Algorithm";
 export interface AlgorithmDetails {
   algorithm: Algorithm;
   onBackClick?: () => void;
-  /** Determines if the start visualization button is locked or not */
-  invalid?: boolean;
 }
 
 export const AlgorithmDetails = (props: AlgorithmDetails) => {

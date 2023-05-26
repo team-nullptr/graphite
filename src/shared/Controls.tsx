@@ -23,13 +23,12 @@ export type ControlsButtonProps = React.DetailedHTMLProps<
 export const ControlsButton = ({
   icon,
   alt,
-  className,
   ...props
 }: ControlsButtonProps) => {
   return (
     <button
       aria-label={alt}
-      className={`${className} group flex h-[30px] w-[30px] cursor-pointer items-center justify-center rounded-md border-none bg-transparent p-0 text-text-base transition-colors hover:bg-base-300 disabled:cursor-auto dark:text-text-base-dark dark:hover:bg-base-200-dark`}
+      className="group flex h-[30px] w-[30px] cursor-pointer items-center justify-center rounded-md border-none bg-transparent p-0 text-text-base transition-colors hover:bg-base-300 disabled:cursor-auto dark:text-text-base-dark dark:hover:bg-base-200-dark"
       {...props}
     >
       {icon}

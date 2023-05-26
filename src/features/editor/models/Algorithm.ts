@@ -1,12 +1,7 @@
 import { Graph } from "../../../engine/runner/graph";
 
-export interface Algorithm {
+export type Algorithm = {
   readonly id: string;
   name: string;
-}
-
-export type AlgorithmValidator = (graph: Graph) => boolean;
-
-export type AlgorithmWithValidator = Algorithm & {
-  isValid?: AlgorithmValidator;
+  impl: (graph: Graph) => string[];
 };

@@ -2,7 +2,6 @@ import { Edge, Graph, Vertex } from "../runner/graph";
 import * as terms from "./gen/gdl.terms";
 import { SyntaxNode, TreeCursor } from "@lezer/common";
 import { parser } from "./gen/gdl";
-import { Parse } from "@lezer/lr/dist/parse";
 
 export class ParseError extends Error {
   constructor(
@@ -23,15 +22,9 @@ export class GraphParser {
     // TODO: learn more about syntaxTree() and if it should be used here.
     const root = parser.parse(source);
     this.cursor = root.cursor();
-
-    // Find line offsets.
     this.lineOffsets = this.findLinesOffsets();
   }
 
-  /**
-   * Parses current syntax tree to construct internal graph representation.
-   * If parse does not succeed throws ParseError. Otherwise, returns the graph.
-   */
   parse(): Graph {
     const edges: Edge[] = [];
     const vertices: Vertex[] = [];
@@ -64,7 +57,6 @@ export class GraphParser {
     return new Graph(vertices, edges);
   }
 
-  /** Parses vertex. */
   private parseVertex(): Vertex {
     this.expect(terms.Id);
     const id = this.getLexeme(this.cursor.node);
@@ -75,7 +67,6 @@ export class GraphParser {
     return new Vertex(id, parseFloat(value));
   }
 
-  /** Parses edge. */
   private parseEdge(directed: boolean): Edge {
     this.expect(terms.Id);
     const aId = this.getLexeme(this.cursor.node);
@@ -86,7 +77,6 @@ export class GraphParser {
     return new Edge(aId, bId, null, directed);
   }
 
-  /** Parses weighted edge. */
   private parseWeightedEdge(directed: boolean): Edge {
     this.expect(terms.Id);
     const aId = this.getLexeme(this.cursor.node);
@@ -100,13 +90,12 @@ export class GraphParser {
     return new Edge(aId, bId, parseFloat(value), directed);
   }
 
-  /** Checks if the next node is of the given type. */
   private expect(termId: number) {
     const precedingNode = this.cursor.node;
 
     if (!(this.cursor.next() && this.cursor.node.type.id === termId))
       throw new ParseError(
-        this.resolveLine(precedingNode.from),
+        this.offsetToLine(precedingNode.from),
         precedingNode,
         this.cursor.node,
         `(${parser.getName(
@@ -115,13 +104,11 @@ export class GraphParser {
       );
   }
 
-  /** Gets node's lexeme. */
   private getLexeme(node: SyntaxNode): string {
     return this.source.slice(node.from, node.to);
   }
 
-  /** Searches for a line the offset is in. */
-  private resolveLine(offset: number) {
+  private offsetToLine(offset: number) {
     let left = 0;
     let right = this.lineOffsets.length - 1;
 
@@ -135,7 +122,6 @@ export class GraphParser {
     return left + 1;
   }
 
-  /** Generates array of new line indexes which can be used to find out token's line. */
   private findLinesOffsets() {
     const linesOffsets = [0];
 

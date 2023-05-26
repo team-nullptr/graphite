@@ -15,11 +15,11 @@ export const DiagnosticsSummary = (props: DiagnosticsSummaryProps) => {
       label="Diagnostics"
       icon={
         <span
-          className={`flex aspect-square items-center justify-center rounded-full  p-[0.75px] text-black ${
+          className={`flex aspect-square items-center justify-center rounded-sm  p-[0.75px] text-black ${
             hasError ? "bg-diagnostic-error" : "bg-diagnostic-ok"
           }`}
         >
-          {props.errors.length > 0 ? (
+          {hasError ? (
             <XMarkIcon className="h-4 w-4" />
           ) : (
             <CheckIcon className="h-4 w-4" />

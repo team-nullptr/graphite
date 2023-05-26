@@ -1,20 +1,15 @@
 import { useMemo } from "react";
-import { useProjectStore } from "../../store/project";
 import { Edge } from "./components/Edge";
 import { Vertex } from "./components/Vertex";
 import { useArrangement } from "./hooks/useArrangement";
 import { Position } from "./model/position";
 import { distributeEdges, groupEdges, sortEdges } from "./util/distributeEdges";
-import { Graph } from "../../engine/runner/graph";
+import { useEditorStore } from "../editor/context/editor";
 
 export type Arrangement = { [key: string]: Position };
 
-export interface SimulatorProps {
-  graph: Graph;
-}
-
-export const Simulator = (props: SimulatorProps) => {
-  const { graph } = props;
+export const Simulator = () => {
+  const graph = useEditorStore((state) => state.graph);
   const { arrangement, vertexMouseDownHandler, svgRef } = useArrangement();
 
   const positionedEdges = useMemo(() => {

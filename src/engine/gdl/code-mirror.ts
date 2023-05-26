@@ -2,7 +2,6 @@ import { LRLanguage, LanguageSupport } from "@codemirror/language";
 import { styleTags, tags } from "@lezer/highlight";
 import { parser } from "./gen/gdl";
 
-/** Extends generated parser with some metadata used for highlighting. */
 export const gdlParser = parser.configure({
   props: [
     styleTags({
@@ -18,7 +17,6 @@ export const gdlParser = parser.configure({
   ],
 });
 
-/** Gdl language support for codemirror editor. */
 export const gdl = new LanguageSupport(
   LRLanguage.define({
     parser: gdlParser,

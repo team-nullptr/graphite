@@ -1,7 +1,6 @@
 import { Diagnostic, linter } from "@codemirror/lint";
 import { GraphParser, ParseError } from "./graph-parser";
 
-/* Basic linter that reports errors returned by GraphParser. */
 export const gdlLinter = linter((view): Diagnostic[] => {
   const parser = new GraphParser(view.state.doc.toString());
 

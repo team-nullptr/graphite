@@ -1,27 +1,31 @@
 import { useEffect, useState } from "react";
 import { GraphParser, ParseError } from "../../engine/gdl/graph-parser";
-import { useProjectStore } from "../../store/project";
 import "./editor-styles.css";
 import { editorOnChange, useEditor } from "./hooks/useEditor";
-import { HorizontalSplit } from "../../shared/HorizontalSplit";
+import { HorizontalSplit } from "../../shared/layout/HorizontalSplit";
 import { DiagnosticsSummary } from "./components/Diagnostics";
+import { useEditorStore } from "../editor/context/editor";
 
 export const CodeEditor = () => {
+  const replaceGraph = useEditorStore((state) => state.replaceGraph);
   const [value, setValue] = useState("// Write your code here");
   const [errors, setErrors] = useState<ParseError[]>([]);
-
-  const setGraph = useProjectStore((state) => state.setGraph);
 
   const { view, ref } = useEditor<HTMLDivElement>([
     editorOnChange((value) => setValue(value)),
   ]);
 
+  // TODO: It might be a good idea to extract code-mirrors specific logic.
   useEffect(() => {
-    if (!view) return;
+    if (!view) {
+      return;
+    }
 
     const currentValue = view.state.doc.toString();
 
-    if (value === currentValue) return;
+    if (value === currentValue) {
+      return;
+    }
 
     view.dispatch({
       changes: {
@@ -33,16 +37,12 @@ export const CodeEditor = () => {
   }, [view, value]);
 
   useEffect(() => {
-    /*
-    TODO: Do we want to parse graph here?
-    Or allow parent to pass a callback function that will run on editor value change.
-    */
-
+    // Do we want to parse graph here?
     const parser = new GraphParser(value);
 
     try {
       const graph = parser.parse();
-      setGraph(graph);
+      replaceGraph(graph);
       setErrors([]);
     } catch (err) {
       if (err instanceof ParseError) setErrors([err]);
