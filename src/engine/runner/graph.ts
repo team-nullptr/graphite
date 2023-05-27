@@ -20,65 +20,65 @@ export class Edge {
   ) {}
 }
 
-export class Graph {
-  // TODO: Does graph need to be modifiable? We replace it every time, so .. Maybe for tests?
+export type Graph = {
+  readonly edges: Edge[];
+  readonly vertices: Vertex[];
+};
 
-  readonly vertices = new Map<string, Vertex>();
-  readonly edges = new Map<string, Edge>();
+// export class Graph {
+//   // TODO: Does graph need to be modifiable? We replace it every time, so .. Maybe for tests?
 
-  constructor(vertices: Vertex[] = [], edges: Edge[] = []) {
-    // TODO: This is a temporary 'hack' there for sure is a cleaner way to do this.
-    vertices.forEach((it) => this.addVertex(it));
-    edges.forEach((it) => this.addEdge(it));
-  }
+//   readonly vertices = new Map<string, Vertex>();
+//   readonly edges = new Map<string, Edge>();
 
-  getEdges(): Edge[] {
-    return [...this.edges.values()];
-  }
+//   constructor(vertices: Vertex[] = [], edges: Edge[] = []) {
+//     // TODO: This is a temporary 'hack' there for sure is a cleaner way to do this.
+//     vertices.forEach((it) => this.addVertex(it));
+//     edges.forEach((it) => this.addEdge(it));
+//   }
 
-  getVertices(): Vertex[] {
-    return [...this.vertices.values()];
-  }
+//   getEdges(): Edge[] {
+//     return [...this.edges.values()];
+//   }
 
-  /** Adds a vertex. */
-  addVertex(vertex: Vertex) {
-    if (this.validateVertex(vertex)) throw new Error("Invalid vertex");
-    this.vertices.set(vertex.id, vertex);
-  }
+//   getVertices(): Vertex[] {
+//     return [...this.vertices.values()];
+//   }
 
-  /** Adds an edge. */
-  addEdge(edge: Edge) {
-    if (!this.validateEdge(edge)) throw new Error("Invalid edge");
+//   addVertex(vertex: Vertex): void {
+//     if (this.validateVertex(vertex)) throw new Error("Invalid vertex");
+//     this.vertices.set(vertex.id, vertex);
+//   }
 
-    this.edges.set(edge.id, edge);
-    this.connectEdgeVertices(edge);
-  }
+//   addEdge(edge: Edge): void {
+//     if (!this.validateEdge(edge)) throw new Error("Invalid edge");
 
-  /** Checks if this edge can be inserted into current graph. */
-  validateEdge(edge: Edge): boolean {
-    return this.vertices.has(edge.from) && this.vertices.has(edge.to);
-  }
+//     this.edges.set(edge.id, edge);
+//     this.connectEdgeVertices(edge);
+//   }
 
-  /** Checks if vertex is valid in this graph's context. */
-  validateVertex(vertex: Vertex) {
-    return this.vertices.has(vertex.id);
-  }
+//   validateEdge(edge: Edge): boolean {
+//     return this.vertices.has(edge.from) && this.vertices.has(edge.to);
+//   }
 
-  /** Adds the edge to vertices' out and in edges arrays. */
-  private connectEdgeVertices(edge: Edge) {
-    // TODO: Write this clener.
+//   validateVertex(vertex: Vertex) {
+//     return this.vertices.has(vertex.id);
+//   }
 
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    const fromNode = this.vertices.get(edge.from)!;
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    const toNode = this.vertices.get(edge.to)!;
+//   private connectEdgeVertices(edge: Edge) {
+//     // TODO: Write this clener.
 
-    fromNode.outEdges.push(edge.id);
-    toNode.inEdges.push(edge.id);
+//     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+//     const fromNode = this.vertices.get(edge.from)!;
+//     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+//     const toNode = this.vertices.get(edge.to)!;
 
-    if (!edge.directed) {
-      fromNode.inEdges.push(edge.id);
-      toNode.outEdges.push(edge.id);
-    }
-  }
-}
+//     fromNode.outEdges.push(edge.id);
+//     toNode.inEdges.push(edge.id);
+
+//     if (!edge.directed) {
+//       fromNode.inEdges.push(edge.id);
+//       toNode.outEdges.push(edge.id);
+//     }
+//   }
+// }

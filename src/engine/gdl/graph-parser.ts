@@ -54,7 +54,7 @@ export class GraphParser {
       }
     }
 
-    return new Graph(vertices, edges);
+    return { edges, vertices };
   }
 
   private parseVertex(): Vertex {

@@ -1,16 +1,10 @@
-import { nanoid } from "nanoid";
 import { useEditorStore } from "../context/editor";
-import { Algorithm } from "../models/Algorithm";
+import { Algorithm } from "../../../models/algorithm";
 import { AlgorithmDetails } from "./AlgorithmDetails";
 import { AlgorithmGrid } from "./AlgorithmGrid";
+import { dijkstra } from "../../../algorithms/dijkstra";
 
-const algorithms: Algorithm[] = [
-  {
-    id: nanoid(),
-    name: "yes",
-    impl: () => ["step"],
-  },
-];
+const algorithms: Algorithm[] = [dijkstra];
 
 export const AlgorithmPicker = () => {
   const { algorithm, replaceAlgorithm } = useEditorStore(

@@ -8,12 +8,12 @@ import { useEditorStore } from "../editor/context/editor";
 
 export type Arrangement = { [key: string]: Position };
 
-export const Simulator = () => {
+export const GraphView = () => {
   const graph = useEditorStore((state) => state.graph);
   const { arrangement, vertexMouseDownHandler, svgRef } = useArrangement();
 
   const positionedEdges = useMemo(() => {
-    const connections = groupEdges(graph.getEdges());
+    const connections = groupEdges(graph.edges);
 
     return connections.map((connection) => {
       const [vertex, edges] = connection;
@@ -23,7 +23,7 @@ export const Simulator = () => {
   }, [graph]);
 
   const renderVertices = () =>
-    graph.getVertices().map((vertex) => {
+    graph.vertices.map((vertex) => {
       const [x, y] = arrangement[vertex.id] ?? [0, 0];
       const { id, value } = vertex;
       return (

@@ -18,4 +18,7 @@ module.exports = {
     sourceType: "module",
   },
   plugins: ["react", "prettier", "@typescript-eslint"],
+  rules: {
+    "no-constant-condition": ["error", { checkLoops: false }],
+  },
 };

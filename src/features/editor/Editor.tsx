@@ -1,14 +1,16 @@
 import { useNavigate, useParams } from "react-router-dom";
 import { useTheme } from "../../context/theme";
 import { VerticalSplit } from "../../shared/layout/VerticalSplit";
-import { Simulator } from "../simulator/Simulator";
+import { GraphView } from "../graph-view/GraphView";
 import { Header } from "./components/Header";
 import { Timeline } from "./components/Timeline";
-import { EditorStoreProvider } from "./context/editor";
+import { EditorStoreProvider, useEditorStore } from "./context/editor";
 import { CommandLineIcon, PlayIcon } from "@heroicons/react/24/outline";
 import { Tab, VerticalTabs } from "../../shared/layout/VerticalTab";
 import { CodeEditor } from "../code-editor/CodeEditor";
 import { AlgorithmPicker } from "./components/AlgorithmPicker";
+import { useEffect, useState } from "react";
+import { HorizontalSplit } from "../../shared/layout/HorizontalSplit";
 
 const sidebarTabs: Tab[] = [
   { id: "edit", icon: <CommandLineIcon />, element: <CodeEditor /> },
@@ -43,25 +45,42 @@ export const Editor = () => {
           <main className="h-full max-h-full">
             <VerticalSplit
               left={<VerticalTabs tabs={sidebarTabs} />}
-              right={
-                <div className="flex h-full flex-col">
-                  <Timeline
-                    playing={false}
-                    currentStep={0}
-                    stepCount={0}
-                    onStepChange={undefined}
-                    onStart={undefined}
-                    onStop={undefined}
-                  />
-                  <div className="flex-grow">
-                    <Simulator />
-                  </div>
-                </div>
-              }
+              right={<Visualizer />}
             />
           </main>
         </div>
       </div>
     </EditorStoreProvider>
+  );
+};
+
+export const Visualizer = () => {
+  const [currentStep, setCurrentStep] = useState(0);
+  const instructions = useEditorStore((state) => state.instructions);
+
+  useEffect(() => {
+    console.log(instructions);
+    setCurrentStep(0);
+  }, [instructions]);
+
+  return (
+    <HorizontalSplit
+      top={
+        <div className="flex h-full flex-col">
+          <Timeline
+            playing={false}
+            currentStep={currentStep}
+            stepCount={instructions.length}
+            onStepChange={setCurrentStep}
+            onStart={undefined}
+            onStop={undefined}
+          />
+          <div className="flex-grow">
+            <GraphView />
+          </div>
+        </div>
+      }
+      bottom={<div>{instructions[currentStep]}</div>}
+    />
   );
 };

@@ -2,7 +2,7 @@ import { createStore } from "zustand";
 import { devtools } from "zustand/middleware";
 import { Graph } from "../../../engine/runner/graph";
 import { Project, ProjectMetadata } from "../../../models/project";
-import { Algorithm } from "../models/Algorithm";
+import { Algorithm } from "../../../models/algorithm";
 
 export const editorModes = {
   ASSEMBLY: "ASSEMBLY",
@@ -16,6 +16,7 @@ export type EditorState = {
   mode: EditorMode;
   graph: Graph;
   algorithm: Algorithm | null;
+  instructions: string[];
   replaceGraph: (graph: Graph) => void;
   replaceAlgorithm: (algorithm: Algorithm | null) => void;
 };
@@ -29,13 +30,20 @@ export const createEditorStore = ({ project }: CreateEditorStoreOpts) => {
     devtools((set) => ({
       metadata: project.metadata,
       mode: editorModes.ASSEMBLY,
-      graph: new Graph(),
+      graph: { edges: [], vertices: [] } as Graph,
       algorithm: null,
+      instructions: [],
       replaceGraph: (graph) => {
-        set({ graph });
+        set((state) => ({
+          graph,
+          instructions: state.algorithm?.impl(graph) ?? [],
+        }));
       },
       replaceAlgorithm: (algorithm) => {
-        set({ algorithm });
+        set((state) => ({
+          algorithm,
+          instructions: algorithm?.impl(state.graph) ?? [],
+        }));
       },
     }))
   );

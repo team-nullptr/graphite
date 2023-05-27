@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { Vertex } from "../../../engine/runner/graph";
 import { Position } from "../model/position";
-import { Arrangement } from "../Simulator";
+import { Arrangement } from "../GraphView";
 
 type SelectedVertex = {
   id: string;

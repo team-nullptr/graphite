@@ -1,4 +1,4 @@
-import { Algorithm } from "../models/Algorithm";
+import { Algorithm } from "../../../models/algorithm";
 
 export interface AlgorithmDetails {
   algorithm: Algorithm;
