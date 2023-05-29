@@ -5,15 +5,20 @@ import { useArrangement } from "./hooks/useArrangement";
 import { Position } from "./model/position";
 import { distributeEdges, groupEdges, sortEdges } from "./util/distributeEdges";
 import { useEditorStore } from "../editor/context/editor";
+import { Highlights } from "../../engine/runner/instruction";
 
 export type Arrangement = { [key: string]: Position };
 
-export const GraphView = () => {
+export type GraphViewProps = {
+  highlights?: Highlights;
+};
+
+export const GraphView = (props: GraphViewProps) => {
   const graph = useEditorStore((state) => state.graph);
   const { arrangement, vertexMouseDownHandler, svgRef } = useArrangement();
 
   const positionedEdges = useMemo(() => {
-    const connections = groupEdges(graph.edges);
+    const connections = groupEdges(Object.values(graph.edges));
 
     return connections.map((connection) => {
       const [vertex, edges] = connection;
@@ -23,11 +28,14 @@ export const GraphView = () => {
   }, [graph]);
 
   const renderVertices = () =>
-    graph.vertices.map((vertex) => {
+    Object.values(graph.vertices).map((vertex) => {
       const [x, y] = arrangement[vertex.id] ?? [0, 0];
       const { id, value } = vertex;
+      const hue = props.highlights?.get(id);
+
       return (
         <Vertex
+          hue={hue}
           key={id}
           cx={x}
           cy={y}

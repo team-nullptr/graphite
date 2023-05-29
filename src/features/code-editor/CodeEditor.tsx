@@ -43,12 +43,13 @@ export const CodeEditor = () => {
     try {
       const graph = parser.parse();
       replaceGraph(graph);
+      console.log(graph);
       setErrors([]);
     } catch (err) {
       if (err instanceof ParseError) setErrors([err]);
       else console.error("Unexpected error");
     }
-  }, [value]);
+  }, [replaceGraph, value]);
 
   return (
     <HorizontalSplit

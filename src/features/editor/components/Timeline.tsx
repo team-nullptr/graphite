@@ -1,56 +1,70 @@
-import { ChangeEvent } from "react";
-
+import {
+  ArrowLeftIcon,
+  ArrowPathIcon,
+  ArrowRightIcon,
+  PlayIcon,
+  StopIcon,
+} from "@heroicons/react/24/outline";
+import { ChangeEvent, useCallback, useEffect, useState } from "react";
 import { Controls, ControlsButton } from "../../../shared/Controls";
 import styles from "./Timeline.module.css";
 
-import {
-  PlayIcon,
-  StopIcon,
-  ArrowPathIcon,
-  ArrowRightIcon,
-  ArrowLeftIcon,
-} from "@heroicons/react/24/outline";
-
 export interface TimelineProps {
-  playing: boolean;
   currentStep: number;
-  stepCount: number;
+  maxStep: number;
   onStepChange?: (step: number) => void;
-  onStop?: () => void;
-  onStart?: () => void;
 }
 
-export const Timeline = (props: TimelineProps) => {
-  const sliderChangeHandler = (event: ChangeEvent<HTMLInputElement>) => {
-    const value = event.target.value;
-    props.onStepChange?.(parseInt(value));
-  };
+export const Timeline = ({
+  currentStep,
+  maxStep,
+  onStepChange,
+}: TimelineProps) => {
+  const [isPlaying, setIsPlaying] = useState(false);
 
-  const startHandler = () => props.onStart?.();
-  const stopHandler = () => props.onStop?.();
-  const restartHandler = () => props.onStepChange?.(1);
+  const restartHandler = () => {
+    setIsPlaying(false);
+    onStepChange?.(0);
+  };
 
   const previousStepHandler = () => {
-    const value = Math.max(props.currentStep - 1, 1);
-    props.onStepChange?.(value);
+    const value = Math.max(currentStep - 1, 0);
+    onStepChange?.(value);
   };
 
-  const nextStepHandler = () => {
-    const value = Math.min(props.currentStep + 1, props.stepCount);
-    props.onStepChange?.(value);
+  const nextStepHandler = useCallback(() => {
+    const value = Math.min(currentStep + 1, maxStep);
+    onStepChange?.(value);
+  }, [currentStep, maxStep, onStepChange]);
+
+  useEffect(() => {
+    if (!isPlaying) {
+      return;
+    }
+
+    const intervalId = setInterval(() => {
+      nextStepHandler();
+    }, 1000);
+
+    return () => clearInterval(intervalId);
+  }, [isPlaying, nextStepHandler]);
+
+  const sliderChangeHandler = (event: ChangeEvent<HTMLInputElement>) => {
+    const value = event.target.value;
+    onStepChange?.(parseInt(value));
   };
 
   return (
     <Controls>
-      {props.playing ? (
+      {isPlaying ? (
         <ControlsButton
-          onClick={stopHandler}
+          onClick={() => setIsPlaying(false)}
           icon={<StopIcon className="h-5 w-5" />}
           alt="stop"
         />
       ) : (
         <ControlsButton
-          onClick={startHandler}
+          onClick={() => setIsPlaying(true)}
           icon={<PlayIcon className="h-5 w-5" />}
           alt="play"
         />
@@ -64,14 +78,14 @@ export const Timeline = (props: TimelineProps) => {
 
       <ControlsButton
         onClick={previousStepHandler}
-        disabled={props.currentStep === 1}
+        disabled={currentStep === 0}
         icon={<ArrowLeftIcon className="h-5 w-5" />}
         alt="previous"
       />
 
       <ControlsButton
         onClick={nextStepHandler}
-        disabled={props.currentStep === props.stepCount}
+        disabled={currentStep === maxStep}
         icon={<ArrowRightIcon className="h-5 w-5" />}
         alt="next"
       />
@@ -79,9 +93,9 @@ export const Timeline = (props: TimelineProps) => {
       <input
         className={styles.slider}
         type="range"
-        min="1"
-        max={props.stepCount}
-        value={props.currentStep}
+        min="0"
+        max={maxStep}
+        value={currentStep}
         onChange={sliderChangeHandler}
       />
     </Controls>

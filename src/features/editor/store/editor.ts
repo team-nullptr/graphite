@@ -3,6 +3,7 @@ import { devtools } from "zustand/middleware";
 import { Graph } from "../../../engine/runner/graph";
 import { Project, ProjectMetadata } from "../../../models/project";
 import { Algorithm } from "../../../models/algorithm";
+import { Instruction } from "../../../engine/runner/instruction";
 
 export const editorModes = {
   ASSEMBLY: "ASSEMBLY",
@@ -16,7 +17,7 @@ export type EditorState = {
   mode: EditorMode;
   graph: Graph;
   algorithm: Algorithm | null;
-  instructions: string[];
+  instructions: Instruction[];
   replaceGraph: (graph: Graph) => void;
   replaceAlgorithm: (algorithm: Algorithm | null) => void;
 };

@@ -12,15 +12,6 @@ import { AlgorithmPicker } from "./components/AlgorithmPicker";
 import { useEffect, useState } from "react";
 import { HorizontalSplit } from "../../shared/layout/HorizontalSplit";
 
-const sidebarTabs: Tab[] = [
-  { id: "edit", icon: <CommandLineIcon />, element: <CodeEditor /> },
-  {
-    id: "algorithm",
-    icon: <PlayIcon />,
-    element: <AlgorithmPicker />,
-  },
-];
-
 export const Editor = () => {
   const { projectId } = useParams<"projectId">();
   const { themeClass } = useTheme();
@@ -43,10 +34,7 @@ export const Editor = () => {
         />
         <div className="flex-1">
           <main className="h-full max-h-full">
-            <VerticalSplit
-              left={<VerticalTabs tabs={sidebarTabs} />}
-              right={<Visualizer />}
-            />
+            <VerticalSplit left={<Sidebar />} right={<Visualizer />} />
           </main>
         </div>
       </div>
@@ -54,33 +42,49 @@ export const Editor = () => {
   );
 };
 
-export const Visualizer = () => {
+// Sidebar
+
+const sidebarTabs: Tab[] = [
+  { id: "edit", icon: <CommandLineIcon />, element: <CodeEditor /> },
+  {
+    id: "algorithm",
+    icon: <PlayIcon />,
+    element: <AlgorithmPicker />,
+  },
+];
+
+const Sidebar = () => {
+  return <VerticalTabs tabs={sidebarTabs} />;
+};
+
+// Visualizer
+
+const Visualizer = () => {
   const [currentStep, setCurrentStep] = useState(0);
   const instructions = useEditorStore((state) => state.instructions);
 
+  // TODO: We might want to do this differently
   useEffect(() => {
-    console.log(instructions);
     setCurrentStep(0);
   }, [instructions]);
+
+  const currentInstruction = instructions[currentStep];
 
   return (
     <HorizontalSplit
       top={
         <div className="flex h-full flex-col">
           <Timeline
-            playing={false}
             currentStep={currentStep}
-            stepCount={instructions.length}
             onStepChange={setCurrentStep}
-            onStart={undefined}
-            onStop={undefined}
+            maxStep={instructions.length - 1}
           />
           <div className="flex-grow">
-            <GraphView />
+            <GraphView highlights={currentInstruction?.highlights} />
           </div>
         </div>
       }
-      bottom={<div>{instructions[currentStep]}</div>}
+      bottom={<div>{currentInstruction?.description}</div>}
     />
   );
 };

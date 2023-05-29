@@ -11,7 +11,7 @@ export const AlgorithmGrid = (props: AlgorithmGridProps) => {
     <ul className="flex flex-col">
       {props.algorithms.map((algorithm) => (
         <AlgorithmTile
-          key={algorithm.id}
+          key={algorithm.name}
           name={algorithm.name}
           onClick={() => props.onAlgorithmSelect?.(algorithm)}
         />

@@ -2,6 +2,7 @@ import { Edge, Graph, Vertex } from "../runner/graph";
 import * as terms from "./gen/gdl.terms";
 import { SyntaxNode, TreeCursor } from "@lezer/common";
 import { parser } from "./gen/gdl";
+import { nanoid } from "nanoid";
 
 export class ParseError extends Error {
   constructor(
@@ -14,9 +15,13 @@ export class ParseError extends Error {
   }
 }
 
+// TODO: There probably is a lot of possible optimisations.
 export class GraphParser {
   private readonly cursor: TreeCursor;
   private readonly lineOffsets: number[];
+
+  private edges: Record<string, Edge> = {};
+  private vertices: Record<string, Vertex> = {};
 
   constructor(private readonly source: string) {
     // TODO: learn more about syntaxTree() and if it should be used here.
@@ -26,25 +31,22 @@ export class GraphParser {
   }
 
   parse(): Graph {
-    const edges: Edge[] = [];
-    const vertices: Vertex[] = [];
-
     while (this.cursor.next()) {
       switch (this.cursor.node.type.id) {
         case terms.Vertex:
-          vertices.push(this.parseVertex());
+          this.parseVertex();
           break;
         case terms.Edge:
-          edges.push(this.parseEdge(false));
+          this.parseEdge(false);
           break;
         case terms.DirectedEdge:
-          edges.push(this.parseEdge(true));
+          this.parseEdge(true);
           break;
         case terms.WeightedEdge:
-          edges.push(this.parseWeightedEdge(false));
+          this.parseWeightedEdge(false);
           break;
         case terms.WeightedDirectedEdge:
-          edges.push(this.parseWeightedEdge(true));
+          this.parseWeightedEdge(true);
           break;
         case terms.Program:
           break;
@@ -54,43 +56,53 @@ export class GraphParser {
       }
     }
 
-    return { edges, vertices };
+    return {
+      edges: this.edges,
+      vertices: this.vertices,
+    };
   }
 
-  private parseVertex(): Vertex {
+  private parseVertex(): void {
     this.expect(terms.Id);
     const id = this.getLexeme(this.cursor.node);
 
     this.expect(terms.Value);
     const value = this.getLexeme(this.cursor.node);
 
-    return new Vertex(id, parseFloat(value));
+    this.vertices[id] = new Vertex(id, parseFloat(value));
   }
 
-  private parseEdge(directed: boolean): Edge {
+  private parseEdge(directed: boolean): void {
     this.expect(terms.Id);
-    const aId = this.getLexeme(this.cursor.node);
+    const from = this.getLexeme(this.cursor.node);
 
     this.expect(terms.Id);
-    const bId = this.getLexeme(this.cursor.node);
+    const to = this.getLexeme(this.cursor.node);
 
-    return new Edge(aId, bId, null, directed);
+    const id = nanoid();
+    // TODO: Do we want to default the weight to 1?
+    const edge = new Edge(id, from, to, 1, directed);
+    this.edges[id] = edge;
+    this.connectVertices(edge);
   }
 
-  private parseWeightedEdge(directed: boolean): Edge {
+  private parseWeightedEdge(directed: boolean): void {
     this.expect(terms.Id);
-    const aId = this.getLexeme(this.cursor.node);
+    const from = this.getLexeme(this.cursor.node);
 
     this.expect(terms.Value);
     const value = this.getLexeme(this.cursor.node);
 
     this.expect(terms.Id);
-    const bId = this.getLexeme(this.cursor.node);
+    const to = this.getLexeme(this.cursor.node);
 
-    return new Edge(aId, bId, parseFloat(value), directed);
+    const id = nanoid();
+    const edge = new Edge(id, from, to, parseFloat(value), directed);
+    this.edges[id] = edge;
+    this.connectVertices(edge);
   }
 
-  private expect(termId: number) {
+  private expect(termId: number): void {
     const precedingNode = this.cursor.node;
 
     if (!(this.cursor.next() && this.cursor.node.type.id === termId))
@@ -108,7 +120,7 @@ export class GraphParser {
     return this.source.slice(node.from, node.to);
   }
 
-  private offsetToLine(offset: number) {
+  private offsetToLine(offset: number): number {
     let left = 0;
     let right = this.lineOffsets.length - 1;
 
@@ -122,7 +134,7 @@ export class GraphParser {
     return left + 1;
   }
 
-  private findLinesOffsets() {
+  private findLinesOffsets(): number[] {
     const linesOffsets = [0];
 
     for (let i = 0; i < this.source.length; i++) {
@@ -132,5 +144,15 @@ export class GraphParser {
     }
 
     return linesOffsets;
+  }
+
+  private connectVertices({ from, to, directed, id }: Edge): void {
+    this.vertices[from].outs.push(id);
+    this.vertices[to].ins.push(id);
+
+    if (!directed) {
+      this.vertices[from].ins.push(id);
+      this.vertices[to].outs.push(id);
+    }
   }
 }

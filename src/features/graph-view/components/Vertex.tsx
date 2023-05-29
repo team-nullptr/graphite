@@ -1,13 +1,13 @@
 import { MouseEvent, useRef } from "react";
 import { Position } from "../model/position";
 
-export interface VertexProps {
+export type VertexProps = {
   cx: number;
   cy: number;
   value: string;
   onMouseDown?: (offset: Position) => void;
   hue?: number;
-}
+};
 
 export const Vertex = (props: VertexProps) => {
   const ref = useRef<SVGGElement>(null);
@@ -25,7 +25,7 @@ export const Vertex = (props: VertexProps) => {
 
   const fillColor =
     props.hue !== undefined
-      ? `hsl(${props.hue}, 50%, 90%)`
+      ? `hsl(${props.hue}, 80%, 80%)`
       : "rgb(247, 247, 247)";
 
   const strokeColor =
