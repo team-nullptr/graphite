@@ -2,9 +2,9 @@ import { useEditorStore } from "../context/editor";
 import { Algorithm } from "../../../models/algorithm";
 import { AlgorithmDetails } from "./AlgorithmDetails";
 import { AlgorithmGrid } from "./AlgorithmGrid";
-import { dijkstra } from "../../../algorithms/dijkstra";
+import { dijkstraAlgorithm } from "../../../algorithms/dijkstra";
 
-const algorithms: Algorithm[] = [dijkstra];
+const algorithms: Algorithm[] = [dijkstraAlgorithm];
 
 export const AlgorithmPicker = () => {
   const { algorithm, replaceAlgorithm } = useEditorStore(

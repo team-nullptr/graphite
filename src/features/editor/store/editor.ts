@@ -26,24 +26,29 @@ export type CreateEditorStoreOpts = {
   project: Project;
 };
 
+const initialGraph: Graph = {
+  edges: {},
+  vertices: {},
+};
+
 export const createEditorStore = ({ project }: CreateEditorStoreOpts) => {
   return createStore<EditorState>()(
     devtools((set) => ({
       metadata: project.metadata,
       mode: editorModes.ASSEMBLY,
-      graph: { edges: [], vertices: [] } as Graph,
-      algorithm: null,
+      graph: initialGraph,
       instructions: [],
+      algorithm: null,
       replaceGraph: (graph) => {
         set((state) => ({
           graph,
-          instructions: state.algorithm?.impl(graph) ?? [],
+          instructions: state.algorithm?.instructionsResolver(graph) ?? [],
         }));
       },
       replaceAlgorithm: (algorithm) => {
         set((state) => ({
           algorithm,
-          instructions: algorithm?.impl(state.graph) ?? [],
+          instructions: algorithm?.instructionsResolver(state.graph) ?? [],
         }));
       },
     }))

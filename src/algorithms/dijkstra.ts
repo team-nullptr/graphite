@@ -8,9 +8,6 @@ import { Algorithm } from "../models/algorithm";
 // TODO: Is it possible to do some typescript magic to omit some of those non-null assertions?
 // TODO: Do we want to use i18 to support multiple languages (en / pl)?
 
-const highlightAll = (vertices: Vertex[], hue: number) =>
-  vertices.map((vertex) => [vertex.id, hue] as [string, number]);
-
 const pickClosest = (
   unvisited: IterableIterator<Vertex>,
   distances: Map<string, number>
@@ -31,55 +28,33 @@ const pickClosest = (
   return next;
 };
 
-const dijkstraImpl = (graph: Graph): Instruction[] => {
-  const instructions: Instruction[] = [];
+function* dijkstraInstructionGenerator(
+  graph: Graph
+): IterableIterator<Instruction> {
+  // init instructions
+  const permamentHighlights: [string, number][] = [];
+
+  // init dijkstra
   const vertices = Object.values(graph.vertices);
   const edges = Object.values(graph.edges);
-
   const distances = new Map(edges.map((edge) => [edge.id, Infinity]));
   const unvisited = new Set(vertices);
-  const visited: Vertex[] = [];
 
-  const start = vertices.at(0);
-
-  if (!start) {
-    console.error("Could not get start node");
-    return [];
-  }
-
+  const start = vertices.at(0)!;
   distances.set(start.id, 0);
 
-  instructions.push({
+  yield {
     description: "Set distance to starting vertext to 0.",
     highlights: new Map([[start.id, 270]]),
-  });
+  };
 
-  while (true) {
-    const visitedHighlights = highlightAll(visited, 225);
-    const current = pickClosest(unvisited.values(), distances);
+  while (unvisited.size > 0) {
+    const current = pickClosest(unvisited.values(), distances)!;
 
-    if (!current) {
-      instructions.push({
-        description: "There is no more unvisited vertices, end the algorithm!",
-        highlights: new Map([...visitedHighlights]),
-      });
-      break;
-    }
-
-    instructions.push({
+    yield {
       description: "Pick the closest vertex from all unvisited vertices.",
-      highlights: new Map([[current.id, 90], ...visitedHighlights]),
-    });
-
-    instructions.push({
-      description:
-        "Iterate over all adjacent unvisited nodes and update their min length.",
-      highlights: current.outs.reduce((highlights, edgeId) => {
-        const edge = graph.edges[edgeId];
-        const adj = graph.vertices[edge.to];
-        return highlights.set(adj.id, 180);
-      }, new Map([...visitedHighlights])),
-    });
+      highlights: new Map([[current.id, 90], ...permamentHighlights]),
+    };
 
     for (const edgeId of current.outs) {
       const edge = graph.edges[edgeId];
@@ -98,19 +73,38 @@ const dijkstraImpl = (graph: Graph): Instruction[] => {
       );
     }
 
-    instructions.push({
-      description: "Mark current node as visited.",
-      highlights: new Map([[current.id, 0], ...visitedHighlights]),
+    const currentOutsHighlight = current.outs.map((edgeId) => {
+      const edge = graph.edges[edgeId];
+      const adj = graph.vertices[edge.to];
+      return [adj.id, 180] as [string, number];
     });
 
-    visited.push(current);
+    yield {
+      description:
+        "Iterate over all adjacent unvisited nodes and update their min length.",
+      highlights: new Map([...currentOutsHighlight, ...permamentHighlights]),
+    };
+
+    yield {
+      description: "Mark current node as visited.",
+      highlights: new Map([[current.id, 0], ...permamentHighlights]),
+    };
+
+    permamentHighlights.push([current.id, 225]);
     unvisited.delete(current);
   }
 
-  return instructions;
-};
+  yield {
+    description: "There is no more unvisited vertices, end the algorithm!",
+    highlights: new Map([...permamentHighlights]),
+  };
+}
 
-export const dijkstra: Algorithm = {
+const dijkstraInstructionResolver = (graph: Graph) => [
+  ...dijkstraInstructionGenerator(graph),
+];
+
+export const dijkstraAlgorithm: Algorithm = {
   name: "Dijkstra",
-  impl: dijkstraImpl,
+  instructionsResolver: dijkstraInstructionResolver,
 } as const;
