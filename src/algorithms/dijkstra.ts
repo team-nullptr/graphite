@@ -36,8 +36,7 @@ function* dijkstraInstructionGenerator(
 
   // init dijkstra
   const vertices = Object.values(graph.vertices);
-  const edges = Object.values(graph.edges);
-  const distances = new Map(edges.map((edge) => [edge.id, Infinity]));
+  const distances = new Map(vertices.map((vertex) => [vertex.id, Infinity]));
   const unvisited = new Set(vertices);
 
   const start = vertices.at(0)!;
@@ -45,6 +44,7 @@ function* dijkstraInstructionGenerator(
 
   yield {
     description: "Set distance to starting vertext to 0.",
+    stepState: JSON.stringify([...distances.entries()]),
     highlights: new Map([[start.id, 270]]),
   };
 
@@ -53,16 +53,13 @@ function* dijkstraInstructionGenerator(
 
     yield {
       description: "Pick the closest vertex from all unvisited vertices.",
-      highlights: new Map([[current.id, 90], ...permamentHighlights]),
+      stepState: JSON.stringify([...distances.entries()]),
+      highlights: new Map([...permamentHighlights, [current.id, 90]]),
     };
 
     for (const edgeId of current.outs) {
       const edge = graph.edges[edgeId];
       const adj = graph.vertices[edge.to];
-
-      if (!unvisited.has(adj)) {
-        continue;
-      }
 
       distances.set(
         adj.id,
@@ -82,12 +79,14 @@ function* dijkstraInstructionGenerator(
     yield {
       description:
         "Iterate over all adjacent unvisited nodes and update their min length.",
-      highlights: new Map([...currentOutsHighlight, ...permamentHighlights]),
+      stepState: JSON.stringify([...distances.entries()]),
+      highlights: new Map([...permamentHighlights, ...currentOutsHighlight]),
     };
 
     yield {
       description: "Mark current node as visited.",
-      highlights: new Map([[current.id, 0], ...permamentHighlights]),
+      stepState: JSON.stringify([...distances.entries()]),
+      highlights: new Map([...permamentHighlights, [current.id, 0]]),
     };
 
     permamentHighlights.push([current.id, 225]);
@@ -96,6 +95,7 @@ function* dijkstraInstructionGenerator(
 
   yield {
     description: "There is no more unvisited vertices, end the algorithm!",
+    stepState: JSON.stringify([...distances.entries()]),
     highlights: new Map([...permamentHighlights]),
   };
 }

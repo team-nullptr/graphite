@@ -35,6 +35,17 @@ export const Visualizer = () => {
         <Tab label="Steps" icon={<BookOpenIcon className="h-4 w-4" />}>
           <div className="h-full w-full bg-base-200 dark:bg-base-300-dark">
             {currentInstruction?.description}
+            <br />
+            <br />
+            <br />
+            <div
+              dangerouslySetInnerHTML={{
+                __html: currentInstruction?.stepState.replaceAll(
+                  /,(?=\[)/g,
+                  "<br/>"
+                ),
+              }}
+            ></div>
           </div>
         </Tab>
       }

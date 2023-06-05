@@ -4,6 +4,7 @@ export type Highlights = Map<string, number>;
 
 export type Instruction = {
   description: string;
+  stepState: string;
   highlights: Highlights;
 };
 

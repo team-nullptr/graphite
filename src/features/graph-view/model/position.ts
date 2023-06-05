@@ -1,4 +1,4 @@
-export type Position = [x: number, y: number];
+export type Position = [number, number];
 
 export const rotatePosition = (
   point: Position,
@@ -8,8 +8,8 @@ export const rotatePosition = (
   const sin = Math.sin(angle);
   const cos = Math.cos(angle);
 
-  let [px, py] = point;
-  let [ox, oy] = origin;
+  const [px, py] = point;
+  const [ox, oy] = origin;
 
   const x = (px - ox) * cos - (py - oy) * sin;
   const y = (px - ox) * sin + (py - oy) * cos;

@@ -30,7 +30,7 @@ export const GraphView = (props: GraphViewProps) => {
   const renderVertices = () =>
     Object.values(graph.vertices).map((vertex) => {
       const [x, y] = arrangement[vertex.id] ?? [0, 0];
-      const { id, value } = vertex;
+      const { id } = vertex;
       const hue = props.highlights?.get(id);
 
       return (
@@ -39,7 +39,7 @@ export const GraphView = (props: GraphViewProps) => {
           key={id}
           cx={x}
           cy={y}
-          value={value.toString()}
+          value={id}
           onMouseDown={(offset) => vertexMouseDownHandler(vertex, offset)}
         />
       );

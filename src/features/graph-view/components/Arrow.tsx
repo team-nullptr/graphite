@@ -3,21 +3,17 @@ import { Position, rotatePosition } from "../model/position";
 
 interface ArrowProps {
   position: Position;
-  angle: number;
+  angle?: number;
   hue?: number;
 }
 
-export const Arrow = (props: ArrowProps) => {
-  const { position, angle } = props;
-
+export const Arrow = ({ position, angle = 0, hue }: ArrowProps) => {
   const path = useMemo(() => {
     return buildArrowPath(position, angle);
   }, [position, angle]);
 
   const fill =
-    props.hue !== undefined
-      ? `hsl(${props.hue}, 50%, 65%)`
-      : "rgb(175, 175, 175)";
+    hue !== undefined ? `hsl(${hue}, 50%, 65%)` : "rgb(175, 175, 175)";
 
   return <path className="transition-[fill]" d={path} style={{ fill }} />;
 };
