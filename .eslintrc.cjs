@@ -18,7 +18,7 @@ module.exports = {
     ecmaVersion: "latest",
     sourceType: "module",
   },
-  plugins: ["react", "prettier", "@typescript-eslint"],
+  plugins: ["react", "@typescript-eslint"],
   rules: {
     "no-constant-condition": ["error", { checkLoops: false }],
   },

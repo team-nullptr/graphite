@@ -1,10 +1,10 @@
-import { useState, useEffect } from "react";
+import { BookOpenIcon } from "@heroicons/react/24/outline";
+import { useEffect, useState } from "react";
+import { Tab } from "../../../shared/Tab";
 import { HorizontalSplit } from "../../../shared/layout/HorizontalSplit";
 import { GraphView } from "../../graph-view/GraphView";
 import { useEditorStore } from "../context/editor";
 import { Timeline } from "./Timeline";
-import { Tab } from "../../../shared/Tab";
-import { BookOpenIcon } from "@heroicons/react/24/outline";
 
 export const Visualizer = () => {
   const [currentStep, setCurrentStep] = useState(0);
