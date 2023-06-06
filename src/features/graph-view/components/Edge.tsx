@@ -24,14 +24,20 @@ const StraightEdge = (props: EdgeProps) => {
   const height = props.dy - props.y;
   const length = Math.sqrt(Math.pow(width, 2) + Math.pow(height, 2));
 
-  const start: Position = [vertexRadius, 0];
-  const end: Position = [length - vertexRadius, 0];
+  const position = props.position ?? 0;
+  const angle = position * 0.25;
+
+  const start = rotatePosition([vertexRadius, 0], angle);
+  const end = rotatePosition([length - vertexRadius, 0], -angle, [length, 0]);
+
+  const mx = (start[0] + end[0]) / 2;
+  const my = Math.tan(angle) * mx;
 
   const rad = Math.atan2(height, width);
   const deg = (rad * 180) / Math.PI;
 
   const transform = `translate(${props.x} ${props.y}) rotate(${deg})`;
-  const path = getLinePath(start, end);
+  const path = getLinePath(start, end, [mx, my]);
 
   const stroke =
     props.hue !== undefined
@@ -45,7 +51,9 @@ const StraightEdge = (props: EdgeProps) => {
         d={path}
         stroke={stroke}
       />
-      {props.directed && <Arrow position={end} hue={props.hue} />}
+      {props.directed && (
+        <Arrow position={end} angle={-angle} hue={props.hue} />
+      )}
     </g>
   );
 };
@@ -87,8 +95,20 @@ const CircularEdge = (props: EdgeProps) => {
   );
 };
 
-const getLinePath = (start: Position, end: Position): string => {
+const getLinePath = (
+  start: Position,
+  end: Position,
+  a: Position,
+  b?: Position
+): string => {
   const [sx, sy] = start;
   const [ex, ey] = end;
-  return `M${sx} ${sy} ${ex} ${ey}`;
+  const [ax, ay] = a;
+
+  if (!b) {
+    return `M${sx} ${sy}Q${ax} ${ay} ${ex} ${ey}`;
+  }
+
+  const [bx, by] = b;
+  return `M${sx} ${sy}C${ax} ${ay},${bx} ${by},${ex} ${ey}`;
 };

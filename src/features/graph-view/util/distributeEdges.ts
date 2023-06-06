@@ -11,14 +11,14 @@ export const groupEdges = (edges: Edge[]): Connection[] => {
   const connections = new Map<string, Connection>();
 
   for (const edge of edges) {
-    const connectionKey = [edge.from.id, edge.to.id].sort().join("");
+    const connectionKey = [edge.from, edge.to].sort().join("");
     const connection = connections.get(connectionKey);
 
     if (connection) {
       connection[1].push(edge);
       continue;
     } else {
-      const vertexKey = edge.from.id;
+      const vertexKey = edge.from;
       const group: Connection = [vertexKey, [edge]];
       connections.set(connectionKey, group);
     }
@@ -44,7 +44,7 @@ export const distributeEdges = (
     const position = false ? index : index - (group.length - 1) / 2;
     // Edges starting on the opposite vertex need their position to be reversed
     // otherwise they will bend in the wrong direction
-    const reverse = edge.from.id !== vertex;
+    const reverse = edge.from !== vertex;
     return [edge, reverse ? -position : position];
   });
 };
@@ -71,6 +71,6 @@ export const sortEdges = (edges: Edge[], vertex: string): Edge[] => {
  */
 const getEdgeDiscriminator = (edge: Edge, key: string) => {
   if (!edge.directed) return 0;
-  if (edge.from.id === key) return 1;
+  if (edge.from === key) return 1;
   return -1;
 };

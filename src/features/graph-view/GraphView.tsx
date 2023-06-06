@@ -2,12 +2,9 @@ import { useMemo } from "react";
 import { Edge } from "./components/Edge";
 import { Vertex } from "./components/Vertex";
 import { useArrangement } from "./hooks/useArrangement";
-import { Position } from "./model/position";
 import { distributeEdges, groupEdges, sortEdges } from "./util/distributeEdges";
 import { useEditorStore } from "../editor/context/editor";
 import { Highlights } from "../../engine/runner/instruction";
-
-export type Arrangement = { [key: string]: Position };
 
 export type GraphViewProps = {
   highlights?: Highlights;
