@@ -24,14 +24,14 @@ export class GraphParser {
   private vertices: Record<string, Vertex> = {};
 
   constructor(private readonly source: string) {
-    // TODO: learn more about syntaxTree() and if it should be used here.
     const root = parser.parse(source);
     this.cursor = root.cursor();
     this.lineOffsets = this.findLinesOffsets();
   }
 
   parse(): Graph {
-    while (this.cursor.next()) {
+    do {
+      // TODO: We should report "unexpected" nodes.
       switch (this.cursor.node.type.id) {
         case terms.Vertex:
           this.parseVertex();
@@ -52,9 +52,8 @@ export class GraphParser {
           break;
         default:
           break;
-        // TODO: We should report "unexpected" nodes.
       }
-    }
+    } while (this.cursor.next());
 
     return {
       edges: this.edges,
@@ -83,6 +82,7 @@ export class GraphParser {
     // TODO: Do we want to default the weight to 1?
     const edge = new Edge(id, from, to, 1, directed);
     this.edges[id] = edge;
+
     this.connectVertices(edge);
   }
 
@@ -99,6 +99,7 @@ export class GraphParser {
     const id = nanoid();
     const edge = new Edge(id, from, to, parseFloat(value), directed);
     this.edges[id] = edge;
+
     this.connectVertices(edge);
   }
 
