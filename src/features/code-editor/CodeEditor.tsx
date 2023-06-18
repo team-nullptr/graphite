@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { GraphParser, ParseError } from "../../engine/gdl/graph-parser";
+import { GraphParser, ParseError } from "../../engine/gdl/graphParser";
 import "./editor-styles.css";
 import { editorOnChange, useEditor } from "./hooks/useEditor";
 import { HorizontalSplit } from "../../shared/layout/HorizontalSplit";

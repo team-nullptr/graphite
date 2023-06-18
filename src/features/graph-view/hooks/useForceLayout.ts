@@ -125,7 +125,7 @@ type SelectedVertex = {
   offset: Vec2;
 };
 
-export const useForceDirectedLayout = (graph: Graph) => {
+export const useForceLayout = (graph: Graph) => {
   const svgRef = useRef<SVGSVGElement>(null);
   const selectedVertexRef = useRef<SelectedVertex>();
   const requestRef = useRef<number>();

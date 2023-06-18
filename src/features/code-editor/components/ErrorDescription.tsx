@@ -1,4 +1,4 @@
-import { ParseError } from "../../../engine/gdl/graph-parser";
+import { ParseError } from "../../../engine/gdl/graphParser";
 
 export type ErrorDescriptionProps = {
   error: ParseError;
