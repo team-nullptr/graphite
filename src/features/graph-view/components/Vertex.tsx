@@ -1,11 +1,11 @@
 import { MouseEvent, useRef } from "react";
-import { Position } from "../model/position";
+import { Vec2 } from "../model/vec2";
 
 export type VertexProps = {
   cx: number;
   cy: number;
   value: string;
-  onMouseDown?: (offset: Position) => void;
+  onMouseDown?: (offset: Vec2) => void;
   hue?: number;
 };
 
@@ -14,12 +14,14 @@ export const Vertex = (props: VertexProps) => {
 
   const mouseDownHandler = (event: MouseEvent) => {
     const boundingBox = ref.current?.getBoundingClientRect();
-    if (!boundingBox) return;
+    if (!boundingBox) {
+      return;
+    }
 
     const offsetX = event.pageX - boundingBox.left - 19;
     const offsetY = event.pageY - boundingBox.top - 19;
+    const offset: Vec2 = new Vec2([offsetX, offsetY]);
 
-    const offset: Position = [offsetX, offsetY];
     props.onMouseDown?.(offset);
   };
 
