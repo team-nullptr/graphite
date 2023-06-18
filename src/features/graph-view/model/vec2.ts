@@ -34,4 +34,15 @@ export class Vec2 {
   len(): number {
     return Math.sqrt(Math.pow(this.x, 2) + Math.pow(this.y, 2));
   }
+
+  rotate(angle: number, origin: Vec2 = new Vec2([0, 0])): Vec2 {
+    const { x: ox, y: oy } = origin;
+
+    const x = (this.x - ox) * Math.cos(angle) - (this.y - oy) * Math.sin(angle);
+    const y = (this.x - ox) * Math.sin(angle) + (this.y - oy) * Math.cos(angle);
+
+    this.x = x + ox;
+    this.y = y + oy;
+    return this;
+  }
 }

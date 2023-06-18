@@ -1,4 +1,4 @@
-import { Position, rotatePosition } from "../model/position";
+import { Vec2 } from "../model/vec2";
 import { Arrow } from "./Arrow";
 
 const vertexRadius = 19;
@@ -27,17 +27,20 @@ const StraightEdge = (props: EdgeProps) => {
   const position = props.position ?? 0;
   const angle = position * 0.25;
 
-  const start = rotatePosition([vertexRadius, 0], angle);
-  const end = rotatePosition([length - vertexRadius, 0], -angle, [length, 0]);
+  const start = new Vec2([vertexRadius, 0]).rotate(angle);
+  const end = new Vec2([length - vertexRadius, 0]).rotate(
+    -angle,
+    new Vec2([length, 0])
+  );
 
-  const mx = (start[0] + end[0]) / 2;
+  const mx = (start.x + end.x) / 2;
   const my = Math.tan(angle) * mx;
 
   const rad = Math.atan2(height, width);
   const deg = (rad * 180) / Math.PI;
 
   const transform = `translate(${props.x} ${props.y}) rotate(${deg})`;
-  const path = getLinePath(start, end, [mx, my]);
+  const path = getLinePath(start, end, new Vec2([mx, my]));
 
   const stroke =
     props.hue !== undefined
@@ -67,7 +70,8 @@ const CircularEdge = (props: EdgeProps) => {
   // Intersection of two rounds - the vertex and the edge
   const arrowX = vertexRadius - radius ** 2 / (2 * vertexRadius);
   const arrowY = Math.sqrt(vertexRadius ** 2 - arrowX ** 2);
-  const arrowPostion: Position = [arrowX, arrowY];
+  const arrowPostion: Vec2 = new Vec2([arrowX, arrowY]);
+
   // TODO: Replace 1.2 with actual calculations, to determine the right angle
   // This is due to how arrows are drawn (rotated)
   const arrowAngle = Math.atan2(cy - arrowY, cx - arrowX) * 1.2 - Math.PI / 2;
@@ -96,19 +100,16 @@ const CircularEdge = (props: EdgeProps) => {
 };
 
 const getLinePath = (
-  start: Position,
-  end: Position,
-  a: Position,
-  b?: Position
+  { x: sx, y: sy }: Vec2,
+  { x: ex, y: ey }: Vec2,
+  { x: ax, y: ay }: Vec2,
+  b?: Vec2
 ): string => {
-  const [sx, sy] = start;
-  const [ex, ey] = end;
-  const [ax, ay] = a;
-
   if (!b) {
     return `M${sx} ${sy}Q${ax} ${ay} ${ex} ${ey}`;
   }
 
-  const [bx, by] = b;
+  const { x: bx, y: by } = b;
+
   return `M${sx} ${sy}C${ax} ${ay},${bx} ${by},${ex} ${ey}`;
 };

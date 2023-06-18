@@ -25,25 +25,23 @@ export const GraphView = ({ highlights }: GraphViewProps) => {
     [graph]
   );
 
-  const vertices = useMemo(
-    () =>
-      Object.entries(arrangement).map(([id, pos]) => {
-        const { x, y } = pos;
-        const hue = highlights?.get(id);
+  const vertices = useMemo(() => {
+    return Object.entries(arrangement).map(([id, pos]) => {
+      const { x, y } = pos;
+      const hue = highlights?.get(id);
 
-        return (
-          <Vertex
-            hue={hue}
-            key={id}
-            cx={x}
-            cy={y}
-            value={id}
-            onMouseDown={(offset) => vertexMouseDownHandler(id, offset)}
-          />
-        );
-      }),
-    [arrangement, highlights, vertexMouseDownHandler]
-  );
+      return (
+        <Vertex
+          hue={hue}
+          key={id}
+          cx={x}
+          cy={y}
+          value={id}
+          onMouseDown={(offset) => vertexMouseDownHandler(id, offset)}
+        />
+      );
+    });
+  }, [arrangement, highlights, vertexMouseDownHandler]);
 
   const edges = useMemo(
     () =>

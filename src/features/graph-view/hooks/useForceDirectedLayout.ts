@@ -2,6 +2,8 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { Graph } from "../../../engine/runner/graph";
 import { Vec2 } from "../model/vec2";
 
+type Arrangement = Record<string, Vec2>;
+
 // TODO: Temporary (not working as good as I would like)
 const preArrange = (graph: Graph) =>
   Object.values(graph.vertices).reduce((arrangement, v, i) => {
@@ -9,8 +11,7 @@ const preArrange = (graph: Graph) =>
     return arrangement;
   }, {} as Arrangement);
 
-type Arrangement = Record<string, Vec2>;
-
+/** Force that pushes vertices away from other vertices. */
 const repulsiveForce = (source: Vec2, adj: Vec2): Vec2 => {
   const force = adj
     .vecTo(source)
@@ -22,6 +23,7 @@ const repulsiveForce = (source: Vec2, adj: Vec2): Vec2 => {
   return force;
 };
 
+/** Force that pushes vertices to adjacent vertices. */
 const attractiveForce = (source: Vec2, adj: Vec2): Vec2 => {
   const spring = 0.2;
   const springLength = 100;
@@ -43,6 +45,12 @@ const defaultApplyForcesOpts: ApplyForcesOpts = {
   coolingFactor: 0.995,
 };
 
+/**
+ * Applies forces to vertices.
+ * I don't really know how to control speed of animation.
+ * This function is called each frame, and everytime it's called vertices are
+ * moved a bit closer to the "optimal state".
+ */
 const applyForces = (
   graph: Graph,
   oldArrangement: Arrangement,
@@ -59,8 +67,9 @@ const applyForces = (
 
   for (const vertexId of vertices) {
     const vertex = graph.vertices[vertexId];
+
+    // repulsive force
     const finalRepulsiveforce = new Vec2([0, 0]);
-    const finalAttractiveForce = new Vec2([0, 0]);
 
     for (const targetVertexId of vertices) {
       if (vertexId === targetVertexId) {
@@ -71,6 +80,9 @@ const applyForces = (
         repulsiveForce(arrangement[vertexId], arrangement[targetVertexId])
       );
     }
+
+    // attractive force
+    const finalAttractiveForce = new Vec2([0, 0]);
 
     for (const edgeId of new Set([...vertex.outs, ...vertex.ins])) {
       const edge = graph.edges[edgeId];
@@ -94,6 +106,8 @@ const applyForces = (
     ...Object.values(forces).map((force) => force.len())
   );
 
+  // We want to stop applying forces when the force length
+  // is smaller then chosen threshold.
   if (maxForce < threshold) {
     return arrangement;
   }
@@ -165,8 +179,9 @@ export const useForceDirectedLayout = (graph: Graph) => {
 
   // Simulation
 
+  // TODO: We don't want to rearrange vertices that were already arranged.
+  // We need to arrange only newly added vertices.
   useEffect(() => {
-    // TODO: Temporary, idk if we want to do this exactly like this
     setArrangment(preArrange(graph));
   }, [graph]);
 

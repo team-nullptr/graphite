@@ -1,8 +1,8 @@
 import { useMemo } from "react";
-import { Position, rotatePosition } from "../model/position";
+import { Vec2 } from "../model/vec2";
 
 interface ArrowProps {
-  position: Position;
+  position: Vec2;
   angle?: number;
   hue?: number;
 }
@@ -18,11 +18,12 @@ export const Arrow = ({ position, angle = 0, hue }: ArrowProps) => {
   return <path className="transition-[fill]" d={path} style={{ fill }} />;
 };
 
-const buildArrowPath = (position: Position, angle: number) => {
+const buildArrowPath = (position: Vec2, angle: number) => {
   // Rotate the arrow start and both arms
-  const [sx, sy] = position;
-  const [ax, ay] = rotatePosition([sx - 6, sy - 4], angle, position);
-  const [bx, by] = rotatePosition([sx - 6, sy + 4], angle, position);
+  const { x: sx, y: sy } = position;
+
+  const { x: ax, y: ay } = new Vec2([sx - 6, sy - 4]).rotate(angle, position);
+  const { x: bx, y: by } = new Vec2([sx - 6, sy + 4]).rotate(angle, position);
 
   // Construct the final path
   return `M${sx} ${sy}L${ax} ${ay}L${bx} ${by}`;
