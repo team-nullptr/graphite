@@ -2,6 +2,8 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { Graph } from "../../../engine/runner/graph";
 import { Vec2 } from "../model/vec2";
 
+// TODO: There is a bug when you paste graph code into editor This hook craches :()
+
 type Arrangement = Record<string, Vec2>;
 
 // TODO: Temporary (not working as good as I would like)
@@ -13,11 +15,14 @@ const preArrange = (graph: Graph) =>
 
 /** Force that pushes vertices away from other vertices. */
 const repulsiveForce = (source: Vec2, adj: Vec2): Vec2 => {
+  const forceStrength = 50;
+  const forceChillout = 1 / 20;
+
   const force = adj
     .vecTo(source)
     .multiply(
-      10 / Math.pow(Math.E, 0.2 * source.distanceTo(adj)) +
-        0.5 / Math.pow(source.distanceTo(adj), 2)
+      forceStrength /
+        (1 + Math.pow(Math.E, forceChillout * source.distanceTo(adj)))
     );
 
   return force;
@@ -25,7 +30,7 @@ const repulsiveForce = (source: Vec2, adj: Vec2): Vec2 => {
 
 /** Force that pushes vertices to adjacent vertices. */
 const attractiveForce = (source: Vec2, adj: Vec2): Vec2 => {
-  const spring = 0.2;
+  const spring = 0.01;
   const springLength = 100;
 
   const springForce = source
@@ -36,13 +41,15 @@ const attractiveForce = (source: Vec2, adj: Vec2): Vec2 => {
 };
 
 type ApplyForcesOpts = {
-  threshold: number;
-  coolingFactor: number;
+  threshold?: number;
+  coolingFactor?: number;
+  ignore?: Set<string>;
 };
 
-const defaultApplyForcesOpts: ApplyForcesOpts = {
+const defaultApplyForcesOpts: Required<ApplyForcesOpts> = {
   threshold: 0.1,
   coolingFactor: 0.995,
+  ignore: new Set(),
 };
 
 /**
@@ -56,7 +63,7 @@ const applyForces = (
   oldArrangement: Arrangement,
   opts?: ApplyForcesOpts
 ): Arrangement => {
-  const { threshold, coolingFactor } = {
+  const { threshold, coolingFactor, ignore } = {
     ...defaultApplyForcesOpts,
     ...opts,
   };
@@ -66,6 +73,11 @@ const applyForces = (
   const vertices = Object.keys(graph.vertices);
 
   for (const vertexId of vertices) {
+    if (ignore.has(vertexId)) {
+      forces[vertexId] = new Vec2([0, 0]);
+      continue;
+    }
+
     const vertex = graph.vertices[vertexId];
 
     // repulsive force
@@ -186,7 +198,13 @@ export const useForceLayout = (graph: Graph) => {
   }, [graph]);
 
   const runSimulation: FrameRequestCallback = useCallback(() => {
-    setArrangment((current) => applyForces(graph, current));
+    setArrangment((current) =>
+      applyForces(graph, current, {
+        ignore: selectedVertexRef.current
+          ? new Set([selectedVertexRef.current.id])
+          : new Set(),
+      })
+    );
     requestRef.current = requestAnimationFrame(runSimulation);
   }, [graph]);
 
