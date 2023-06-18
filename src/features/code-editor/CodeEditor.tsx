@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { GraphParser, ParseError } from "../../engine/gdl/graph-parser";
+import { GraphParser, ParseError } from "../../engine/gdl/graphParser";
 import "./editor-styles.css";
 import { editorOnChange, useEditor } from "./hooks/useEditor";
 import { HorizontalSplit } from "../../shared/layout/HorizontalSplit";
@@ -43,7 +43,6 @@ export const CodeEditor = () => {
     try {
       const graph = parser.parse();
       replaceGraph(graph);
-      console.log(graph);
       setErrors([]);
     } catch (err) {
       if (err instanceof ParseError) setErrors([err]);

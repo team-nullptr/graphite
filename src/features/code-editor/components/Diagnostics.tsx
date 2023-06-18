@@ -1,5 +1,5 @@
 import { BugAntIcon } from "@heroicons/react/24/outline";
-import { ParseError } from "../../../engine/gdl/graph-parser";
+import { ParseError } from "../../../engine/gdl/graphParser";
 import { Tab } from "../../../shared/Tab";
 import { ErrorDescription } from "./ErrorDescription";
 

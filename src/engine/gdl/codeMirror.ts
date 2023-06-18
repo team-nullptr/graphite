@@ -2,7 +2,7 @@ import { LRLanguage, LanguageSupport } from "@codemirror/language";
 import { styleTags, tags } from "@lezer/highlight";
 import { parser } from "./gen/gdl";
 import { Diagnostic, linter } from "@codemirror/lint";
-import { GraphParser, ParseError } from "./graph-parser";
+import { GraphParser, ParseError } from "./graphParser";
 
 export const gdlParser = parser.configure({
   props: [
