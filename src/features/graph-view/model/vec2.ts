@@ -2,7 +2,8 @@ export class Vec2 {
   x: number;
   y: number;
 
-  constructor(pos: [number, number]) {
+  // TODO: Maybe we can just pass x and y arguments?
+  constructor(pos: [number, number] = [0, 0]) {
     this.x = pos[0];
     this.y = pos[1];
   }
