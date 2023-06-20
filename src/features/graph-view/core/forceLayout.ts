@@ -91,6 +91,7 @@ const defaultComputeForcesOpts: Required<ComputeForcesOpts> = {
   ignore: new Set(),
 };
 
+// TODO: There is a bug when you paste graph definition into editor this crashes :()
 export const applyForces = (
   graph: Graph,
   oldArrangement: Arrangement,
@@ -120,6 +121,7 @@ export const applyForces = (
       .add(attractiveForce);
 
     const force = forces[vertex.id].len();
+
     if (force > maxForce) {
       maxForce = force;
     }
