@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { Vec2 } from "../model/vec2";
+import { Vec2 } from "../types/vec2";
 
 interface ArrowProps {
   position: Vec2;

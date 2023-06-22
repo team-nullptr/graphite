@@ -1,4 +1,4 @@
-import { Vec2 } from "../model/vec2";
+import { Vec2 } from "../types/vec2";
 import { Arrow } from "./Arrow";
 
 const vertexRadius = 19;

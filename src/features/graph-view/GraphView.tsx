@@ -4,7 +4,7 @@ import { Vertex } from "./components/Vertex";
 import { distributeEdges, groupEdges, sortEdges } from "./util/distributeEdges";
 import { useEditorStore } from "../editor/context/editor";
 import { Highlights } from "../../engine/runner/instruction";
-import { useForceLayout } from "./hooks/useForceLayout";
+import { useGraphLayout } from "./hooks/useGraphLayout";
 
 export type GraphViewProps = {
   highlights?: Highlights;
@@ -12,7 +12,7 @@ export type GraphViewProps = {
 
 export const GraphView = ({ highlights }: GraphViewProps) => {
   const graph = useEditorStore((state) => state.graph);
-  const { arrangement, svgRef, vertexMouseDownHandler } = useForceLayout(graph);
+  const { arrangement, svgRef, vertexMouseDownHandler } = useGraphLayout(graph);
 
   const positionedEdges = useMemo(
     () =>

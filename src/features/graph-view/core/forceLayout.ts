@@ -1,6 +1,6 @@
 import { Graph, Vertex } from "../../../engine/runner/graph";
-import { Arrangement } from "../model/arrangement";
-import { Vec2 } from "../model/vec2";
+import { Arrangement } from "../types/arrangement";
+import { Vec2 } from "../types/vec2";
 
 const repulsiveForce = (source: Vec2, adj: Vec2): Vec2 => {
   const forceStrength = 50;

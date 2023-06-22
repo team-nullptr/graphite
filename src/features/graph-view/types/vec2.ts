@@ -1,3 +1,4 @@
+// TODO: Change methods so that they don't mutate the original vector.
 export class Vec2 {
   x: number;
   y: number;
