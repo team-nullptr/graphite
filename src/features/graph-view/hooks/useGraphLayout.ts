@@ -13,16 +13,6 @@ const preArrange = (graph: Graph) =>
     return arrangement;
   }, {} as Arrangement);
 
-const getPointerPosition = (event: MouseEvent): Vec2 => {
-  const target = event.target as HTMLElement;
-  const boundingBox = target.getBoundingClientRect();
-
-  const x = event.clientX - boundingBox.left;
-  const y = event.clientY - boundingBox.top;
-
-  return new Vec2([x, y]);
-};
-
 export const useGraphLayout = (graph: Graph) => {
   const svgRef = useRef<SVGSVGElement>(null);
   const selectedVertexRef = useRef<SelectedVertex>();
