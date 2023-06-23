@@ -7,7 +7,6 @@ import { nanoid } from "nanoid";
 export class ParseError extends Error {
   constructor(
     public readonly line: number,
-    public readonly precedingNode: SyntaxNode,
     public readonly node: SyntaxNode,
     message: string
   ) {
@@ -15,7 +14,6 @@ export class ParseError extends Error {
   }
 }
 
-// TODO: There probably is a lot of possible optimisations.
 export class GraphParser {
   private readonly cursor: TreeCursor;
   private readonly lineOffsets: number[];
@@ -31,8 +29,10 @@ export class GraphParser {
 
   parse(): Graph {
     do {
-      // TODO: We should report "unexpected" nodes.
       switch (this.cursor.node.type.id) {
+        case terms.Program:
+        case terms.LineComment:
+          break;
         case terms.Vertex:
           this.parseVertex();
           break;
@@ -48,10 +48,12 @@ export class GraphParser {
         case terms.WeightedDirectedEdge:
           this.parseWeightedEdge(true);
           break;
-        case terms.Program:
-          break;
         default:
-          break;
+          throw new ParseError(
+            this.offsetToLine(this.cursor.node.from),
+            this.cursor.node,
+            `Unexpected token`
+          );
       }
     } while (this.cursor.next());
 
@@ -109,12 +111,21 @@ export class GraphParser {
     if (!(this.cursor.next() && this.cursor.node.type.id === termId))
       throw new ParseError(
         this.offsetToLine(precedingNode.from),
-        precedingNode,
         this.cursor.node,
         `(${parser.getName(
           precedingNode.type.id
         )}) must be followed by (${parser.getName(termId)}).`
       );
+  }
+
+  private connectVertices({ from, to, directed, id }: Edge): void {
+    this.vertices[from].outs.push(id);
+    this.vertices[to].ins.push(id);
+
+    if (!directed) {
+      this.vertices[from].ins.push(id);
+      this.vertices[to].outs.push(id);
+    }
   }
 
   private getLexeme(node: SyntaxNode): string {
@@ -145,15 +156,5 @@ export class GraphParser {
     }
 
     return linesOffsets;
-  }
-
-  private connectVertices({ from, to, directed, id }: Edge): void {
-    this.vertices[from].outs.push(id);
-    this.vertices[to].ins.push(id);
-
-    if (!directed) {
-      this.vertices[from].ins.push(id);
-      this.vertices[to].outs.push(id);
-    }
   }
 }

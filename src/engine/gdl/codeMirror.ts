@@ -34,8 +34,8 @@ export const gdlLinter = linter((view): Diagnostic[] => {
     if (err instanceof ParseError) {
       return [
         {
-          from: err.precedingNode.from,
-          to: err.precedingNode.to,
+          from: err.node.from,
+          to: err.node.to,
           severity: "error",
           message: err.message,
         },
