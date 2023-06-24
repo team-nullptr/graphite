@@ -18,11 +18,11 @@ How would it even work? In fact it can be a simple interpreted language. The int
 Let's look at an example:
 
 ```rust
-1 vertex A
-2 vertex B
-3
-4 A.edge(B).weight(13)
-5 B.direct(A).weight(10)
+vertex A
+vertex B
+
+A.edge(B).weight(13)
+B.direct(A).weight(10)
 ```
 
 We can assume that everything is an expression that produces either a `vertex` or an `edge`. After lexing and parsing the source, interpreter would execute each expression.
