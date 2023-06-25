@@ -1,17 +1,15 @@
 import { Token } from "./token";
 import { TokenType } from "./types/token";
-import { Expr, Literal, Call, Variable } from "./expr";
+import { Expr, Literal, Call, Variable, VertexReference } from "./expr";
 import { Expression, Stmt } from "./stmt";
 
-/*
-
+/* 
 program   ::= statement* EOF
 statement ::= exprStmt
 exprStmt  ::= call
-call      ::= primary "(" arguments? ")" 
-arguments ::= primary ( "," primary )*
-primary   ::= NUMBER | IDENTIFIER
-
+call      ::= IDENTIFIER "(" arguments? ")" 
+arguments ::= argument ( "," argument )*
+argument  ::= NUMBER | IDENTIFIER 
 */
 
 export class Parser {
@@ -34,7 +32,9 @@ export class Parser {
   }
 
   private call(): Expr {
-    let expr: Expr = this.primary();
+    let expr: Expr = new Variable(
+      this.consume("IDENTIFIER", "Expected an identifier.")
+    );
 
     if (this.match("LEFT_PAREN")) {
       expr = this.finishCall(expr);
@@ -48,11 +48,11 @@ export class Parser {
 
     if (!this.check("RIGHT_PAREN")) {
       do {
-        if (args.length > 255) {
+        if (args.length >= 255) {
           throw new Error("Can't have more than 255 arguments.");
         }
 
-        args.push(this.primary());
+        args.push(this.argument());
       } while (this.match("COMMA"));
     }
 
@@ -64,13 +64,13 @@ export class Parser {
     return new Call(calle, paren, args);
   }
 
-  private primary(): Expr {
+  private argument(): Expr {
     if (this.match("NUMBER")) {
       return new Literal(this.previous().literal);
     }
 
     if (this.match("IDENTIFIER")) {
-      return new Variable(this.previous());
+      return new VertexReference(this.previous());
     }
 
     throw new Error("Expected expression");

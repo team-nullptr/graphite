@@ -8,6 +8,7 @@ export interface Visitor<R> {
   visitLiteralExpr(expr: Literal): R;
   visitCallExpr(expr: Call): R;
   visitVariableExpr(expr: Variable): R;
+  visitVertexReference(expr: VertexReference): R;
 }
 
 export class Literal implements Expr {
@@ -35,5 +36,13 @@ export class Variable implements Expr {
 
   accept<R>(visitor: Visitor<R>): R {
     return visitor.visitVariableExpr(this);
+  }
+}
+
+export class VertexReference implements Expr {
+  constructor(public readonly name: Token) {}
+
+  accept<R>(visitor: Visitor<R>): R {
+    return visitor.visitVertexReference(this);
   }
 }

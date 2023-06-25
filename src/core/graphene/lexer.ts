@@ -33,9 +33,6 @@ export class Lexer {
       case ",":
         this.addToken("COMMA");
         break;
-      case ".":
-        this.addToken("DOT");
-        break;
 
       // Whitespace
       case " ":

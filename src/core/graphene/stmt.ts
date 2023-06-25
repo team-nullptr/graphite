@@ -1,6 +1,6 @@
 import { Expr } from "./expr";
 
-interface Visitor<R> {
+export interface Visitor<R> {
   visitExpressionStmt(stmt: Expression): R;
 }
 
