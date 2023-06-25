@@ -1,8 +1,6 @@
 import { Token } from "./token";
 import { TokenType } from "./types/token";
 
-const keywords: Map<string, TokenType> = new Map([["vertex", "VERTEX"]]);
-
 export class Lexer {
   private tokens: Token[] = [];
   private current = 0;
@@ -31,6 +29,9 @@ export class Lexer {
         break;
       case ")":
         this.addToken("RIGHT_PAREN");
+        break;
+      case ",":
+        this.addToken("COMMA");
         break;
       case ".":
         this.addToken("DOT");
@@ -71,9 +72,7 @@ export class Lexer {
       this.advance();
     }
 
-    const lexeme = this.source.substring(this.start, this.current);
-    const type = keywords.get(lexeme) ?? "IDENTIFIER";
-    this.addToken(type);
+    this.addToken("IDENTIFIER");
   }
 
   private isDigit(c: string): boolean {

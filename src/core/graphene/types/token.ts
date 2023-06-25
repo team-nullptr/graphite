@@ -3,13 +3,11 @@ export type TokenType =
   | "LEFT_PAREN"
   | "RIGHT_PAREN"
   | "DOT"
+  | "COMMA"
 
   // Literals
   | "IDENTIFIER"
   | "NUMBER"
-
-  // Keywords
-  | "VERTEX"
 
   // Misc
   | "EOF";

@@ -5,13 +5,13 @@ import { Token } from "./token";
 test("Lexer correctly scans all tokens", () => {
   const source = `vertex A
 vertex B
-A.edge(B).weight(69)
+A.edge(B).weight(69, 1)
 B.direct(A).weight(420)`;
 
-  const validTokens: Token[] = [
-    new Token("VERTEX", "vertex", 1),
+  const expectedTokens: Token[] = [
+    new Token("IDENTIFIER", "vertex", 1),
     new Token("IDENTIFIER", "A", 1),
-    new Token("VERTEX", "vertex", 2),
+    new Token("IDENTIFIER", "vertex", 2),
     new Token("IDENTIFIER", "B", 2),
     new Token("IDENTIFIER", "A", 3),
     new Token("DOT", ".", 3),
@@ -23,6 +23,8 @@ B.direct(A).weight(420)`;
     new Token("IDENTIFIER", "weight", 3),
     new Token("LEFT_PAREN", "(", 3),
     new Token("NUMBER", "69", 3, 69),
+    new Token("COMMA", ",", 3),
+    new Token("NUMBER", "1", 3, 1),
     new Token("RIGHT_PAREN", ")", 3),
     new Token("IDENTIFIER", "B", 4),
     new Token("DOT", ".", 4),
@@ -39,7 +41,7 @@ B.direct(A).weight(420)`;
   ];
 
   const lexer = new Lexer(source);
-  const tokens = lexer.lex();
+  const receivedTokens = lexer.lex();
 
-  expect(tokens).toEqual(validTokens);
+  expect(receivedTokens).toEqual(expectedTokens);
 });
