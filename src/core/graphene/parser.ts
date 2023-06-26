@@ -3,14 +3,15 @@ import { TokenType } from "./types/token";
 import { Expr, Literal, Call, Variable, VertexReference } from "./expr";
 import { Expression, Stmt } from "./stmt";
 
-/* 
-program   ::= statement* EOF
-statement ::= exprStmt
-exprStmt  ::= call
-call      ::= IDENTIFIER "(" arguments? ")" 
-arguments ::= argument ( "," argument )*
-argument  ::= NUMBER | IDENTIFIER 
-*/
+export class ParseError extends Error {
+  constructor(token: Token, message: string) {
+    super(
+      `[line ${token.line}] Error ${
+        token.type === "EOF" ? "at end" : `at '${token.lexeme}'`
+      }: ${message}`
+    );
+  }
+}
 
 export class Parser {
   private current = 0;
@@ -92,7 +93,7 @@ export class Parser {
       return this.advance();
     }
 
-    throw new Error(error);
+    throw new ParseError(this.peek(), error);
   }
 
   private check(type: TokenType): boolean {

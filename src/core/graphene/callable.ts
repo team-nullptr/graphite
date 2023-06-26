@@ -1,5 +1,7 @@
-import { Interpreter } from ".";
+import { Interpreter } from "./interpreter";
 
-export interface Callable {
-  call(interpreter: Interpreter, args: unknown[]): unknown;
+export abstract class Callable {
+  abstract readonly arity: number;
+
+  abstract call(interpreter: Interpreter, args: unknown[]): unknown;
 }

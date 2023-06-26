@@ -1,5 +1,5 @@
 import { expect, test } from "vitest";
-import { Interpreter } from "./interpreter";
+import { Interpreter } from "../interpreter";
 
 test("Vertices are added correctly", () => {
   const expectedVertices = ["A", "B", "C", "D"];

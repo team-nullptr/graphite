@@ -1,6 +1,6 @@
 import { test, expect } from "vitest";
-import { Lexer } from "./lexer";
-import { Token } from "./token";
+import { Lexer } from "../lexer";
+import { Token } from "../token";
 
 test("Lexer correctly scans all tokens", () => {
   const source = `vertex(A)

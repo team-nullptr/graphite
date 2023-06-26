@@ -1,6 +1,12 @@
 import { Token } from "./token";
 import { TokenType } from "./types/token";
 
+class LexError extends Error {
+  constructor(public readonly line: number, message: string) {
+    super(`[line ${line}] Error: ${message}`);
+  }
+}
+
 export class Lexer {
   private tokens: Token[] = [];
   private current = 0;
@@ -50,6 +56,8 @@ export class Lexer {
           this.number();
         } else if (this.isAlpha(c)) {
           this.identifier();
+        } else {
+          throw new LexError(this.line, "Unexpected token.");
         }
         break;
     }
