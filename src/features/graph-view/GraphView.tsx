@@ -3,7 +3,7 @@ import { Edge } from "./components/Edge";
 import { Vertex } from "./components/Vertex";
 import { distributeEdges, groupEdges, sortEdges } from "./util/distributeEdges";
 import { useEditorStore } from "../editor/context/editor";
-import { Highlights } from "../../engine/runner/instruction";
+import { Highlights } from "../../core/simulator/instruction";
 import { useGraphLayout } from "./hooks/useGraphLayout";
 
 export type GraphViewProps = {

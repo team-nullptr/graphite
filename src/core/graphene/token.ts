@@ -5,6 +5,8 @@ export class Token {
     public readonly type: TokenType,
     public readonly lexeme: string,
     public readonly line: number,
+    public readonly from: number,
+    public readonly to: number,
     public readonly literal?: unknown
   ) {}
 }

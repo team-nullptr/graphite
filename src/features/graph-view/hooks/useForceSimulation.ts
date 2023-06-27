@@ -6,7 +6,7 @@ import {
   useEffect,
   useCallback,
 } from "react";
-import { Graph } from "../../../engine/runner/graph";
+import { Graph } from "../../../core/simulator/graph";
 import { applyForces } from "../core/forceLayout";
 import { Arrangement } from "../types/arrangement";
 import { SelectedVertex } from "../types/selectedVertex";

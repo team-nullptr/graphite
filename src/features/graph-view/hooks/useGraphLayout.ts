@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Graph } from "../../../engine/runner/graph";
+import { Graph } from "../../../core/simulator/graph";
 import { Vec2 } from "../types/vec2";
 import { Arrangement } from "../types/arrangement";
 import { SelectedVertex } from "../types/selectedVertex";

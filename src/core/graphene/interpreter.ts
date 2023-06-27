@@ -1,6 +1,6 @@
 import { nanoid } from "nanoid";
-import { Edge, Graph, Vertex } from "../../engine/runner/graph";
-import { Callable } from "./callable";
+import { Edge, Graph, Vertex } from "../simulator/graph";
+import { Callable, CallableArg } from "./callable";
 import {
   Call,
   Expr,
@@ -9,14 +9,12 @@ import {
   Variable,
   VertexReference,
 } from "./expr";
-import { Lexer } from "./lexer";
-import { Parser } from "./parser";
-import { Expression, Stmt, Visitor as StmtVisitor } from "./stmt";
+import { Expression, Statement, Visitor as StmtVisitor } from "./stmt";
 import { Token } from "./token";
 
-class RuntimeError extends Error {
+class ExecError extends Error {
   constructor(public readonly token: Token, message: string) {
-    super(message);
+    super(`[line ${token.line}] Error at '${token.lexeme}': ${message}`);
   }
 }
 
@@ -28,20 +26,42 @@ class Environment {
       return this.values.get(name.lexeme);
     }
 
-    throw new Error(`Undefined variable '${name.lexeme}'.`);
+    throw new ExecError(name, `Undefined variable.`);
   }
 }
 
 export class Interpreter implements ExprVisitor<unknown>, StmtVisitor<void> {
+  // TODO: Is there any way to create those global functions outside of this class?
   private environment = new Environment(
     new Map([
       [
         "vertex",
         new (class extends Callable {
           arity = 2;
+          args = ["name", "value"];
 
-          call(interpreter: Interpreter, [id]: unknown[]) {
-            interpreter.vertices[id as string] = new Vertex(id as string, 1);
+          validateArgsType(args: CallableArg[]) {
+            const [id, value] = args;
+
+            if (typeof id.value !== "string" && !(id.value instanceof String)) {
+              throw new ExecError(args[0].token, "Invalid vertex id.");
+            }
+
+            if (
+              typeof value.value !== "number" &&
+              !(value.value instanceof Number)
+            ) {
+              throw new ExecError(args[1].token, "Value must be a number.");
+            }
+          }
+
+          call(interpreter: Interpreter, args: CallableArg[]) {
+            const [id, value] = args.map(({ value }) => value) as [
+              string,
+              number
+            ];
+
+            interpreter.vertices[id] = new Vertex(id, value);
           }
         })(),
       ],
@@ -49,17 +69,41 @@ export class Interpreter implements ExprVisitor<unknown>, StmtVisitor<void> {
         "edge",
         new (class extends Callable {
           arity = 3;
+          args = ["from", "to", "weight"];
 
-          call(interpreter: Interpreter, [fromId, toId]: unknown[]) {
+          validateArgsType(args: CallableArg[]) {
+            const [from, to, weight] = args;
+
+            if (
+              typeof from.value !== "string" &&
+              !(from.value instanceof String)
+            ) {
+              throw new ExecError(args[0].token, "Invalid vertex id.");
+            }
+
+            if (typeof to.value !== "string" && !(to.value instanceof String)) {
+              throw new ExecError(args[1].token, "Invalid vertex id.");
+            }
+
+            if (
+              typeof weight.value !== "number" &&
+              !(weight.value instanceof Number)
+            ) {
+              throw new ExecError(args[2].token, "Value must be a number.");
+            }
+          }
+
+          call(interpreter: Interpreter, args: CallableArg[]) {
+            const [from, to, weight] = args.map(({ value }) => value) as [
+              string,
+              string,
+              number
+            ];
+
             const id = nanoid();
 
-            interpreter.edges[id] = new Edge(
-              id,
-              fromId as string,
-              toId as string,
-              1,
-              false
-            );
+            console.log(id, from, to, weight);
+            interpreter.edges[id] = new Edge(id, from, to, weight, false);
           }
         })(),
       ],
@@ -69,7 +113,7 @@ export class Interpreter implements ExprVisitor<unknown>, StmtVisitor<void> {
   private edges: Record<string, Edge> = {};
   private vertices: Record<string, Vertex> = {};
 
-  constructor(private readonly stmts: Stmt[]) {}
+  constructor(private readonly stmts: Statement[]) {}
 
   forge(): Graph {
     for (const stmt of this.stmts) {
@@ -86,43 +130,48 @@ export class Interpreter implements ExprVisitor<unknown>, StmtVisitor<void> {
     this.evaluate(stmt.expression);
   }
 
-  visitLiteralExpr(expr: Literal): unknown {
-    return expr.value;
-  }
-
   visitCallExpr(expr: Call): unknown {
     const calle = this.evaluate(expr.calle);
 
     if (!(calle instanceof Callable)) {
-      throw new RuntimeError(expr.paren, "Only functions can be called.");
+      throw new ExecError(expr.paren, "Only functions can be called.");
     }
 
-    const args: unknown[] = [];
+    const args: CallableArg[] = [];
+
     for (const arg of expr.args) {
-      args.push(this.evaluate(arg));
+      args.push({
+        token: arg.token,
+        value: this.evaluate(arg),
+      });
     }
 
+    // TODO: We could list missing arguments in the error message.
     if (args.length !== calle.arity) {
-      throw new RuntimeError(
+      throw new ExecError(
         expr.paren,
         `Expected ${calle.arity} arguments but got ${args.length}.`
       );
     }
 
-    // TODO: Check argument types?
+    calle.validateArgsType(args);
 
     return calle.call(this, args);
   }
 
-  visitVertexReference(expr: VertexReference): string {
-    return expr.name.lexeme;
+  visitLiteralExpr(expr: Literal): unknown {
+    return expr.value;
   }
 
   visitVariableExpr(expr: Variable): unknown {
-    return this.environment.get(expr.name);
+    return this.environment.get(expr.token);
   }
 
-  private execute(stmt: Stmt) {
+  visitVertexReferenceExpr(expr: VertexReference): string {
+    return expr.token.lexeme;
+  }
+
+  private execute(stmt: Statement) {
     stmt.accept(this);
   }
 

@@ -1,9 +1,13 @@
 import { Token } from "./token";
 import { TokenType } from "./types/token";
 
-class LexError extends Error {
-  constructor(public readonly line: number, message: string) {
-    super(`[line ${line}] Error: ${message}`);
+class LexerError extends Error {
+  constructor(
+    public readonly line: number,
+    public readonly c: string,
+    message: string
+  ) {
+    super(`[line ${line}] Error at '${c}': ${message}`);
   }
 }
 
@@ -21,7 +25,17 @@ export class Lexer {
       this.scanToken();
     }
 
-    this.tokens.push(new Token("EOF", "", this.line, undefined));
+    this.tokens.push(
+      new Token(
+        "EOF",
+        "",
+        this.line,
+        // TODO: Idk if this offset is correct
+        this.source.length,
+        this.source.length,
+        undefined
+      )
+    );
     return this.tokens;
   }
 
@@ -57,7 +71,7 @@ export class Lexer {
         } else if (this.isAlpha(c)) {
           this.identifier();
         } else {
-          throw new LexError(this.line, "Unexpected token.");
+          throw new LexerError(this.line, c, "Unexpected character.");
         }
         break;
     }
@@ -106,6 +120,9 @@ export class Lexer {
 
   private addToken(type: TokenType, literal?: unknown): void {
     const lexeme = this.source.substring(this.start, this.current);
-    this.tokens.push(new Token(type, lexeme, this.line, literal));
+
+    this.tokens.push(
+      new Token(type, lexeme, this.line, this.start, this.current, literal)
+    );
   }
 }

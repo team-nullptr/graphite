@@ -1,5 +1,5 @@
-import { Graph } from "../engine/runner/graph";
-import { Instruction } from "../engine/runner/instruction";
+import { Graph } from "../core/simulator/graph";
+import { Instruction } from "../core/simulator/instruction";
 
 export type Algorithm = {
   name: string;

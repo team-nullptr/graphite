@@ -1,13 +1,20 @@
 import { Token } from "./token";
 import { TokenType } from "./types/token";
-import { Expr, Literal, Call, Variable, VertexReference } from "./expr";
-import { Expression, Stmt } from "./stmt";
+import {
+  Expr,
+  Literal,
+  Call,
+  Variable,
+  VertexReference,
+  ArgumentExpr,
+} from "./expr";
+import { Expression, Statement } from "./stmt";
 
 export class ParseError extends Error {
   constructor(token: Token, message: string) {
     super(
-      `[line ${token.line}] Error ${
-        token.type === "EOF" ? "at end" : `at '${token.lexeme}'`
+      `[line ${token.line}] Error at ${
+        token.type === "EOF" ? "end" : `'${token.lexeme}'`
       }: ${message}`
     );
   }
@@ -18,8 +25,8 @@ export class Parser {
 
   constructor(private readonly tokens: Token[]) {}
 
-  parse(): Stmt[] {
-    const stmts: Stmt[] = [];
+  parse(): Statement[] {
+    const stmts: Statement[] = [];
 
     while (!this.isAtEnd()) {
       stmts.push(this.stmt());
@@ -28,7 +35,7 @@ export class Parser {
     return stmts;
   }
 
-  private stmt(): Stmt {
+  private stmt(): Statement {
     return new Expression(this.call());
   }
 
@@ -45,12 +52,16 @@ export class Parser {
   }
 
   private finishCall(calle: Expr): Expr {
-    const args: Expr[] = [];
+    const args: ArgumentExpr[] = [];
 
     if (!this.check("RIGHT_PAREN")) {
       do {
+        // TODO: Do we really need this chek?
         if (args.length >= 255) {
-          throw new Error("Can't have more than 255 arguments.");
+          throw new ParseError(
+            this.peek(),
+            "Cannot have more than 255 arguments."
+          );
         }
 
         args.push(this.argument());
@@ -59,22 +70,22 @@ export class Parser {
 
     const paren: Token = this.consume(
       "RIGHT_PAREN",
-      "Expected ')' after function arguments"
+      "Expected ')' after function arguments."
     );
 
     return new Call(calle, paren, args);
   }
 
-  private argument(): Expr {
+  private argument(): ArgumentExpr {
     if (this.match("NUMBER")) {
-      return new Literal(this.previous().literal);
+      return new Literal(this.previous(), this.previous().literal);
     }
 
     if (this.match("IDENTIFIER")) {
       return new VertexReference(this.previous());
     }
 
-    throw new Error("Expected expression");
+    throw new ParseError(this.peek(), "Expected next function argument.");
   }
 
   private match(...types: TokenType[]): boolean {
