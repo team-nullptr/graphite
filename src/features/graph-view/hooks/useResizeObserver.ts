@@ -1,6 +1,6 @@
 import { RefObject, useEffect, useState } from "react";
 
-export const useResizeObserver = (ref: RefObject<Element>) => {
+export const useResizeObserver = (ref: RefObject<HTMLElement>) => {
   const [rect, setRect] = useState<DOMRect>();
 
   useEffect(() => {
