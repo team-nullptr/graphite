@@ -79,6 +79,8 @@ export class Interpreter implements ExprVisitor<Obj>, StmtVisitor<void> {
             const weight = expectNumberArg(args[2]);
 
             interpreter.edges[id] = new Edge(id, from, to, weight, false);
+            interpreter.vertices[from].outs.push(id);
+            interpreter.vertices[to].ins.push(id);
           }
         })(),
       ],
