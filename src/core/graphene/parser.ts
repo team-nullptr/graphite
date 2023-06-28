@@ -2,11 +2,11 @@ import { Token } from "./token";
 import { TokenType } from "./types/token";
 import {
   Expr,
-  Literal,
   Call,
   Variable,
-  VertexReference,
-  ArgumentExpr,
+  Literal,
+  NumberLiteral,
+  VertexLiteral,
 } from "./expr";
 import { Expression, Statement } from "./stmt";
 
@@ -52,7 +52,7 @@ export class Parser {
   }
 
   private finishCall(calle: Expr): Expr {
-    const args: ArgumentExpr[] = [];
+    const args: Literal[] = [];
 
     if (!this.check("RIGHT_PAREN")) {
       do {
@@ -76,13 +76,16 @@ export class Parser {
     return new Call(calle, paren, args);
   }
 
-  private argument(): ArgumentExpr {
+  private argument(): Literal {
     if (this.match("NUMBER")) {
-      return new Literal(this.previous(), this.previous().literal);
+      return new NumberLiteral(
+        this.previous(),
+        this.previous().literal as number
+      );
     }
 
     if (this.match("IDENTIFIER")) {
-      return new VertexReference(this.previous());
+      return new VertexLiteral(this.previous(), this.previous().lexeme);
     }
 
     throw new ParseError(this.peek(), "Expected next function argument.");

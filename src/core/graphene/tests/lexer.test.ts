@@ -3,10 +3,11 @@ import { Lexer } from "../lexer";
 import { Token } from "../token";
 
 test("Lexer correctly scans all tokens", () => {
+  // arrange
   const source = `vertex(  A)
 edge(A, B, 2)`;
 
-  const expectedTokens: Token[] = [
+  const want: Token[] = [
     new Token("IDENTIFIER", "vertex", 1, 0, 6),
     new Token("LEFT_PAREN", "(", 1, 6, 7),
     new Token("IDENTIFIER", "A", 1, 9, 10),
@@ -24,8 +25,9 @@ edge(A, B, 2)`;
     new Token("EOF", "", 2, 25, 25),
   ];
 
-  const lexer = new Lexer(source);
-  const receivedTokens = lexer.lex();
+  // act
+  const got = new Lexer(source).lex();
 
-  expect(receivedTokens).toEqual(expectedTokens);
+  // assert
+  expect(got).toEqual(want);
 });

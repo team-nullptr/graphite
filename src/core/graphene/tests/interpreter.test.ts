@@ -1,14 +1,23 @@
 import { expect, test } from "vitest";
 import { Interpreter } from "../interpreter";
+import { Lexer } from "../lexer";
+import { Parser } from "../parser";
+import { Vertex } from "../../simulator/graph";
 
 test("Vertices are added correctly", () => {
-  const expectedVertices = ["A", "B", "C", "D"];
-  const source = expectedVertices
-    .map((vertex) => `vertex(${vertex})`)
-    .join("\n");
+  // arrange
+  const want = ["A", "B", "C", "D"];
+  const source = want.map((vertex) => `vertex(${vertex}, 1)`).join("\n");
 
-  const interpreter = new Interpreter(source);
-  const receivedVertices = interpreter.forge();
+  const tokens = new Lexer(source).lex();
+  const stmts = new Parser(tokens).parse();
+  const interpreter = new Interpreter(stmts);
 
-  expect(receivedVertices).toEqual(expectedVertices);
+  // act
+  const got = interpreter.forge();
+
+  // assert
+  expect(Object.values(got.vertices)).toEqual(
+    want.map((id) => new Vertex(id, 1))
+  );
 });
