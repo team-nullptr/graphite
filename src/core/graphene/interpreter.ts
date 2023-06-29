@@ -1,17 +1,17 @@
 import { nanoid } from "nanoid";
 import { Edge, Graph, Vertex } from "../simulator/graph";
-import { Callable, CallableArg } from "./callable";
+import { Callable } from "./callable";
 import {
-  Call,
   Expr,
   Visitor as ExprVisitor,
   NumberLiteral,
   Variable,
   VertexLiteral,
 } from "./expr";
-import { Expression, Statement, Visitor as StmtVisitor } from "./stmt";
+import { Call } from "./stmt";
+import { Statement, Visitor as StmtVisitor } from "./stmt";
 import { Token } from "./token";
-import { Obj } from "./object";
+import { Obj, assertNumber, assertVertex } from "./object";
 
 class ExecError extends Error {
   constructor(public readonly token: Token, message: string) {
@@ -32,24 +32,6 @@ class Environment {
   }
 }
 
-// TODO: Move this somewhere
-const expectVertexArg = (arg: CallableArg): string => {
-  if (arg.obj.type !== "VERTEX") {
-    throw new ExecError(arg.token, "Expected a vertex id.");
-  }
-
-  return arg.obj.value;
-};
-
-// TODO: Move this somewhere
-const expectNumberArg = (arg: CallableArg): number => {
-  if (arg.obj.type !== "NUMBER") {
-    throw new ExecError(arg.token, "Expected a number.");
-  }
-
-  return arg.obj.value;
-};
-
 export class Interpreter implements ExprVisitor<Obj>, StmtVisitor<void> {
   // TODO: Is there any way to create those global functions outside of this class?
   private environment = new Environment(
@@ -59,9 +41,9 @@ export class Interpreter implements ExprVisitor<Obj>, StmtVisitor<void> {
         new (class extends Callable {
           arity = 2;
 
-          call(interpreter: Interpreter, args: CallableArg[]): void {
-            const id = expectVertexArg(args[0]);
-            const value = expectNumberArg(args[1]);
+          call(interpreter: Interpreter, args: Obj[]): void {
+            const id = assertVertex(args[0]);
+            const value = assertNumber(args[1]);
 
             interpreter.vertices[id] = new Vertex(id, value);
           }
@@ -72,11 +54,11 @@ export class Interpreter implements ExprVisitor<Obj>, StmtVisitor<void> {
         new (class extends Callable {
           arity = 3;
 
-          call(interpreter: Interpreter, args: CallableArg[]): void {
+          call(interpreter: Interpreter, args: Obj[]): void {
             const id = nanoid();
-            const from = expectVertexArg(args[0]);
-            const to = expectVertexArg(args[1]);
-            const weight = expectNumberArg(args[2]);
+            const from = assertVertex(args[0]);
+            const to = assertVertex(args[1]);
+            const weight = assertNumber(args[2]);
 
             interpreter.edges[id] = new Edge(id, from, to, weight, false);
             interpreter.vertices[from].outs.push(id);
@@ -103,24 +85,16 @@ export class Interpreter implements ExprVisitor<Obj>, StmtVisitor<void> {
     };
   }
 
-  visitExpressionStmt(stmt: Expression): void {
-    this.evaluate(stmt.expression);
-  }
-
-  visitCallExpr(expr: Call): Obj {
+  visitCallStmt(expr: Call): void {
     const calle = this.evaluate(expr.calle);
 
     if (!(calle instanceof Callable)) {
       throw new ExecError(expr.paren, "Only functions can be called.");
     }
 
-    const args: CallableArg[] = [];
-
+    const args: Obj[] = [];
     for (const arg of expr.args) {
-      args.push({
-        token: arg.token,
-        obj: this.evaluate(arg),
-      });
+      args.push(this.evaluate(arg));
     }
 
     // TODO: We could list missing arguments in the error message.
@@ -132,9 +106,6 @@ export class Interpreter implements ExprVisitor<Obj>, StmtVisitor<void> {
     }
 
     calle.call(this, args);
-
-    // TODO: Make call a statement.
-    return { type: "VOID" };
   }
 
   visitVertexLiteral(expr: VertexLiteral): Obj {

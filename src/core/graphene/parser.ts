@@ -1,14 +1,8 @@
 import { Token } from "./token";
 import { TokenType } from "./types/token";
-import {
-  Expr,
-  Call,
-  Variable,
-  Literal,
-  NumberLiteral,
-  VertexLiteral,
-} from "./expr";
-import { Expression, Statement } from "./stmt";
+import { Expr, Variable, Literal, NumberLiteral, VertexLiteral } from "./expr";
+import { Call } from "./stmt";
+import { Statement } from "./stmt";
 
 export class ParseError extends Error {
   constructor(token: Token, message: string) {
@@ -29,29 +23,19 @@ export class Parser {
     const stmts: Statement[] = [];
 
     while (!this.isAtEnd()) {
-      stmts.push(this.stmt());
+      stmts.push(this.callStmt());
     }
 
     return stmts;
   }
 
-  private stmt(): Statement {
-    return new Expression(this.call());
-  }
-
-  private call(): Expr {
-    let expr: Expr = new Variable(
+  private callStmt(): Call {
+    const calle: Expr = new Variable(
       this.consume("IDENTIFIER", "Expected an identifier.")
     );
 
-    if (this.match("LEFT_PAREN")) {
-      expr = this.finishCall(expr);
-    }
+    this.consume("LEFT_PAREN", "Expected function call.");
 
-    return expr;
-  }
-
-  private finishCall(calle: Expr): Expr {
     const args: Literal[] = [];
 
     if (!this.check("RIGHT_PAREN")) {
