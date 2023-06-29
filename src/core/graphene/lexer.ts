@@ -1,5 +1,4 @@
-import { Token } from "./token";
-import { TokenType } from "./types/token";
+import { Token, TokenType } from "./token";
 
 class LexerError extends Error {
   constructor(
@@ -61,6 +60,7 @@ export class Lexer {
         break;
 
       case "\n":
+        this.addToken("LINE");
         this.line++;
         break;
 

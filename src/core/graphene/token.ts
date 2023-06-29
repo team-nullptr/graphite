@@ -1,4 +1,11 @@
-import { TokenType } from "./types/token";
+export type TokenType =
+  | "LEFT_PAREN"
+  | "RIGHT_PAREN"
+  | "COMMA"
+  | "IDENTIFIER"
+  | "NUMBER"
+  | "LINE"
+  | "EOF";
 
 export class Token {
   constructor(

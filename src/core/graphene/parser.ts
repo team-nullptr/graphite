@@ -1,5 +1,4 @@
-import { Token } from "./token";
-import { TokenType } from "./types/token";
+import { Token, TokenType } from "./token";
 import { Expr, Variable, Literal, NumberLiteral, VertexLiteral } from "./expr";
 import { Call } from "./stmt";
 import { Statement } from "./stmt";
@@ -22,8 +21,14 @@ export class Parser {
   parse(): Statement[] {
     const stmts: Statement[] = [];
 
+    this.ignoreNewLines();
+
     while (!this.isAtEnd()) {
       stmts.push(this.callStmt());
+
+      if (this.peek().type !== "EOF") {
+        this.consumeNewLine("Expected newline after statement.");
+      }
     }
 
     return stmts;
@@ -34,22 +39,12 @@ export class Parser {
       this.consume("IDENTIFIER", "Expected an identifier.")
     );
 
-    this.consume("LEFT_PAREN", "Expected function call.");
+    this.consume("LEFT_PAREN", "Expected a function call.");
 
-    const args: Literal[] = [];
+    let args: Literal[] = [];
 
     if (!this.check("RIGHT_PAREN")) {
-      do {
-        // TODO: Do we really need this chek?
-        if (args.length >= 255) {
-          throw new ParseError(
-            this.peek(),
-            "Cannot have more than 255 arguments."
-          );
-        }
-
-        args.push(this.argument());
-      } while (this.match("COMMA"));
+      args = this.finishArgumentList();
     }
 
     const paren: Token = this.consume(
@@ -58,6 +53,26 @@ export class Parser {
     );
 
     return new Call(calle, paren, args);
+  }
+
+  private finishArgumentList(): Literal[] {
+    const args: Literal[] = [];
+
+    do {
+      // TODO: Do we really need this chek?
+      if (args.length >= 255) {
+        throw new ParseError(
+          this.peek(),
+          "Cannot have more than 255 arguments."
+        );
+      }
+
+      this.ignoreNewLines();
+      args.push(this.argument());
+    } while (this.match("COMMA"));
+
+    this.ignoreNewLines();
+    return args;
   }
 
   private argument(): Literal {
@@ -73,6 +88,10 @@ export class Parser {
     }
 
     throw new ParseError(this.peek(), "Expected next function argument.");
+  }
+
+  private ignoreNewLines() {
+    while (this.match("LINE"));
   }
 
   private match(...types: TokenType[]): boolean {
@@ -92,6 +111,11 @@ export class Parser {
     }
 
     throw new ParseError(this.peek(), error);
+  }
+
+  private consumeNewLine(error: string) {
+    this.consume("LINE", error);
+    this.ignoreNewLines();
   }
 
   private check(type: TokenType): boolean {

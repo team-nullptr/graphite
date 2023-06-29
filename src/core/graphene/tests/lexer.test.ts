@@ -12,6 +12,14 @@ edge(A, B, 2)`;
     new Token("LEFT_PAREN", "(", 1, 6, 7),
     new Token("IDENTIFIER", "A", 1, 9, 10),
     new Token("RIGHT_PAREN", ")", 1, 10, 11),
+    new Token(
+      "LINE",
+      `
+`,
+      1,
+      11,
+      12
+    ),
 
     new Token("IDENTIFIER", "edge", 2, 12, 16),
     new Token("LEFT_PAREN", "(", 2, 16, 17),

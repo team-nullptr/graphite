@@ -1,8 +1,8 @@
 import { expect, test } from "vitest";
 import { Lexer } from "../lexer";
 import { Parser } from "../parser";
-import { Expression } from "../stmt";
-import { Call, Variable, VertexLiteral, NumberLiteral } from "../expr";
+import { Call } from "../stmt";
+import { Variable, VertexLiteral, NumberLiteral } from "../expr";
 import { Token } from "../token";
 
 test("Parser parses Graphene syntax correctly", () => {
@@ -11,15 +11,13 @@ test("Parser parses Graphene syntax correctly", () => {
   const tokens = new Lexer(source).lex();
 
   const want = [
-    new Expression(
-      new Call(
-        new Variable(new Token("IDENTIFIER", "vertex", 1, 0, 6)),
-        new Token("RIGHT_PAREN", ")", 1, 11, 12),
-        [
-          new VertexLiteral(new Token("IDENTIFIER", "A", 1, 7, 8), "A"),
-          new NumberLiteral(new Token("NUMBER", "4", 1, 10, 11, 4), 4),
-        ]
-      )
+    new Call(
+      new Variable(new Token("IDENTIFIER", "vertex", 1, 0, 6)),
+      new Token("RIGHT_PAREN", ")", 1, 11, 12),
+      [
+        new VertexLiteral(new Token("IDENTIFIER", "A", 1, 7, 8), "A"),
+        new NumberLiteral(new Token("NUMBER", "4", 1, 10, 11, 4), 4),
+      ]
     ),
   ];
 
