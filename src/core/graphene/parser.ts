@@ -27,7 +27,8 @@ export class Parser {
       stmts.push(this.callStmt());
 
       if (this.peek().type !== "EOF") {
-        this.consumeNewLine("Expected newline after statement.");
+        this.consume("LINE", "Expected a newline after a statement.");
+        this.ignoreNewLines();
       }
     }
 
@@ -111,11 +112,6 @@ export class Parser {
     }
 
     throw new ParseError(this.peek(), error);
-  }
-
-  private consumeNewLine(error: string) {
-    this.consume("LINE", error);
-    this.ignoreNewLines();
   }
 
   private check(type: TokenType): boolean {

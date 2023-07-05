@@ -39,11 +39,11 @@ export class Interpreter implements ExprVisitor<Obj>, StmtVisitor<void> {
       [
         "vertex",
         new (class extends Callable {
-          arity = 2;
+          arity = { min: 1, max: 2 };
 
           call(interpreter: Interpreter, args: Obj[]): void {
             const id = assertVertex(args[0]);
-            const value = assertNumber(args[1]);
+            const value = args[1] ? assertNumber(args[1]) : 1;
 
             interpreter.vertices[id] = new Vertex(id, value);
           }
@@ -52,15 +52,32 @@ export class Interpreter implements ExprVisitor<Obj>, StmtVisitor<void> {
       [
         "edge",
         new (class extends Callable {
-          arity = 3;
+          arity = { min: 2, max: 3 };
 
           call(interpreter: Interpreter, args: Obj[]): void {
             const id = nanoid();
             const from = assertVertex(args[0]);
             const to = assertVertex(args[1]);
-            const weight = assertNumber(args[2]);
+            const weight = args[2] ? assertNumber(args[2]) : 1;
 
             interpreter.edges[id] = new Edge(id, from, to, weight, false);
+            interpreter.vertices[from].outs.push(id);
+            interpreter.vertices[to].ins.push(id);
+          }
+        })(),
+      ],
+      [
+        "arc",
+        new (class extends Callable {
+          arity = { min: 2, max: 3 };
+
+          call(interpreter: Interpreter, args: Obj[]): void {
+            const id = nanoid();
+            const from = assertVertex(args[0]);
+            const to = assertVertex(args[1]);
+            const weight = args[2] ? assertNumber(args[1]) : 1;
+
+            interpreter.edges[id] = new Edge(id, from, to, weight, true);
             interpreter.vertices[from].outs.push(id);
             interpreter.vertices[to].ins.push(id);
           }
@@ -98,10 +115,10 @@ export class Interpreter implements ExprVisitor<Obj>, StmtVisitor<void> {
     }
 
     // TODO: We could list missing arguments in the error message.
-    if (args.length !== calle.arity) {
+    if (args.length < calle.arity.min || args.length > calle.arity.max) {
       throw new ExecError(
         expr.paren,
-        `Expected ${calle.arity} arguments but got ${args.length}.`
+        `Expected between ${calle.arity.min}-${calle.arity.max} arguments but got ${args.length}.`
       );
     }
 
