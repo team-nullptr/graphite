@@ -16,7 +16,7 @@ export const useZoom = (
     (event: WheelEvent, container: SVGSVGElement) => {
       event.preventDefault();
 
-      const scaleFactor = getScaleFactor(-event.deltaY);
+      const scaleFactor = getScaleFactor(event.deltaY);
 
       const { clientX, clientY } = event;
       const pointInSvgSpace = getPointInSvgSpace(clientX, clientY, container);
@@ -24,20 +24,12 @@ export const useZoom = (
       setViewport((viewport) => {
         const [x, y, w, h] = viewport;
 
-        // TODO: It literally needs a lot of prettier-ignore. What the hell is this formatting?
-
-        const [scaledViewportX, scaledViewportWidth] = scaleAxis(
-          x,
-          x + w,
-          pointInSvgSpace.x,
-          scaleFactor
-        );
-        const [scaledViewportY, scaledViewportHeight] = scaleAxis(
-          y,
-          y + h,
-          pointInSvgSpace.y,
-          scaleFactor
-        );
+        // prettier-ignore
+        const [scaledViewportX, scaledViewportWidth] =
+          scaleAxis(x, x + w, pointInSvgSpace.x, scaleFactor);
+        // prettier-ignore
+        const [scaledViewportY, scaledViewportHeight] =
+          scaleAxis(y, y + h, pointInSvgSpace.y, scaleFactor);
 
         return [
           scaledViewportX,

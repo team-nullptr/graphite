@@ -1,33 +1,63 @@
-import { useMemo } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { Highlights } from "../../engine/runner/instruction";
+import { useEditorStore } from "../editor/context/editor";
 import { Edge } from "./components/Edge";
 import { Vertex } from "./components/Vertex";
-import { distributeEdges, groupEdges, sortEdges } from "./util/distributeEdges";
-import { useEditorStore } from "../editor/context/editor";
-import { Highlights } from "../../engine/runner/instruction";
 import { useGraphLayout } from "./hooks/useGraphLayout";
+import { usePan } from "./hooks/usePan";
+import { useResizeObserver } from "./hooks/useResizeObserver";
+import { useZoom } from "./hooks/useZoom";
+import { distributeEdges, groupEdges, sortEdges } from "./util/distributeEdges";
 
-export type GraphViewProps = {
+export interface GraphViewProps {
   highlights?: Highlights;
-};
+  className: string;
+}
 
-export const GraphView = ({ highlights }: GraphViewProps) => {
+type Viewport = [x: number, y: number, width: number, height: number];
+
+export const GraphView = (props: GraphViewProps) => {
+  const svgRef = useRef<SVGSVGElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const containerRect = useResizeObserver(containerRef);
+
+  const [viewport, setViewport] = useState<Viewport>([0, 0, 0, 0]);
+
   const graph = useEditorStore((state) => state.graph);
-  const { arrangement, svgRef, vertexMouseDownHandler } = useGraphLayout(graph);
+  const { arrangement, vertexMouseDownHandler, areControlsEnabled } =
+    useGraphLayout(graph, svgRef);
+
+  useEffect(() => {
+    if (!containerRect) return;
+
+    const { width, height } = containerRect;
+    setViewport([0, 0, width, height]);
+  }, [containerRect]);
+
+  const containerDimen = [
+    containerRect?.width ?? 0,
+    containerRect?.height ?? 0,
+  ] satisfies [number, number];
+
+  usePan(svgRef, containerDimen, setViewport, areControlsEnabled);
+  useZoom(svgRef, setViewport);
 
   const positionedEdges = useMemo(
     () =>
-      groupEdges(Object.values(graph.edges)).map((connection) => {
-        const [vertex, edges] = connection;
-        const sortedEdges = sortEdges(edges, vertex);
-        return distributeEdges(sortedEdges, vertex);
-      }),
+      groupEdges(Object.values(graph.edges))
+        .map((connection) => {
+          const [vertex, edges] = connection;
+          const sortedEdges = sortEdges(edges, vertex);
+          return distributeEdges(sortedEdges, vertex);
+        })
+        .flat(),
     [graph]
   );
 
   const vertices = useMemo(() => {
     return Object.entries(arrangement).map(([id, pos]) => {
       const { x, y } = pos;
-      const hue = highlights?.get(id);
+      const hue = props.highlights?.get(id);
 
       return (
         <Vertex
@@ -36,18 +66,18 @@ export const GraphView = ({ highlights }: GraphViewProps) => {
           cx={x}
           cy={y}
           value={id}
-          onMouseDown={(offset) => vertexMouseDownHandler(id, offset)}
+          onMouseDown={(event) => vertexMouseDownHandler(id, event)}
         />
       );
     });
-  }, [arrangement, highlights, vertexMouseDownHandler]);
+  }, [arrangement, props.highlights, vertexMouseDownHandler]);
 
   const edges = useMemo(
     () =>
-      positionedEdges.flat().map((positionedEdge) => {
+      positionedEdges.map((positionedEdge) => {
         const [edge, position] = positionedEdge;
-        const { x, y } = arrangement[edge.from];
-        const { x: dx, y: dy } = arrangement[edge.to];
+        const { x, y } = arrangement[edge.from] ?? { x: 0, y: 0 };
+        const { x: dx, y: dy } = arrangement[edge.to] ?? { x: 0, y: 0 };
         const circular = edge.from === edge.to;
 
         return (
@@ -67,12 +97,17 @@ export const GraphView = ({ highlights }: GraphViewProps) => {
   );
 
   return (
-    <svg
-      ref={svgRef}
-      className="h-full w-full bg-base-200 dark:bg-base-300-dark"
-    >
-      {edges}
-      {vertices}
-    </svg>
+    <>
+      <div ref={containerRef} className={props.className + " overflow-hidden"}>
+        <svg
+          ref={svgRef}
+          className="h-full w-full"
+          viewBox={viewport.join(" ")}
+        >
+          {edges}
+          {vertices}
+        </svg>
+      </div>
+    </>
   );
 };
