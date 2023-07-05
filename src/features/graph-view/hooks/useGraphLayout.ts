@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { RefObject, useEffect, useRef, useState } from "react";
 import { Graph } from "../../../engine/runner/graph";
 import { Vec2 } from "../types/vec2";
 import { Arrangement } from "../types/arrangement";
@@ -23,13 +23,17 @@ const getPointerPosition = (event: MouseEvent): Vec2 => {
   return new Vec2([x, y]);
 };
 
-export const useGraphLayout = (graph: Graph) => {
-  const svgRef = useRef<SVGSVGElement>(null);
+export const useGraphLayout = (
+  graph: Graph,
+  svgRef: RefObject<SVGSVGElement>
+) => {
+  const areControlsEnabled = useRef<boolean>(false);
   const selectedVertexRef = useRef<SelectedVertex>();
   const [arrangement, setArrangment] = useState<Arrangement>(preArrange(graph));
 
   const vertexMouseDownHandler = (id: string, offset: Vec2) => {
     selectedVertexRef.current = { id, offset };
+    areControlsEnabled.current = false;
   };
 
   useForceSimulation(graph, selectedVertexRef, setArrangment);
@@ -42,6 +46,7 @@ export const useGraphLayout = (graph: Graph) => {
   useEffect(() => {
     const mouseUpHandler = () => {
       selectedVertexRef.current = undefined;
+      areControlsEnabled.current = true;
     };
 
     const mouseMoveHandler = (event: MouseEvent) => {
@@ -77,5 +82,6 @@ export const useGraphLayout = (graph: Graph) => {
     vertexMouseDownHandler,
     svgRef,
     selectedVertexRef,
+    areControlsEnabled,
   };
 };

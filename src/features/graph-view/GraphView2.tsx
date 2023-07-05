@@ -2,8 +2,16 @@ import { useEffect, useRef, useState } from "react";
 import { useResizeObserver } from "./hooks/useResizeObserver";
 import { useZoom } from "./hooks/useZoom";
 import { usePan } from "./hooks/usePan";
+import { useMemo } from "react";
+import { Edge } from "./components/Edge";
+import { Vertex } from "./components/Vertex";
+import { distributeEdges, groupEdges, sortEdges } from "./util/distributeEdges";
+import { useEditorStore } from "../editor/context/editor";
+import { Highlights } from "../../engine/runner/instruction";
+import { useGraphLayout } from "./hooks/useGraphLayout";
 
 export interface GraphViewProps {
+  highlights?: Highlights;
   className: string;
 }
 
@@ -16,6 +24,10 @@ export const GraphView = (props: GraphViewProps) => {
 
   const [viewport, setViewport] = useState<Viewport>([0, 0, 0, 0]);
 
+  const graph = useEditorStore((state) => state.graph);
+  const { arrangement, vertexMouseDownHandler, areControlsEnabled } =
+    useGraphLayout(graph, svgRef);
+
   useEffect(() => {
     if (!containerRect) return;
 
@@ -23,15 +35,67 @@ export const GraphView = (props: GraphViewProps) => {
     setViewport([0, 0, width, height]);
   }, [containerRect]);
 
-  // TODO: This looks weird, maybe do something about it,
-  // like change what resize observer returns?
   const containerDimen = [
     containerRect?.width ?? 0,
     containerRect?.height ?? 0,
   ] satisfies [number, number];
 
-  usePan(svgRef, containerDimen, setViewport, { current: true });
+  usePan(svgRef, containerDimen, setViewport, areControlsEnabled);
   useZoom(svgRef, setViewport);
+
+  const positionedEdges = useMemo(
+    () =>
+      groupEdges(Object.values(graph.edges))
+        .map((connection) => {
+          const [vertex, edges] = connection;
+          const sortedEdges = sortEdges(edges, vertex);
+          return distributeEdges(sortedEdges, vertex);
+        })
+        .flat(),
+    [graph]
+  );
+
+  const vertices = useMemo(() => {
+    return Object.entries(arrangement).map(([id, pos]) => {
+      const { x, y } = pos;
+      const hue = props.highlights?.get(id);
+
+      return (
+        <Vertex
+          hue={hue}
+          key={id}
+          cx={x}
+          cy={y}
+          value={id}
+          onMouseDown={(offset) => vertexMouseDownHandler(id, offset)}
+        />
+      );
+    });
+  }, [arrangement, props.highlights, vertexMouseDownHandler]);
+
+  const edges = useMemo(
+    () =>
+      positionedEdges.map((positionedEdge) => {
+        const [edge, position] = positionedEdge;
+        const { x, y } = arrangement[edge.from] ?? { x: 0, y: 0 };
+        const { x: dx, y: dy } = arrangement[edge.to] ?? { x: 0, y: 0 };
+        const circular = edge.from === edge.to;
+
+        return (
+          <Edge
+            key={edge.id}
+            position={position}
+            x={x}
+            y={y}
+            dx={dx}
+            dy={dy}
+            directed={edge.directed}
+            circular={circular}
+          />
+        );
+      }),
+    [arrangement, positionedEdges]
+  );
 
   return (
     <>
@@ -41,11 +105,8 @@ export const GraphView = (props: GraphViewProps) => {
           className="h-full w-full"
           viewBox={viewport.join(" ")}
         >
-          <circle cx={50} cy={50} r={25} fill="blue" />
-          <rect x={95} y={50} width={40} height={20} fill="red" />
-          <circle cx={250} cy={150} r={25} fill="pink" />
-          <rect x={305} y={50} width={15} height={45} fill="gold" />
-          <rect x={505} y={50} width={40} height={75} fill="lime" />
+          {edges}
+          {vertices}
         </svg>
       </div>
     </>

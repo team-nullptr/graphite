@@ -1,4 +1,4 @@
-import { MouseEvent, useRef } from "react";
+import { useEffect, useRef } from "react";
 import { Vec2 } from "../types/vec2";
 
 export type VertexProps = {
@@ -25,6 +25,19 @@ export const Vertex = (props: VertexProps) => {
     props.onMouseDown?.(offset);
   };
 
+  useEffect(() => {
+    const vertexElement = ref.current;
+    if (!vertexElement) return;
+
+    // Registering mousedown event this way is crucial for the app to function properly.
+    // The addEventListener method allows for passing the options argument,
+    // which will force the event to be delivered in the earlier phase (capture phase)
+    vertexElement.addEventListener("mousedown", mouseDownHandler, true);
+    return () => {
+      vertexElement.removeEventListener("mousedown", mouseDownHandler);
+    };
+  }, []);
+
   const fillColor =
     props.hue !== undefined
       ? `hsl(${props.hue}, 80%, 80%)`
@@ -39,7 +52,7 @@ export const Vertex = (props: VertexProps) => {
     props.hue !== undefined ? `hsl(${props.hue}, 50%, 30%)` : "rgb(0, 0, 0)";
 
   return (
-    <g ref={ref} className="font-[JetBrains]" onMouseDown={mouseDownHandler}>
+    <g ref={ref} className="font-[JetBrains]">
       <circle
         className="stroke-1 transition-[fill,_stroke]"
         cx={props.cx}

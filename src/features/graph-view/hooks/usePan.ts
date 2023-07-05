@@ -30,7 +30,7 @@ export const usePan = (
   const previousMousePosition = useRef<Position>([0, 0]);
 
   const handleMouseDown = useCallback((event: MouseEvent) => {
-    if (!enabled) return;
+    if (!enabled.current) return;
     event.preventDefault();
 
     const { clientX, clientY } = event;
@@ -51,14 +51,13 @@ export const usePan = (
       previousMousePosition.current = currentMousePosition;
 
       setViewport((viewport) => {
-        const [x, y, w, h] = viewport;
+        const [x, y, viewportWidth, h] = viewport;
         const [dx, dy] = delta;
 
-        // TODO: This is too much logic here, refactor this
-        const scaledWidth = elementDimensions[0] || 1;
-        const scale = w / scaledWidth;
+        const elementWidth = elementDimensions[0] || 1;
+        const scale = viewportWidth / elementWidth;
 
-        return [x + dx * scale, y + dy * scale, w, h];
+        return [x + dx * scale, y + dy * scale, viewportWidth, h];
       });
     },
     [elementDimensions]
