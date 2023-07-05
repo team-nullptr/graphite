@@ -1,5 +1,5 @@
-import { Graph, Vertex } from "../engine/runner/graph";
-import { Instruction } from "../engine/runner/instruction";
+import { Graph, Vertex } from "../core/simulator/graph";
+import { Instruction } from "../core/simulator/instruction";
 import { Algorithm } from "../models/algorithm";
 
 // TODO: This probably can be implemented neater. We should review this code later and make some optimisations.

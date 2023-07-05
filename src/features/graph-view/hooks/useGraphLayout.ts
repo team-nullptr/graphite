@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Graph } from "../../../engine/runner/graph";
+import { Graph } from "../../../core/simulator/graph";
 import { Vec2 } from "../types/vec2";
 import { Arrangement } from "../types/arrangement";
 import { SelectedVertex } from "../types/selectedVertex";
@@ -12,16 +12,6 @@ const preArrange = (graph: Graph) =>
     arrangement[v.id] = new Vec2([100 + 100 * i, 100 + 100 * i]);
     return arrangement;
   }, {} as Arrangement);
-
-const getPointerPosition = (event: MouseEvent): Vec2 => {
-  const target = event.target as HTMLElement;
-  const boundingBox = target.getBoundingClientRect();
-
-  const x = event.clientX - boundingBox.left;
-  const y = event.clientY - boundingBox.top;
-
-  return new Vec2([x, y]);
-};
 
 export const useGraphLayout = (graph: Graph) => {
   const svgRef = useRef<SVGSVGElement>(null);

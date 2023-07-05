@@ -1,4 +1,4 @@
-import { Graph, Vertex } from "../../../engine/runner/graph";
+import { Graph, Vertex } from "../../../core/simulator/graph";
 import { Arrangement } from "../types/arrangement";
 import { Vec2 } from "../types/vec2";
 

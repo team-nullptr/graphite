@@ -1,10 +1,9 @@
 import { BugAntIcon } from "@heroicons/react/24/outline";
-import { ParseError } from "../../../engine/gdl/graphParser";
 import { Tab } from "../../../shared/Tab";
 import { ErrorDescription } from "./ErrorDescription";
 
 type DiagnosticsSummaryProps = {
-  errors: ParseError[];
+  errors: Error[];
 };
 
 export const DiagnosticsSummary = ({ errors }: DiagnosticsSummaryProps) => {
