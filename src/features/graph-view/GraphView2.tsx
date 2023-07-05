@@ -1,14 +1,13 @@
-import { useEffect, useRef, useState } from "react";
-import { useResizeObserver } from "./hooks/useResizeObserver";
-import { useZoom } from "./hooks/useZoom";
-import { usePan } from "./hooks/usePan";
-import { useMemo } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { Highlights } from "../../engine/runner/instruction";
+import { useEditorStore } from "../editor/context/editor";
 import { Edge } from "./components/Edge";
 import { Vertex } from "./components/Vertex";
-import { distributeEdges, groupEdges, sortEdges } from "./util/distributeEdges";
-import { useEditorStore } from "../editor/context/editor";
-import { Highlights } from "../../engine/runner/instruction";
 import { useGraphLayout } from "./hooks/useGraphLayout";
+import { usePan } from "./hooks/usePan";
+import { useResizeObserver } from "./hooks/useResizeObserver";
+import { useZoom } from "./hooks/useZoom";
+import { distributeEdges, groupEdges, sortEdges } from "./util/distributeEdges";
 
 export interface GraphViewProps {
   highlights?: Highlights;
@@ -67,7 +66,7 @@ export const GraphView = (props: GraphViewProps) => {
           cx={x}
           cy={y}
           value={id}
-          onMouseDown={(offset) => vertexMouseDownHandler(id, offset)}
+          onMouseDown={(event) => vertexMouseDownHandler(id, event)}
         />
       );
     });

@@ -1,33 +1,22 @@
 import { useEffect, useRef } from "react";
-import { Vec2 } from "../types/vec2";
 
 export type VertexProps = {
   cx: number;
   cy: number;
   value: string;
-  onMouseDown?: (offset: Vec2) => void;
+  onMouseDown?: (event: MouseEvent) => void;
   hue?: number;
 };
 
 export const Vertex = (props: VertexProps) => {
   const ref = useRef<SVGGElement>(null);
 
-  const mouseDownHandler = (event: MouseEvent) => {
-    const boundingBox = ref.current?.getBoundingClientRect();
-    if (!boundingBox) {
-      return;
-    }
-
-    const offsetX = event.pageX - boundingBox.left - 19;
-    const offsetY = event.pageY - boundingBox.top - 19;
-    const offset: Vec2 = new Vec2([offsetX, offsetY]);
-
-    props.onMouseDown?.(offset);
-  };
-
   useEffect(() => {
     const vertexElement = ref.current;
     if (!vertexElement) return;
+
+    const mouseDownHandler = props.onMouseDown;
+    if (!mouseDownHandler) return;
 
     // Registering mousedown event this way is crucial for the app to function properly.
     // The addEventListener method allows for passing the options argument,
@@ -36,7 +25,7 @@ export const Vertex = (props: VertexProps) => {
     return () => {
       vertexElement.removeEventListener("mousedown", mouseDownHandler);
     };
-  }, []);
+  }, [props.onMouseDown]);
 
   const fillColor =
     props.hue !== undefined

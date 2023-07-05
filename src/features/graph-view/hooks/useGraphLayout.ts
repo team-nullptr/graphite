@@ -1,8 +1,8 @@
 import { RefObject, useEffect, useRef, useState } from "react";
 import { Graph } from "../../../engine/runner/graph";
-import { Vec2 } from "../types/vec2";
 import { Arrangement } from "../types/arrangement";
 import { SelectedVertex } from "../types/selectedVertex";
+import { Vec2 } from "../types/vec2";
 import { useForceSimulation } from "./useForceSimulation";
 
 // TODO: Learn more about initial arrangement for force-directed graphs
@@ -13,16 +13,6 @@ const preArrange = (graph: Graph) =>
     return arrangement;
   }, {} as Arrangement);
 
-const getPointerPosition = (event: MouseEvent): Vec2 => {
-  const target = event.target as HTMLElement;
-  const boundingBox = target.getBoundingClientRect();
-
-  const x = event.clientX - boundingBox.left;
-  const y = event.clientY - boundingBox.top;
-
-  return new Vec2([x, y]);
-};
-
 export const useGraphLayout = (
   graph: Graph,
   svgRef: RefObject<SVGSVGElement>
@@ -31,7 +21,22 @@ export const useGraphLayout = (
   const selectedVertexRef = useRef<SelectedVertex>();
   const [arrangement, setArrangment] = useState<Arrangement>(preArrange(graph));
 
-  const vertexMouseDownHandler = (id: string, offset: Vec2) => {
+  const vertexMouseDownHandler = (id: string, event: MouseEvent) => {
+    const svg = svgRef.current;
+    if (!svg) return;
+
+    const mouseInSvgSpace = getPointInSvgSpace(
+      event.clientX,
+      event.clientY,
+      svg
+    );
+    const vertexPosition = arrangement[id];
+
+    const offset = new Vec2([
+      mouseInSvgSpace.x - vertexPosition.x,
+      mouseInSvgSpace.y - vertexPosition.y,
+    ]);
+
     selectedVertexRef.current = { id, offset };
     areControlsEnabled.current = false;
   };
@@ -50,21 +55,24 @@ export const useGraphLayout = (
     };
 
     const mouseMoveHandler = (event: MouseEvent) => {
-      if (!svgRef.current || !selectedVertexRef.current) {
-        return;
-      }
+      if (!selectedVertexRef.current) return;
+
+      const svg = svgRef.current;
+      if (!svg) return;
 
       const { id, offset } = selectedVertexRef.current;
-      const boundingBox = svgRef.current.getBoundingClientRect();
+      const position = getPointInSvgSpace(event.clientX, event.clientY, svg);
 
-      const finalPosition = new Vec2([
-        event.clientX - boundingBox.left - offset.x,
-        event.clientY - boundingBox.top - offset.y,
-      ]);
+      // FIXME: .subtract() method modifies the passed vector
+      // const scale = getSvgScale(svg);
+      const offsetCopy = new Vec2([offset.x, offset.y]);
+
+      const positionWithMouseOffset = new Vec2([position.x, position.y]);
+      positionWithMouseOffset.substract(offsetCopy);
 
       setArrangment((arrangement) => ({
         ...arrangement,
-        [id]: finalPosition,
+        [id]: positionWithMouseOffset,
       }));
     };
 
@@ -84,4 +92,14 @@ export const useGraphLayout = (
     selectedVertexRef,
     areControlsEnabled,
   };
+};
+
+const getPointInSvgSpace = (
+  x: number,
+  y: number,
+  svg: SVGSVGElement
+): DOMPoint => {
+  const point = new DOMPoint(x, y);
+  const svgViewportOffsetMatrix = svg.getScreenCTM()?.inverse();
+  return point.matrixTransform(svgViewportOffsetMatrix);
 };
