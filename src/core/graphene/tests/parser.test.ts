@@ -28,14 +28,18 @@ test("Parser parses Graphene syntax correctly", () => {
   expect(got).toStrictEqual(want);
 });
 
-test.each([`vertex(vertex())`, `34`, `vertex(,)`, `()`])(
-  "Report syntax error for '%s'",
-  (source) => {
-    // arrange
-    const tokens = new Lexer(source).lex();
-    const parser = new Parser(tokens);
+test.each([
+  `vertex(vertex())`,
+  `34`,
+  `vertex(,)`,
+  `()`,
+  `vertex(A)vertex(B)`,
+  `vertex(`,
+])("Report syntax error for '%s'", (source) => {
+  // arrange
+  const tokens = new Lexer(source).lex();
+  const parser = new Parser(tokens);
 
-    // assert
-    expect(() => parser.parse()).toThrowError();
-  }
-);
+  // assert
+  expect(() => parser.parse()).toThrowError();
+});

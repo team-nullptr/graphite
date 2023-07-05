@@ -21,3 +21,27 @@ test("Vertices are added correctly", () => {
     want.map((id) => new Vertex(id, 1))
   );
 });
+
+test("Edges are added correctly", () => {
+  // arrange
+  const source = `
+vertex(A)  
+vertex(B)
+
+edge(A, B)
+edge(A, B, 5)
+
+arc(A, B)
+arc(A, B, 5)
+`;
+
+  const tokens = new Lexer(source).lex();
+  const stmts = new Parser(tokens).parse();
+  const interpreter = new Interpreter(stmts);
+
+  // act
+  const got = interpreter.forge();
+
+  // assert
+  expect(Object.keys(got.edges)).toHaveLength(4);
+});

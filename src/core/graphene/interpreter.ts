@@ -75,7 +75,7 @@ export class Interpreter implements ExprVisitor<Obj>, StmtVisitor<void> {
             const id = nanoid();
             const from = assertVertex(args[0]);
             const to = assertVertex(args[1]);
-            const weight = args[2] ? assertNumber(args[1]) : 1;
+            const weight = args[2] ? assertNumber(args[2]) : 1;
 
             interpreter.edges[id] = new Edge(id, from, to, weight, true);
             interpreter.vertices[from].outs.push(id);
