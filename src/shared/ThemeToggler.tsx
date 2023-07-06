@@ -7,7 +7,7 @@ export const ThemeToggler = () => {
 
   return (
     <div
-      className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-lg border border-base-300 bg-base-200 text-text-base dark:border-base-200-dark dark:bg-base-300-dark dark:text-text-base-dark"
+      className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-lg  bg-base-200 text-text-base dark:bg-base-300-dark dark:text-text-base-dark"
       onClick={toggle}
     >
       {mode === "auto" && <SparklesIcon className="h-6 w-6" />}
