@@ -27,10 +27,10 @@ const StraightEdge = (props: EdgeProps) => {
   const position = props.position ?? 0;
   const angle = position * 0.25;
 
-  const start = new Vec2([vertexRadius, 0]).rotate(angle);
-  const end = new Vec2([length - vertexRadius, 0]).rotate(
+  const start = new Vec2(vertexRadius, 0).rotate(angle);
+  const end = new Vec2(length - vertexRadius, 0).rotate(
     -angle,
-    new Vec2([length, 0])
+    new Vec2(length, 0)
   );
 
   const mx = (start.x + end.x) / 2;
@@ -40,7 +40,7 @@ const StraightEdge = (props: EdgeProps) => {
   const deg = (rad * 180) / Math.PI;
 
   const transform = `translate(${props.x} ${props.y}) rotate(${deg})`;
-  const path = getLinePath(start, end, new Vec2([mx, my]));
+  const path = getLinePath(start, end, new Vec2(mx, my));
 
   const stroke =
     props.hue !== undefined
@@ -70,7 +70,7 @@ const CircularEdge = (props: EdgeProps) => {
   // Intersection of two rounds - the vertex and the edge
   const arrowX = vertexRadius - radius ** 2 / (2 * vertexRadius);
   const arrowY = Math.sqrt(vertexRadius ** 2 - arrowX ** 2);
-  const arrowPostion: Vec2 = new Vec2([arrowX, arrowY]);
+  const arrowPostion: Vec2 = new Vec2(arrowX, arrowY);
 
   // TODO: Replace 1.2 with actual calculations, to determine the right angle
   // This is due to how arrows are drawn (rotated)

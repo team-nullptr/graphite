@@ -1,12 +1,16 @@
-// TODO: Change methods so that they don't mutate the original vector.
 export class Vec2 {
-  x: number;
-  y: number;
+  constructor(public x: number, public y: number) {}
 
-  // TODO: Maybe we can just pass x and y arguments?
-  constructor(pos: [number, number] = [0, 0]) {
-    this.x = pos[0];
-    this.y = pos[1];
+  static add(a: Vec2, b: Vec2): Vec2 {
+    return new Vec2(a.x + b.x, a.y + b.y);
+  }
+
+  static substract(a: Vec2, b: Vec2): Vec2 {
+    return Vec2.add(a, Vec2.multiply(b, -1));
+  }
+
+  static multiply(vec: Vec2, n: number): Vec2 {
+    return new Vec2(vec.x * n, vec.y * n);
   }
 
   add(v: Vec2): Vec2 {
@@ -16,7 +20,7 @@ export class Vec2 {
   }
 
   substract(v: Vec2): Vec2 {
-    return this.add(v.multiply(-1));
+    return this.add(Vec2.multiply(v, -1));
   }
 
   multiply(n: number): Vec2 {
@@ -26,7 +30,7 @@ export class Vec2 {
   }
 
   vecTo(target: Vec2): Vec2 {
-    return new Vec2([target.x - this.x, target.y - this.y]);
+    return new Vec2(target.x - this.x, target.y - this.y);
   }
 
   distanceTo(v: Vec2): number {
@@ -37,14 +41,11 @@ export class Vec2 {
     return Math.sqrt(Math.pow(this.x, 2) + Math.pow(this.y, 2));
   }
 
-  rotate(angle: number, origin: Vec2 = new Vec2([0, 0])): Vec2 {
+  rotate(angle: number, origin: Vec2 = new Vec2(0, 0)): Vec2 {
     const { x: ox, y: oy } = origin;
-
     const x = (this.x - ox) * Math.cos(angle) - (this.y - oy) * Math.sin(angle);
     const y = (this.x - ox) * Math.sin(angle) + (this.y - oy) * Math.cos(angle);
 
-    this.x = x + ox;
-    this.y = y + oy;
-    return this;
+    return new Vec2(x + ox, y + oy);
   }
 }

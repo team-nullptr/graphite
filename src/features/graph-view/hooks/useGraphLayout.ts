@@ -8,11 +8,12 @@ import { useForceSimulation } from "./useForceSimulation";
 
 // TODO: Learn more about initial arrangement for force-directed graphs
 const preArrange = (graph: Graph) =>
-  Object.values(graph.vertices).reduce((arrangement, v, i) => {
-    arrangement[v.id] = new Vec2([
-      Math.random() * 100 + 100,
-      Math.random() * 100 + 100,
-    ]);
+  Object.values(graph.vertices).reduce((arrangement, v) => {
+    arrangement[v.id] = new Vec2(
+      Math.random() * 200 + 100,
+      Math.random() * 200 + 100
+    );
+
     return arrangement;
   }, {} as Arrangement);
 
@@ -35,10 +36,10 @@ export const useGraphLayout = (
     );
     const vertexPosition = arrangement[id];
 
-    const offset = new Vec2([
+    const offset = new Vec2(
       mouseInSvgSpace.x - vertexPosition.x,
-      mouseInSvgSpace.y - vertexPosition.y,
-    ]);
+      mouseInSvgSpace.y - vertexPosition.y
+    );
 
     selectedVertexRef.current = { id, offset };
     areControlsEnabled.current = false;
@@ -66,12 +67,10 @@ export const useGraphLayout = (
       const { id, offset } = selectedVertexRef.current;
       const position = getPointInSvgSpace(event.clientX, event.clientY, svg);
 
-      // FIXME: .subtract() method modifies the passed vector
       // const scale = getSvgScale(svg);
-      const offsetCopy = new Vec2([offset.x, offset.y]);
 
-      const positionWithMouseOffset = new Vec2([position.x, position.y]);
-      positionWithMouseOffset.substract(offsetCopy);
+      const positionWithMouseOffset = new Vec2(position.x, position.y);
+      positionWithMouseOffset.substract(offset);
 
       setArrangment((arrangement) => ({
         ...arrangement,

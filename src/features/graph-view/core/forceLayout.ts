@@ -28,7 +28,7 @@ const computeRepulsiveForce = (
   vertices: Vertex[],
   arrangement: Arrangement
 ): Vec2 => {
-  const totalForce = new Vec2([0, 0]);
+  const totalForce = new Vec2(0, 0);
 
   for (const currentVertex of vertices) {
     if (currentVertex.id === vertex.id) {
@@ -52,7 +52,7 @@ const computeAttractiveForce = (
   arrangement: Arrangement
 ): Vec2 => {
   const processedEdges = new Set<string>();
-  const totalForce = new Vec2([0, 0]);
+  const totalForce = new Vec2(0, 0);
   const adjacentEdges = [...vertex.ins, ...vertex.outs];
 
   for (const edgeId of adjacentEdges) {
@@ -91,7 +91,6 @@ const defaultComputeForcesOpts: Required<ComputeForcesOpts> = {
   ignore: new Set(),
 };
 
-// TODO: There is a bug when you paste graph definition into editor this crashes :()
 export const applyForces = (
   graph: Graph,
   oldArrangement: Arrangement,
@@ -109,16 +108,14 @@ export const applyForces = (
 
   for (const vertex of vertices) {
     if (ignore.has(vertex.id)) {
-      forces[vertex.id] = new Vec2([0, 0]);
+      forces[vertex.id] = new Vec2(0, 0);
       continue;
     }
 
     const repulsiveForce = computeRepulsiveForce(vertex, vertices, arrangement);
     const attractiveForce = computeAttractiveForce(vertex, graph, arrangement);
 
-    forces[vertex.id] = new Vec2([0, 0])
-      .add(repulsiveForce)
-      .add(attractiveForce);
+    forces[vertex.id] = new Vec2(0, 0).add(repulsiveForce).add(attractiveForce);
 
     const force = forces[vertex.id].len();
 

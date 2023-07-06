@@ -95,8 +95,6 @@ export const useEditor = <T extends HTMLElement>(extensions: Extension[]) => {
       state: EditorState.create({
         extensions: [
           graphene,
-          // gdlLinter,
-          // syntaxHighlighting(GDLHighlightStyleLight, { fallback: true }),
           history(),
           keymap.of(defaultKeymap),
           lineNumbers(),
