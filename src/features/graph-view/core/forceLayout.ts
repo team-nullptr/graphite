@@ -86,7 +86,7 @@ export type ComputeForcesOpts = {
 };
 
 const defaultComputeForcesOpts: Required<ComputeForcesOpts> = {
-  threshold: 0.1,
+  threshold: 0.01,
   coolingFactor: 0.995,
   ignore: new Set(),
 };

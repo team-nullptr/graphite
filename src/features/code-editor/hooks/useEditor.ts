@@ -4,7 +4,6 @@ import { Compartment, EditorState, Extension } from "@codemirror/state";
 import { EditorView, ViewUpdate, keymap, lineNumbers } from "@codemirror/view";
 import { tags } from "@lezer/highlight";
 import { useEffect, useMemo, useRef, useState } from "react";
-// import { gdl, gdlLinter } from "../../../engine/gdl/codeMirror";
 import { graphene } from "../../../core/graphene/tools/codeMirror";
 import { Theme, useTheme } from "../../../context/theme";
 

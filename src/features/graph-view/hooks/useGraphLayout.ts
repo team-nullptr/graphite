@@ -1,5 +1,5 @@
 import { RefObject, useEffect, useRef, useState } from "react";
-import { Graph } from "../../../engine/runner/graph";
+import { Graph } from "../../../core/simulator/graph";
 
 import { Arrangement } from "../types/arrangement";
 import { SelectedVertex } from "../types/selectedVertex";
@@ -7,10 +7,12 @@ import { Vec2 } from "../types/vec2";
 import { useForceSimulation } from "./useForceSimulation";
 
 // TODO: Learn more about initial arrangement for force-directed graphs
-// http://www.cmap.polytechnique.fr/~nikolaus.hansen/proceedings/2015/GECCO/companion/p1397.pdf!
 const preArrange = (graph: Graph) =>
   Object.values(graph.vertices).reduce((arrangement, v, i) => {
-    arrangement[v.id] = new Vec2([100 + 100 * i, 100 + 100 * i]);
+    arrangement[v.id] = new Vec2([
+      Math.random() * 100 + 100,
+      Math.random() * 100 + 100,
+    ]);
     return arrangement;
   }, {} as Arrangement);
 
