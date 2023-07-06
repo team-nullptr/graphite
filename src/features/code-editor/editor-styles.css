@@ -17,6 +17,3 @@
 .cm-editor .cm-diagnostic-error {
   @apply font-medium text-[#f6511d];
 }
-
-/* .cm-editor .cm-lintPoint:after {
-} */

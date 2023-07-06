@@ -11,8 +11,9 @@ export default {
       black: "#000000",
 
       // Light
-      "base-200": "#f5f5f5",
-      "base-300": "#e5e5e5",
+      "base-200": "#ffffff",
+      "base-hover-200": "#fafafa",
+      "base-300": "#f1f1f1",
       "text-base": "#222222",
       "text-dimmed": "#808080",
 

@@ -58,12 +58,12 @@ const editorThemeDark = EditorView.theme(
 
 const editorThemeLight = EditorView.theme({
   "&": {
-    backgroundColor: "#f5f5f5",
+    backgroundColor: "#ffffff",
     height: "100%",
   },
   ".cm-gutters": {
     border: "none",
-    backgroundColor: "#f5f5f5",
+    backgroundColor: "#ffffff",
   },
 });
 

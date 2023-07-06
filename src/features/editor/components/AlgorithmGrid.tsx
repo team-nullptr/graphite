@@ -1,4 +1,5 @@
 import { Algorithm } from "../../../models/algorithm";
+import { AlgorithmCard } from "./AlgorithmCard";
 
 export interface AlgorithmGridProps {
   algorithms: Algorithm[];
@@ -10,15 +11,13 @@ export const AlgorithmGrid = ({
   onAlgorithmSelect,
 }: AlgorithmGridProps) => {
   return (
-    <div className="flex h-full w-full flex-col bg-base-200 dark:bg-base-300-dark">
+    <div className="flex h-full w-full flex-col divide-y divide-base-300 bg-base-200 dark:bg-base-300-dark">
       {algorithms.map((algorithm) => (
-        <div
+        <AlgorithmCard
           key={algorithm.name}
-          className="w-full p-4 text-text-base dark:text-text-base-dark"
+          algorithm={algorithm}
           onClick={() => onAlgorithmSelect?.(algorithm)}
-        >
-          {algorithm.name}
-        </div>
+        />
       ))}
     </div>
   );

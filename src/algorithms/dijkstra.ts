@@ -106,5 +106,8 @@ const dijkstraInstructionResolver = (graph: Graph) => [
 
 export const dijkstraAlgorithm: Algorithm = {
   name: "Dijkstra",
+  description:
+    "Dijkstra algorithm allows you to find shortest path from starting node to every other node.",
+  tags: ["shortest path"],
   instructionsResolver: dijkstraInstructionResolver,
-} as const;
+};
