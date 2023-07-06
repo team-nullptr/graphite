@@ -1,8 +1,8 @@
 import { createStore } from "zustand";
 import { devtools } from "zustand/middleware";
 import { Graph } from "../../../core/simulator/graph";
-import { Project, ProjectMetadata } from "../../../models/project";
-import { Algorithm } from "../../../models/algorithm";
+import { Project, ProjectMetadata } from "../../../types/project";
+import { Algorithm } from "../../../types/algorithm";
 import { Instruction } from "../../../core/simulator/instruction";
 
 export const editorModes = {

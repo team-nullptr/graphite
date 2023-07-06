@@ -1,13 +1,17 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Highlights } from "../../core/simulator/instruction";
-import { useEditorStore } from "../editor/context/editor";
+import { Highlights } from "../../../../core/simulator/instruction";
+import { useEditorStore } from "../../context/editor";
 import { Edge } from "./components/Edge";
 import { Vertex } from "./components/Vertex";
 import { useGraphLayout } from "./hooks/useGraphLayout";
 import { usePan } from "./hooks/usePan";
 import { useResizeObserver } from "./hooks/useResizeObserver";
 import { useZoom } from "./hooks/useZoom";
-import { distributeEdges, groupEdges, sortEdges } from "./util/distributeEdges";
+import {
+  distributeEdges,
+  groupEdges,
+  sortEdges,
+} from "./helpers/distributeEdges";
 
 export interface GraphViewProps {
   highlights?: Highlights;

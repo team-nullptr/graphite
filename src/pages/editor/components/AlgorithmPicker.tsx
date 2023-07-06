@@ -1,5 +1,5 @@
 import { useEditorStore } from "../context/editor";
-import { Algorithm } from "../../../models/algorithm";
+import { Algorithm } from "../../../types/algorithm";
 import { AlgorithmDetails } from "./AlgorithmDetails";
 import { AlgorithmGrid } from "./AlgorithmGrid";
 import { dijkstraAlgorithm } from "../../../algorithms/dijkstra";

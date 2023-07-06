@@ -8,7 +8,7 @@ import {
   useState,
 } from "react";
 import { useStore } from "zustand";
-import { Project } from "../../../models/project";
+import { Project } from "../../../types/project";
 import { EditorState, EditorStore, createEditorStore } from "../store/editor";
 
 // TODO: temporary

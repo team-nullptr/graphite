@@ -1,4 +1,4 @@
-import { Algorithm } from "../../../models/algorithm";
+import { Algorithm } from "../../../types/algorithm";
 import { AlgorithmCard } from "./AlgorithmCard";
 
 export interface AlgorithmGridProps {

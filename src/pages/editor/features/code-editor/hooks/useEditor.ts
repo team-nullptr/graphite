@@ -4,8 +4,8 @@ import { Compartment, EditorState, Extension } from "@codemirror/state";
 import { EditorView, ViewUpdate, keymap, lineNumbers } from "@codemirror/view";
 import { tags } from "@lezer/highlight";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { graphene } from "../../../core/graphene/tools/codeMirror";
-import { Theme, useTheme } from "../../../context/theme";
+import { graphene } from "../../../../../core/graphene/tools/codeMirror";
+import { Theme, useTheme } from "../../../../../context/theme";
 
 // Creates onChange extension for editor.
 export const editorOnChange = (cb: (value: string) => void) => {

@@ -1,6 +1,6 @@
 import { useNavigate, useParams } from "react-router-dom";
 import { useTheme } from "../../context/theme";
-import { VerticalSplit } from "../../shared/layout/VerticalSplit";
+import { VerticalSplit } from "../../layout/VerticalSplit";
 import { Header } from "./components/Header";
 import { Sidebar } from "./components/Sidebar";
 import { Visualizer } from "./components/Visualizer";

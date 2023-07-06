@@ -1,6 +1,6 @@
 import { Graph, Vertex } from "../core/simulator/graph";
 import { Instruction } from "../core/simulator/instruction";
-import { Algorithm } from "../models/algorithm";
+import { Algorithm } from "../types/algorithm";
 
 // TODO: This probably can be implemented neater. We should review this code later and make some optimisations.
 // TODO: There is a lot of null assertions for now.

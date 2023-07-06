@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
 import "./editor-styles.css";
 import { editorOnChange, useEditor } from "./hooks/useEditor";
-import { HorizontalSplit } from "../../shared/layout/HorizontalSplit";
+import { HorizontalSplit } from "../../../../layout/HorizontalSplit";
 import { DiagnosticsSummary } from "./components/Diagnostics";
-import { useEditorStore } from "../editor/context/editor";
-import { Lexer } from "../../core/graphene/lexer";
-import { Parser } from "../../core/graphene/parser";
-import { Interpreter } from "../../core/graphene/interpreter";
+import { useEditorStore } from "../../context/editor";
+import { Lexer } from "../../../../core/graphene/lexer";
+import { Parser } from "../../../../core/graphene/parser";
+import { Interpreter } from "../../../../core/graphene/interpreter";
 
 export const CodeEditor = () => {
   const replaceGraph = useEditorStore((state) => state.replaceGraph);
