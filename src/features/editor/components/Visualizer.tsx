@@ -26,9 +26,10 @@ export const Visualizer = () => {
             onStepChange={setCurrentStep}
             maxStep={instructions.length - 1}
           />
-          <div className="flex-grow">
-            <GraphView highlights={currentInstruction?.highlights} />
-          </div>
+          <GraphView
+            className="h-full w-full"
+            highlights={currentInstruction?.highlights}
+          />
         </div>
       }
       bottom={
