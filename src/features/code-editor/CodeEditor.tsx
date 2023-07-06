@@ -1,15 +1,17 @@
 import { useEffect, useState } from "react";
-import { GraphParser, ParseError } from "../../engine/gdl/graphParser";
 import "./editor-styles.css";
 import { editorOnChange, useEditor } from "./hooks/useEditor";
 import { HorizontalSplit } from "../../shared/layout/HorizontalSplit";
 import { DiagnosticsSummary } from "./components/Diagnostics";
 import { useEditorStore } from "../editor/context/editor";
+import { Lexer } from "../../core/graphene/lexer";
+import { Parser } from "../../core/graphene/parser";
+import { Interpreter } from "../../core/graphene/interpreter";
 
 export const CodeEditor = () => {
   const replaceGraph = useEditorStore((state) => state.replaceGraph);
-  const [value, setValue] = useState("// Write your code here");
-  const [errors, setErrors] = useState<ParseError[]>([]);
+  const [value, setValue] = useState("");
+  const [errors, setErrors] = useState<Error[]>([]);
 
   const { view, ref } = useEditor<HTMLDivElement>([
     editorOnChange((value) => setValue(value)),
@@ -38,14 +40,15 @@ export const CodeEditor = () => {
 
   useEffect(() => {
     // Do we want to parse graph here?
-    const parser = new GraphParser(value);
-
     try {
-      const graph = parser.parse();
+      const tokens = new Lexer(value).lex();
+      const stmts = new Parser(tokens).parse();
+      const graph = new Interpreter(stmts).forge();
+
       replaceGraph(graph);
       setErrors([]);
     } catch (err) {
-      if (err instanceof ParseError) setErrors([err]);
+      if (err instanceof Error) setErrors([err]);
       else console.error("Unexpected error");
     }
   }, [replaceGraph, value]);

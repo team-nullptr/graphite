@@ -4,7 +4,8 @@ import { Compartment, EditorState, Extension } from "@codemirror/state";
 import { EditorView, ViewUpdate, keymap, lineNumbers } from "@codemirror/view";
 import { tags } from "@lezer/highlight";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { gdl, gdlLinter } from "../../../engine/gdl/codeMirror";
+// import { gdl, gdlLinter } from "../../../engine/gdl/codeMirror";
+import { graphene } from "../../../core/graphene/tools/codeMirror";
 import { Theme, useTheme } from "../../../context/theme";
 
 // Creates onChange extension for editor.
@@ -18,16 +19,8 @@ export const editorOnChange = (cb: (value: string) => void) => {
 
 const codeThemeLight = HighlightStyle.define([
   {
-    tag: tags.keyword,
+    tag: tags.variableName,
     color: "#6F42C1",
-  },
-  {
-    tag: tags.string,
-    color: "#24292E",
-  },
-  {
-    tag: tags.comment,
-    color: "#6A737D",
   },
   {
     tag: tags.number,
@@ -37,16 +30,12 @@ const codeThemeLight = HighlightStyle.define([
 
 const codeThemeDark = HighlightStyle.define([
   {
-    tag: tags.keyword,
+    tag: tags.brace,
+    color: "#CAD1D8",
+  },
+  {
+    tag: tags.variableName,
     color: "#D2A8FF",
-  },
-  {
-    tag: tags.string,
-    color: "#E6EDF3",
-  },
-  {
-    tag: tags.comment,
-    color: "#8B949E",
   },
   {
     tag: tags.number,
@@ -106,8 +95,8 @@ export const useEditor = <T extends HTMLElement>(extensions: Extension[]) => {
     const view = new EditorView({
       state: EditorState.create({
         extensions: [
-          gdl,
-          gdlLinter,
+          graphene,
+          // gdlLinter,
           // syntaxHighlighting(GDLHighlightStyleLight, { fallback: true }),
           history(),
           keymap.of(defaultKeymap),
