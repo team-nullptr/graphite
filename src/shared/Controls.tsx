@@ -8,9 +8,11 @@ export type ControlsProps = PropsWithChildren<{
 }>;
 
 export const Controls = ({ children, alignment = "center" }: ControlsProps) => {
+  const alignmentStyle = `justify-${alignment}`;
+
   return (
     <nav
-      className={`flex items-center justify-${alignment} gap-4 border-b border-slate-300 bg-slate-50 p-2`}
+      className={`flex items-center ${alignmentStyle} gap-4 border-b border-slate-300 bg-slate-50 p-2`}
     >
       {children}
     </nav>

@@ -1,12 +1,9 @@
 import { Algorithm } from "../../../types/algorithm";
 import { ArrowLeftIcon } from "@heroicons/react/24/outline";
 import { Controls, ControlsButton } from "../../../shared/Controls";
-import { useState } from "react";
-import { ChevronDownIcon, ChevronUpIcon } from "@heroicons/react/24/outline";
-
-import { PlayIcon } from "@heroicons/react/20/solid";
-
+import { PlayIcon } from "@heroicons/react/24/outline";
 import { useEditorStore } from "../context/editor";
+import { Select } from "../../../shared/ui/Select";
 
 export interface AlgorithmDetails {
   algorithm: Algorithm;
@@ -18,74 +15,40 @@ export const AlgorithmDetails = ({ algorithm, onBack }: AlgorithmDetails) => {
 
   return (
     <div className="flex h-full flex-col bg-slate-50">
-      <Controls alignment="between">
+      <Controls alignment="start">
         <ControlsButton
           icon={<ArrowLeftIcon className="h-5 w-5" />}
           onClick={onBack}
           alt="back"
         />
-
-        <button className="flex items-center gap-2 rounded-md bg-blue-500 px-2 py-1 text-sm text-white">
-          Run <PlayIcon className="h-4 w-4" />
-        </button>
       </Controls>
-      <div className="flex flex-col divide-y divide-slate-300">
+
+      <div className="relative flex flex-1 flex-col divide-y divide-slate-300">
         <div className="flex flex-col gap-2 p-4">
           <span className="font-medium text-slate-800">{algorithm.name}</span>
           <p className="text-slate-600">{algorithm.description}</p>
         </div>
+
+        {/* TODO: Is there any way to make this config universal so that it works with any algorithm? */}
         <div className="flex flex-col gap-8 p-4">
           <div className="flex flex-col gap-2">
             <span className="text-slate-800">
               Starting Vertex <span className="text-blue-500">*</span>
             </span>
-            <Select values={Object.keys(graph.vertices)} />
+            <Select
+              label="Choose starting vertex"
+              values={Object.keys(graph.vertices)}
+            />
           </div>
         </div>
       </div>
-    </div>
-  );
-};
 
-type SelectOptions = {
-  values: string[];
-};
-
-const Select = ({ values }: SelectOptions) => {
-  const [value, setValue] = useState<string | undefined>(values[0]);
-  const [opened, setOpened] = useState(false);
-
-  const handleValueChange = (value: string) => {
-    setValue(value);
-    setOpened(false);
-  };
-
-  return (
-    <div className="relative w-full">
-      <div
-        className="relative w-full rounded-md border px-4 py-2"
-        onClick={() => setOpened(!opened)}
-      >
-        {value}
-        {opened ? (
-          <ChevronUpIcon className="absolute bottom-0 right-2 top-0 my-auto h-4 w-4" />
-        ) : (
-          <ChevronDownIcon className="absolute bottom-0 right-2 top-0 my-auto h-4 w-4" />
-        )}
+      <div className="flex-g flex justify-end border-t border-gray-300 bg-gray-50 p-4">
+        <button className="flex w-fit items-center gap-2 rounded-md border-2 border-blue-400 bg-blue-500 px-2 py-1 text-sm text-white">
+          <PlayIcon className="h-4 w-4" />
+          Run
+        </button>
       </div>
-      {opened && (
-        <div className="absolute top-12 max-h-48 w-full overflow-y-scroll rounded-md border">
-          {values.map((value) => (
-            <div
-              className="flex h-10 items-center px-4 py-2 hover:bg-gray-100"
-              key={value}
-              onClick={() => handleValueChange(value)}
-            >
-              {value}
-            </div>
-          ))}
-        </div>
-      )}
     </div>
   );
 };
