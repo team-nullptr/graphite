@@ -56,18 +56,16 @@ export const HorizontalSplit = ({ top, bottom }: HorizontalSplitProps) => {
 
   return (
     <div className="flex h-full w-full flex-col" ref={ref}>
-      <div className="overflow-auto" style={{ height: `${topShare}%` }}>
+      <div className="w-full overflow-auto" style={{ height: `${topShare}%` }}>
         {top}
       </div>
-
       <div
         onMouseDown={() => setIsResizing(true)}
         className={`relative z-[999] w-full border-b border-slate-300 before:absolute before:-top-2 before:h-4 before:w-full before:bg-slate-200  before:opacity-0 before:transition-opacity hover:cursor-row-resize hover:before:opacity-30 ${
           isResizing && "cursor-col-resize before:opacity-30"
         }`}
       />
-
-      <div className="relative flex-1 overflow-y-auto bg-white">{bottom}</div>
+      <div className="w-full flex-1 overflow-auto">{bottom}</div>
     </div>
   );
 };

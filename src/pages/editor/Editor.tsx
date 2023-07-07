@@ -20,17 +20,15 @@ export const Editor = () => {
       projectId={projectId ?? ""}
       loadingFallback={<>Loading ...</>}
     >
-      <div className={`flex h-full flex-col ${themeClass}`}>
+      <div className={`flex h-screen flex-col overflow-hidden ${themeClass}`}>
         <Header
           name={""}
           onRename={undefined}
           onNavigateUp={handleNavigateUp}
         />
-        <div className="flex-1">
-          <main className="h-full max-h-full">
-            <VerticalSplit left={<Sidebar />} right={<Visualizer />} />
-          </main>
-        </div>
+        <main className="h-[calc(100vh_-_48px)]">
+          <VerticalSplit left={<Sidebar />} right={<Visualizer />} />
+        </main>
       </div>
     </EditorStoreProvider>
   );

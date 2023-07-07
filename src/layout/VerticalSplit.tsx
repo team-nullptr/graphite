@@ -57,7 +57,10 @@ export const VerticalSplit = (props: SplitLayoutProps) => {
 
   return (
     <div className="flex h-full w-full" ref={ref}>
-      <div className="overflow-hidden" style={{ width: `${leftShare}%` }}>
+      <div
+        className="h-full w-full overflow-hidden"
+        style={{ width: `${leftShare}%` }}
+      >
         {props.left}
       </div>
       <div
@@ -66,7 +69,7 @@ export const VerticalSplit = (props: SplitLayoutProps) => {
           isResizing && "cursor-col-resize before:opacity-30"
         }`}
       />
-      <div className="flex-1">{props.right}</div>
+      <div className="w-full flex-1 overflow-hidden">{props.right}</div>
     </div>
   );
 };

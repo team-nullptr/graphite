@@ -2,8 +2,6 @@ import { useEffect, useState } from "react";
 import { GraphView } from "../features/graph-view/GraphView";
 import { useEditorStore } from "../context/editor";
 import { Timeline } from "./Timeline";
-import { HorizontalSplit } from "../../../layout/HorizontalSplit";
-import { VerticalSplit } from "../../../layout/VerticalSplit";
 
 export const Visualizer = () => {
   const [currentStep, setCurrentStep] = useState(0);
