@@ -27,9 +27,9 @@ export const Select = ({ values, label }: SelectOptions) => {
       >
         {value ? value : <span className="text-slate-500">{label}</span>}
         {opened ? (
-          <ChevronUpIcon className="absolute bottom-0 right-2 top-0 my-auto h-4 w-4" />
-        ) : (
           <ChevronDownIcon className="absolute bottom-0 right-2 top-0 my-auto h-4 w-4" />
+        ) : (
+          <ChevronUpIcon className="absolute bottom-0 right-2 top-0 my-auto h-4 w-4" />
         )}
       </div>
       {opened && (
