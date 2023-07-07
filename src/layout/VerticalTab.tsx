@@ -16,14 +16,12 @@ const TabIcon = ({ tab, highlight, onClick }: TabIconProps) => {
   return (
     <div
       key={tab.id}
-      className={`flex aspect-square w-full cursor-pointer items-center justify-center hover:bg-base-300 dark:hover:bg-base-200-dark ${
-        highlight && "bg-base-300 dark:bg-base-200-dark"
+      className={`flex aspect-square w-full cursor-pointer items-center justify-center hover:bg-slate-100 ${
+        highlight && "bg-slate-100"
       }`}
       onClick={onClick}
     >
-      <div className="h-6 w-6 text-text-base dark:text-text-base-dark">
-        {tab.icon}
-      </div>
+      <div className="h-6 w-6 text-slate-800">{tab.icon}</div>
     </div>
   );
 };
@@ -43,7 +41,7 @@ export const VerticalTabs = (props: VerticalTabsProps) => {
 
   return (
     <div className="flex h-full w-full">
-      <div className="flex w-12 flex-shrink-0 flex-col border-r border-r-base-300 bg-base-200 dark:border-r-base-200-dark dark:bg-base-300-dark">
+      <div className="flex w-12 flex-shrink-0 flex-col border-r border-r-slate-300 bg-slate-50">
         {props.tabs.map((tab) => (
           <TabIcon
             key={tab.id}

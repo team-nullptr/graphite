@@ -8,7 +8,7 @@ type DiagnosticsSummaryProps = {
 export const DiagnosticsSummary = ({ errors }: DiagnosticsSummaryProps) => {
   return (
     <Tab label="Diagnostics">
-      <div className="h-full bg-base-200 p-4 text-text-base dark:bg-base-300-dark dark:text-text-base-dark">
+      <div className="h-full bg-slate-50 p-4 text-slate-900">
         {errors.map((error, i) => (
           <ErrorDescription key={i} error={error} />
         ))}

@@ -5,9 +5,8 @@ import {
   PlayIcon,
   StopIcon,
 } from "@heroicons/react/24/outline";
-import { ChangeEvent, useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Controls, ControlsButton } from "../../../shared/Controls";
-import styles from "./Timeline.module.css";
 
 export interface TimelineProps {
   currentStep: number;
@@ -49,33 +48,13 @@ export const Timeline = ({
     return () => clearInterval(intervalId);
   }, [isPlaying, nextStepHandler]);
 
-  const sliderChangeHandler = (event: ChangeEvent<HTMLInputElement>) => {
-    const value = event.target.value;
-    onStepChange?.(parseInt(value));
-  };
+  // const sliderChangeHandler = (event: ChangeEvent<HTMLInputElement>) => {
+  //   const value = event.target.value;
+  //   onStepChange?.(parseInt(value));
+  // };
 
   return (
     <Controls>
-      {isPlaying ? (
-        <ControlsButton
-          onClick={() => setIsPlaying(false)}
-          icon={<StopIcon className="h-5 w-5" />}
-          alt="stop"
-        />
-      ) : (
-        <ControlsButton
-          onClick={() => setIsPlaying(true)}
-          icon={<PlayIcon className="h-5 w-5" />}
-          alt="play"
-        />
-      )}
-
-      <ControlsButton
-        onClick={restartHandler}
-        icon={<ArrowPathIcon className="h-5 w-5" />}
-        alt="restart"
-      />
-
       <ControlsButton
         onClick={previousStepHandler}
         disabled={currentStep === 0}
@@ -90,6 +69,8 @@ export const Timeline = ({
         alt="next"
       />
 
+      {/* TODO: Maybe we can make something better than built-in slider */}
+      {/* 
       <input
         className={styles.slider}
         type="range"
@@ -97,7 +78,27 @@ export const Timeline = ({
         max={maxStep}
         value={currentStep}
         onChange={sliderChangeHandler}
+      /> */}
+
+      <ControlsButton
+        onClick={restartHandler}
+        icon={<ArrowPathIcon className="h-5 w-5" />}
+        alt="restart"
       />
+
+      {isPlaying ? (
+        <ControlsButton
+          onClick={() => setIsPlaying(false)}
+          icon={<StopIcon className="h-5 w-5" />}
+          alt="stop"
+        />
+      ) : (
+        <ControlsButton
+          onClick={() => setIsPlaying(true)}
+          icon={<PlayIcon className="h-5 w-5" />}
+          alt="play"
+        />
+      )}
     </Controls>
   );
 };

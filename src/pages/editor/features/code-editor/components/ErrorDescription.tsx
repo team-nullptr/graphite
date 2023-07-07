@@ -6,8 +6,8 @@ export const ErrorDescription = (props: ErrorDescriptionProps) => {
   const { message } = props.error;
 
   return (
-    <div className="border-l-4 border-diagnostic-error px-4 py-2">
-      <div className="text-text-base dark:text-text-base-dark">{message}</div>
+    <div className="border-l-4 border-red-500 px-4 py-2">
+      <div className="text-slatee-800">{message}</div>
     </div>
   );
 };

@@ -27,45 +27,48 @@ const codeThemeLight = HighlightStyle.define([
   },
 ]);
 
-const codeThemeDark = HighlightStyle.define([
-  {
-    tag: tags.brace,
-    color: "#CAD1D8",
-  },
-  {
-    tag: tags.variableName,
-    color: "#D2A8FF",
-  },
-  {
-    tag: tags.number,
-    color: "#D2A8FF",
-  },
-]);
+// const codeThemeDark = HighlightStyle.define([
+//   {
+//     tag: tags.brace,
+//     color: "#CAD1D8",
+//   },
+//   {
+//     tag: tags.variableName,
+//     color: "#D2A8FF",
+//   },
+//   {
+//     tag: tags.number,
+//     color: "#D2A8FF",
+//   },
+// ]);
 
-// TODO: Make those themes pretty.
-const editorThemeDark = EditorView.theme(
-  {
-    "&": {
-      backgroundColor: "#1E1F23",
-      height: "100%",
-    },
-    ".cm-gutters": {
-      backgroundColor: "#1E1F23",
-    },
-  },
-  { dark: true }
-);
+const codeThemeDark = codeThemeLight;
 
 const editorThemeLight = EditorView.theme({
   "&": {
-    backgroundColor: "#ffffff",
+    backgroundColor: "#f9fafb",
     height: "100%",
   },
   ".cm-gutters": {
     border: "none",
-    backgroundColor: "#ffffff",
+    backgroundColor: "#f9fafb",
   },
 });
+
+// const editorThemeDark = EditorView.theme(
+//   {
+//     "&": {
+//       backgroundColor: "#1E1F23",
+//       height: "100%",
+//     },
+//     ".cm-gutters": {
+//       backgroundColor: "#1E1F23",
+//     },
+//   },
+//   { dark: true }
+// );
+
+const editorThemeDark = editorThemeLight;
 
 export const useEditor = <T extends HTMLElement>(extensions: Extension[]) => {
   const ref = useRef<T>(null);

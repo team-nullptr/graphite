@@ -15,9 +15,12 @@ export const AlgorithmPicker = () => {
   );
 
   return (
-    <div className="h-full w-full bg-base-200 dark:bg-base-300-dark">
+    <div className="h-full w-full bg-slate-50">
       {algorithm ? (
-        <AlgorithmDetails algorithm={algorithm} />
+        <AlgorithmDetails
+          algorithm={algorithm}
+          onBack={() => replaceAlgorithm(null)}
+        />
       ) : (
         <AlgorithmGrid
           algorithms={algorithms}

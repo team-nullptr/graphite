@@ -40,16 +40,14 @@ export const createEditorStore = ({ project }: CreateEditorStoreOpts) => {
       instructions: [],
       algorithm: null,
       replaceGraph: (graph) => {
-        set((state) => ({
+        set({
           graph,
-          instructions: state.algorithm?.instructionsResolver(graph) ?? [],
-        }));
+        });
       },
       replaceAlgorithm: (algorithm) => {
-        set((state) => ({
+        set({
           algorithm,
-          instructions: algorithm?.instructionsResolver(state.graph) ?? [],
-        }));
+        });
       },
     }))
   );

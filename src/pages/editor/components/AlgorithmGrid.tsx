@@ -11,7 +11,7 @@ export const AlgorithmGrid = ({
   onAlgorithmSelect,
 }: AlgorithmGridProps) => {
   return (
-    <div className="flex h-full w-full flex-col divide-y divide-base-300 bg-base-200 dark:bg-base-300-dark">
+    <div className="flex h-full w-full flex-col divide-y divide-slate-300 bg-slate-50">
       {algorithms.map((algorithm) => (
         <AlgorithmCard
           key={algorithm.name}

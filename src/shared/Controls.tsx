@@ -1,13 +1,18 @@
 import type { PropsWithChildren } from "react";
 
-export interface ControlsProps {
-  className?: string;
-}
+export type Alignment = "start" | "center" | "end" | "between";
 
-export const Controls = (props: PropsWithChildren<ControlsProps>) => {
+export type ControlsProps = PropsWithChildren<{
+  className?: string;
+  alignment?: Alignment;
+}>;
+
+export const Controls = ({ children, alignment = "center" }: ControlsProps) => {
   return (
-    <nav className="flex items-center justify-center gap-4 border-b border-base-300 bg-base-200 p-2 dark:border-base-200-dark dark:bg-base-300-dark">
-      {props.children}
+    <nav
+      className={`flex items-center justify-${alignment} gap-4 border-b border-slate-300 bg-slate-50 p-2`}
+    >
+      {children}
     </nav>
   );
 };
@@ -28,7 +33,7 @@ export const ControlsButton = ({
   return (
     <button
       aria-label={alt}
-      className="group flex h-[30px] w-[30px] cursor-pointer items-center justify-center rounded-md border-none bg-transparent p-0 text-text-base transition-colors hover:bg-base-300 disabled:cursor-auto dark:text-text-base-dark dark:hover:bg-base-200-dark"
+      className="group flex h-[30px] w-[30px] cursor-pointer items-center justify-center rounded-md border-none bg-transparent p-0 text-slate-800 transition-colors hover:bg-slate-100 disabled:cursor-auto"
       {...props}
     >
       {icon}

@@ -7,7 +7,7 @@ export type TabProps = {
 export const Tab = (props: PropsWithChildren<TabProps>) => {
   return (
     <div className="flex h-full w-full flex-col">
-      <div className="flex w-full items-center gap-4 border-b border-base-300 bg-base-200 px-4 py-2 text-text-base dark:border-base-200-dark dark:bg-base-300-dark dark:text-text-base-dark">
+      <div className="flex w-full items-center gap-4 border-b border-slate-300 bg-slate-50 px-4 py-2 text-slate-800">
         {props.label}
       </div>
       <div className="flex-1">{props.children}</div>
