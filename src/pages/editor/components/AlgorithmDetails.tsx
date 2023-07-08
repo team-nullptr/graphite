@@ -4,6 +4,7 @@ import { Controls, ControlsButton } from "../../../shared/Controls";
 import { PlayIcon } from "@heroicons/react/24/outline";
 import { useEditorStore } from "../context/editor";
 import { Select } from "../../../shared/ui/Select";
+import { SpaceshipButton } from "../../../shared/ui/SpaceshipButton";
 
 export interface AlgorithmDetails {
   algorithm: Algorithm;
@@ -43,11 +44,12 @@ export const AlgorithmDetails = ({ algorithm, onBack }: AlgorithmDetails) => {
         </div>
       </div>
 
-      <div className="flex-g flex justify-end border-t border-gray-300 bg-gray-50 p-4">
-        <button className="flex w-fit items-center gap-2 rounded-md border-2 border-blue-400 bg-blue-500 px-2 py-1 text-sm text-white">
-          <PlayIcon className="h-4 w-4" />
-          Run
-        </button>
+      <div className="flex-g flex justify-end border-t border-gray-300 bg-slate-50 p-4">
+        <SpaceshipButton
+          onClick={() => console.log("Run the algorithm")}
+          label="Run"
+          icon={<PlayIcon className="h-5 w-5" />}
+        />
       </div>
     </div>
   );

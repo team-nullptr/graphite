@@ -1,0 +1,40 @@
+.swoosh_mask {
+  /* Mask gradient so that it is displayed where padding is. */
+  mask-composite: xor;
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+}
+
+.glow {
+  @apply bg-cover;
+  animation: swooshSpin 4s infinite linear;
+  background-image: conic-gradient(
+    from 0 at 50% 50%,
+    theme(colors.slate.400) 0deg,
+    theme(colors.slate.50) 60deg,
+    theme(colors.slate.50) 310deg,
+    theme(colors.slate.400) 360deg
+  );
+}
+
+.swoosh {
+  @apply bg-cover;
+  animation: swooshSpin 4s infinite linear;
+  background-image: conic-gradient(
+    from 0 at 50% 50%,
+    theme(colors.slate.600) 0deg,
+    theme(colors.slate.300) 60deg,
+    theme(colors.slate.300) 310deg,
+    theme(colors.slate.600) 360deg
+  );
+}
+
+@keyframes swooshSpin {
+  0% {
+    transform: translate(-50%, -50%) rotate(0);
+  }
+  100% {
+    transform: translate(-50%, -50%) rotate(360deg);
+  }
+}
