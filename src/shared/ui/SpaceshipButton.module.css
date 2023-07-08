@@ -23,10 +23,10 @@
   animation: swooshSpin 4s infinite linear;
   background-image: conic-gradient(
     from 0 at 50% 50%,
-    theme(colors.slate.600) 0deg,
+    theme(colors.slate.900) 0deg,
     theme(colors.slate.300) 60deg,
     theme(colors.slate.300) 310deg,
-    theme(colors.slate.600) 360deg
+    theme(colors.slate.900) 360deg
   );
 }
 

@@ -17,7 +17,7 @@ export const SpaceshipButton = ({
     <div className="pointer-events-none relative isolate overflow-hidden rounded-lg">
       {/* Shiny Border */}
       <div
-        className={`pointer-events-none absolute -z-10 h-full w-full overflow-hidden rounded-lg p-[2px] ${styles.swoosh_mask} blur-sm`}
+        className={`pointer-events-none absolute -z-10 h-full w-full overflow-hidden rounded-lg p-[2px] ${styles.swoosh_mask}`}
       >
         <div
           className={`absolute left-1/2 top-1/2 aspect-square w-[120%] -translate-x-1/2 -translate-y-1/2 ${styles.swoosh}`}
