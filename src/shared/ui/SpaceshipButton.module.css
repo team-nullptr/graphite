@@ -7,7 +7,6 @@
 }
 
 .glow {
-  @apply bg-cover;
   animation: swooshSpin 4s infinite linear;
   background-image: conic-gradient(
     from 0 at 50% 50%,
@@ -19,7 +18,6 @@
 }
 
 .swoosh {
-  @apply bg-cover;
   animation: swooshSpin 4s infinite linear;
   background-image: conic-gradient(
     from 0 at 50% 50%,

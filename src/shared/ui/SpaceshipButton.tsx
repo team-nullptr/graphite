@@ -20,7 +20,7 @@ export const SpaceshipButton = ({
         className={`pointer-events-none absolute -z-10 h-full w-full overflow-hidden rounded-lg p-[2px] ${styles.swoosh_mask}`}
       >
         <div
-          className={`absolute left-1/2 top-1/2 aspect-square w-[120%] -translate-x-1/2 -translate-y-1/2 ${styles.swoosh}`}
+          className={`absolute left-1/2 top-1/2 aspect-square w-[120%] -translate-x-1/2 -translate-y-1/2 bg-cover ${styles.swoosh}`}
         />
       </div>
 
@@ -29,7 +29,7 @@ export const SpaceshipButton = ({
         className={`pointer-events-none absolute -z-10 h-full w-full overflow-hidden rounded-lg blur-lg`}
       >
         <div
-          className={`absolute left-1/2 top-1/2 aspect-square w-[120%] -translate-x-1/2 -translate-y-1/2 overflow-hidden rounded-lg ${styles.glow}`}
+          className={`absolute left-1/2 top-1/2 aspect-square w-[120%] -translate-x-1/2 -translate-y-1/2 overflow-hidden rounded-lg bg-cover ${styles.glow}`}
         />
       </div>
 
