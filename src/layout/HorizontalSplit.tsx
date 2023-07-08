@@ -1,18 +1,9 @@
-import { useRef, useState, useLayoutEffect, useEffect, ReactNode } from "react";
+import { useRef, useState, useEffect, ReactNode } from "react";
 
-const useHorizontalSplit = <E extends HTMLElement>() => {
+const useHorizontalSplit = <E extends HTMLElement>(initialTopShare: number) => {
   const ref = useRef<E>(null);
-  const [topShare, setTopShare] = useState(0);
+  const [topShare, setTopShare] = useState(initialTopShare);
   const [isResizing, setIsResizing] = useState(false);
-
-  useLayoutEffect(() => {
-    if (!ref.current) {
-      console.error("Ref not initialized after initial render.");
-      return;
-    }
-
-    setTopShare(50);
-  }, []);
 
   useEffect(() => {
     const stopResizing = () => setIsResizing(false);
@@ -48,11 +39,16 @@ const useHorizontalSplit = <E extends HTMLElement>() => {
 type HorizontalSplitProps = {
   top: ReactNode;
   bottom: ReactNode;
+  initialTopShare?: number;
 };
 
-export const HorizontalSplit = ({ top, bottom }: HorizontalSplitProps) => {
+export const HorizontalSplit = ({
+  top,
+  bottom,
+  initialTopShare = 50,
+}: HorizontalSplitProps) => {
   const { topShare, isResizing, setIsResizing, ref } =
-    useHorizontalSplit<HTMLDivElement>();
+    useHorizontalSplit<HTMLDivElement>(initialTopShare);
 
   return (
     <div className="flex h-full w-full flex-col" ref={ref}>

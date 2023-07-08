@@ -1,19 +1,9 @@
-import { ReactNode, useEffect, useLayoutEffect, useRef, useState } from "react";
+import { ReactNode, useEffect, useRef, useState } from "react";
 
-const useVerticalSplit = <E extends HTMLElement>() => {
+const useVerticalSplit = <E extends HTMLElement>(initialLeftShare: number) => {
   const ref = useRef<E>(null);
-  const [leftShare, setLeftShare] = useState(0);
+  const [leftShare, setLeftShare] = useState(initialLeftShare);
   const [isResizing, setIsResizing] = useState(false);
-
-  // TODO: I really don't like this ..
-  useLayoutEffect(() => {
-    if (!ref.current) {
-      console.error("Ref not initialized after initial render.");
-      return;
-    }
-
-    setLeftShare(50);
-  }, []);
 
   useEffect(() => {
     const stopResizing = () => setIsResizing(false);
@@ -49,11 +39,16 @@ const useVerticalSplit = <E extends HTMLElement>() => {
 export type SplitLayoutProps = {
   left: ReactNode;
   right: ReactNode;
+  initialLeftShare?: number;
 };
 
-export const VerticalSplit = (props: SplitLayoutProps) => {
+export const VerticalSplit = ({
+  left,
+  right,
+  initialLeftShare = 50,
+}: SplitLayoutProps) => {
   const { leftShare, isResizing, setIsResizing, ref } =
-    useVerticalSplit<HTMLDivElement>();
+    useVerticalSplit<HTMLDivElement>(initialLeftShare);
 
   return (
     <div className="flex h-full w-full" ref={ref}>
@@ -61,7 +56,7 @@ export const VerticalSplit = (props: SplitLayoutProps) => {
         className="h-full w-full overflow-hidden"
         style={{ width: `${leftShare}%` }}
       >
-        {props.left}
+        {left}
       </div>
       <div
         onMouseDown={() => setIsResizing(true)}
@@ -69,7 +64,7 @@ export const VerticalSplit = (props: SplitLayoutProps) => {
           isResizing && "cursor-col-resize before:opacity-30"
         }`}
       />
-      <div className="w-full flex-1 overflow-hidden">{props.right}</div>
+      <div className="w-full flex-1 overflow-hidden">{right}</div>
     </div>
   );
 };

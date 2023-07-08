@@ -27,7 +27,11 @@ export const Editor = () => {
           onNavigateUp={handleNavigateUp}
         />
         <main className="h-[calc(100vh_-_48px)]">
-          <VerticalSplit left={<Sidebar />} right={<Visualizer />} />
+          <VerticalSplit
+            initialLeftShare={20}
+            left={<Sidebar />}
+            right={<Visualizer />}
+          />
         </main>
       </div>
     </EditorStoreProvider>

@@ -35,7 +35,7 @@ export const SpaceshipButton = ({
 
       {/* Button */}
       <button
-        className={`pointer-events-auto flex h-full items-center gap-2 rounded-lg bg-transparent px-3 py-2 text-slate-800 transition-all hover:bg-slate-600 hover:text-white ${styles.spaceshipButton}`}
+        className={`pointer-events-auto flex h-full items-center gap-2 rounded-lg bg-transparent px-3 py-2 text-slate-800 transition-all ease-out hover:bg-slate-800 hover:text-white`}
         onClick={onClick}
       >
         {icon} {label}
