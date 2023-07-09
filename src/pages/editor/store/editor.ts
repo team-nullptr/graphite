@@ -3,7 +3,6 @@ import { devtools } from "zustand/middleware";
 import { Graph } from "../../../core/simulator/graph";
 import { Project, ProjectMetadata } from "../../../types/project";
 import { Algorithm } from "../../../types/algorithm";
-import { Instruction } from "../../../core/simulator/instruction";
 
 export const editorModes = {
   ASSEMBLY: "ASSEMBLY",
@@ -17,9 +16,8 @@ export type EditorState = {
   mode: EditorMode;
   graph: Graph;
   algorithm: Algorithm | null;
-  instructions: Instruction[];
-  replaceGraph: (graph: Graph) => void;
-  replaceAlgorithm: (algorithm: Algorithm | null) => void;
+  setGraph: (graph: Graph) => void;
+  setAlgorithm: (algorithm: Algorithm | null) => void;
 };
 
 export type CreateEditorStoreOpts = {
@@ -37,14 +35,13 @@ export const createEditorStore = ({ project }: CreateEditorStoreOpts) => {
       metadata: project.metadata,
       mode: editorModes.ASSEMBLY,
       graph: initialGraph,
-      instructions: [],
       algorithm: null,
-      replaceGraph: (graph) => {
+      setGraph: (graph) => {
         set({
           graph,
         });
       },
-      replaceAlgorithm: (algorithm) => {
+      setAlgorithm: (algorithm) => {
         set({
           algorithm,
         });

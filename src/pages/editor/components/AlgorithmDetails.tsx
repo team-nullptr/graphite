@@ -12,7 +12,10 @@ export interface AlgorithmDetails {
 }
 
 export const AlgorithmDetails = ({ algorithm, onBack }: AlgorithmDetails) => {
-  const graph = useEditorStore(({ graph }) => graph);
+  const { graph, setAlgorithm } = useEditorStore(({ graph, setAlgorithm }) => ({
+    graph,
+    setAlgorithm,
+  }));
 
   return (
     <div className="flex h-full flex-col bg-slate-50">
@@ -46,7 +49,7 @@ export const AlgorithmDetails = ({ algorithm, onBack }: AlgorithmDetails) => {
 
       <div className="flex-g flex justify-end border-t border-gray-300 bg-slate-50 p-4">
         <SpaceshipButton
-          onClick={() => console.log("Run the algorithm")}
+          onClick={() => setAlgorithm(algorithm)}
           label="Run"
           icon={<PlayIcon className="h-5 w-5" />}
         />

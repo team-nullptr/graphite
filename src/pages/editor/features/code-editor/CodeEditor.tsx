@@ -9,7 +9,7 @@ import { Parser } from "../../../../core/graphene/parser";
 import { Interpreter } from "../../../../core/graphene/interpreter";
 
 export const CodeEditor = () => {
-  const replaceGraph = useEditorStore((state) => state.replaceGraph);
+  const setGraph = useEditorStore(({ setGraph }) => setGraph);
   const [value, setValue] = useState("");
   const [errors, setErrors] = useState<Error[]>([]);
 
@@ -45,13 +45,13 @@ export const CodeEditor = () => {
       const stmts = new Parser(tokens).parse();
       const graph = new Interpreter(stmts).forge();
 
-      replaceGraph(graph);
+      setGraph(graph);
       setErrors([]);
     } catch (err) {
       if (err instanceof Error) setErrors([err]);
       else console.error("Unexpected error");
     }
-  }, [replaceGraph, value]);
+  }, [setGraph, value]);
 
   return (
     <HorizontalSplit

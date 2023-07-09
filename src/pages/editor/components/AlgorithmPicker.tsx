@@ -2,26 +2,31 @@ import { useEditorStore } from "../context/editor";
 import { AlgorithmDetails } from "./AlgorithmDetails";
 import { AlgorithmGrid } from "./AlgorithmGrid";
 import { algorithms } from "../../../algorithms";
+import { useState } from "react";
+import { Algorithm } from "../../../types/algorithm";
 
 export const AlgorithmPicker = () => {
-  const { algorithm, replaceAlgorithm } = useEditorStore(
-    ({ algorithm, replaceAlgorithm }) => ({
-      algorithm,
-      replaceAlgorithm,
-    })
-  );
+  const [pickedAlgorithm, setPickerAlgorithm] = useState<Algorithm>();
+
+  const { setAlgorithm } = useEditorStore(({ algorithm, setAlgorithm }) => ({
+    algorithm,
+    setAlgorithm,
+  }));
 
   return (
     <div className="h-full w-full bg-slate-50">
-      {algorithm ? (
+      {pickedAlgorithm ? (
         <AlgorithmDetails
-          algorithm={algorithm}
-          onBack={() => replaceAlgorithm(null)}
+          algorithm={pickedAlgorithm}
+          onBack={() => {
+            setAlgorithm(null);
+            setPickerAlgorithm(undefined);
+          }}
         />
       ) : (
         <AlgorithmGrid
           algorithms={algorithms}
-          onAlgorithmSelect={replaceAlgorithm}
+          onAlgorithmSelect={setPickerAlgorithm}
         />
       )}
     </div>
