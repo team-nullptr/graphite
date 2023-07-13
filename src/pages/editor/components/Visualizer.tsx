@@ -5,7 +5,7 @@ import { Timeline } from "./Timeline";
 import { HorizontalSplit } from "../../../layout/HorizontalSplit";
 
 export const Visualizer = () => {
-  const [currentStep, setCurrentStep] = useState(0);
+  const [currentStepIndex, setCurrentStep] = useState(0);
 
   const mode = useEditorStore(({ mode }) => mode);
 
@@ -18,32 +18,29 @@ export const Visualizer = () => {
     return <GraphView className="h-full w-full" />;
   }
 
-  const currentInstruction = mode.instructions[currentStep];
+  const currentStep = mode.steps[currentStepIndex];
 
   return (
     <HorizontalSplit
       top={
         <div className="flex h-full flex-col">
           <Timeline
-            currentStep={currentStep}
+            currentStep={currentStepIndex}
             onStepChange={setCurrentStep}
-            maxStep={mode.instructions.length - 1}
+            maxStep={mode.steps.length - 1}
           />
           <GraphView
             className="h-full w-full"
-            highlights={currentInstruction?.highlights}
+            highlights={currentStep?.highlights}
           />
         </div>
       }
       bottom={
         <div className="bg-base-200 dark:bg-base-300-dark h-full w-full">
-          {currentInstruction?.description}
+          {currentStep?.description}
           <div
             dangerouslySetInnerHTML={{
-              __html: currentInstruction?.stepState.replaceAll(
-                /,(?=\[)/g,
-                "<br/>"
-              ),
+              __html: currentStep?.stepState.replaceAll(/,(?=\[)/g, "<br/>"),
             }}
           />
         </div>

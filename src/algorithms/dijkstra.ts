@@ -1,11 +1,10 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
+
 import { Graph, Vertex } from "../core/simulator/graph";
-import { Instruction } from "../core/simulator/instruction";
+import { Step } from "../core/simulator/step";
 import { Algorithm } from "../types/algorithm";
 
-// TODO: This probably can be implemented neater. We should review this code later and make some optimisations.
-// TODO: There is a lot of null assertions for now.
 // TODO: Check if algorithm can be run on a graph.
-// TODO: Is it possible to do some typescript magic to omit some of those non-null assertions?
 // TODO: Do we want to use i18 to support multiple languages (en / pl)?
 
 const pickClosest = (
@@ -28,12 +27,9 @@ const pickClosest = (
   return next;
 };
 
-function* dijkstraInstructionGenerator(
-  graph: Graph,
-  startingVertex: string
-): IterableIterator<Instruction> {
-  // init instructions
-  const permamentHighlights: [string, number][] = [];
+const algorithm = (graph: Graph, startingVertex: string): Step[] => {
+  const steps: Step[] = [];
+  const highlights: [string, number][] = [];
 
   // init dijkstra
   const vertices = Object.values(graph.vertices);
@@ -43,72 +39,76 @@ function* dijkstraInstructionGenerator(
   const start = graph.vertices[startingVertex];
   distances.set(start.id, 0);
 
-  yield {
+  steps.push({
     description: "Set distance to starting vertext to 0.",
     stepState: JSON.stringify([...distances.entries()]),
     highlights: new Map([[start.id, 270]]),
-  };
+  });
 
   while (unvisited.size > 0) {
     const current = pickClosest(unvisited.values(), distances)!;
 
-    yield {
+    steps.push({
       description: "Pick the closest vertex from all unvisited vertices.",
       stepState: JSON.stringify([...distances.entries()]),
-      highlights: new Map([...permamentHighlights, [current.id, 90]]),
-    };
+      highlights: new Map([...highlights, [current.id, 90]]),
+    });
+
+    const outsHighlights: [string, number][] = [];
 
     for (const edgeId of current.outs) {
       const edge = graph.edges[edgeId];
-      const adj = graph.vertices[edge.to];
+
+      const adjacent =
+        graph.vertices[
+          edge.to === current.id && !edge.directed ? edge.from : edge.to
+        ];
+
+      if (!unvisited.has(adjacent)) {
+        continue;
+      }
 
       distances.set(
-        adj.id,
+        adjacent.id,
         Math.min(
-          distances.get(adj.id)!,
+          distances.get(adjacent.id)!,
           distances.get(current.id)! + edge.weight!
         )
       );
+
+      outsHighlights.push([adjacent.id, 180]);
     }
 
-    const currentOutsHighlight = current.outs.map((edgeId) => {
-      const edge = graph.edges[edgeId];
-      const adj = graph.vertices[edge.to];
-      return [adj.id, 180] as [string, number];
-    });
-
-    yield {
+    steps.push({
       description:
         "Iterate over all adjacent unvisited nodes and update their min length.",
       stepState: JSON.stringify([...distances.entries()]),
-      highlights: new Map([...permamentHighlights, ...currentOutsHighlight]),
-    };
+      highlights: new Map([...highlights, ...outsHighlights]),
+    });
 
-    yield {
+    highlights.push([current.id, 225]);
+    unvisited.delete(current);
+
+    steps.push({
       description: "Mark current node as visited.",
       stepState: JSON.stringify([...distances.entries()]),
-      highlights: new Map([...permamentHighlights, [current.id, 0]]),
-    };
-
-    permamentHighlights.push([current.id, 225]);
-    unvisited.delete(current);
+      highlights: new Map([...highlights, [current.id, 0]]),
+    });
   }
 
-  yield {
+  steps.push({
     description: "There is no more unvisited vertices, end the algorithm!",
     stepState: JSON.stringify([...distances.entries()]),
-    highlights: new Map([...permamentHighlights]),
-  };
-}
+    highlights: new Map([...highlights]),
+  });
 
-const dijkstraInstructionResolver = (graph: Graph, startingVertex: string) => [
-  ...dijkstraInstructionGenerator(graph, startingVertex),
-];
+  return steps;
+};
 
 export const dijkstra: Algorithm = {
   name: "Dijkstra",
   description:
     "Dijkstra algorithm allows you to find shortest path from starting node to every other node.",
   tags: ["shortest path"],
-  instructionsResolver: dijkstraInstructionResolver,
+  algorithm,
 };

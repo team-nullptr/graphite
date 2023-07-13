@@ -1,8 +1,8 @@
 import { Graph, Vertex } from "../core/simulator/graph";
-import { Instruction } from "../core/simulator/instruction";
+import { Step } from "../core/simulator/step";
 import { Algorithm } from "../types/algorithm";
 
-function* dfsInstructionGenerator(graph: Graph): IterableIterator<Instruction> {
+function* dfsInstructionGenerator(graph: Graph): IterableIterator<Step> {
   const visited = new Set<string>();
   const stack: string[] = [];
 
@@ -47,5 +47,5 @@ export const dfs: Algorithm = {
   name: "Depth First Search",
   description: "Depth First Search algorithm visit all nodes of a graph.",
   tags: ["exploration"],
-  instructionsResolver: dfsInstructionResolver,
+  algorithm: dfsInstructionResolver,
 };

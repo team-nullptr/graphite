@@ -33,7 +33,7 @@ export const AlgorithmDetails = ({ algorithm, onBack }: AlgorithmDetails) => {
 
     setMode({
       mode: "SIMULATION",
-      instructions: algorithm.instructionsResolver(graph, startingVertex),
+      steps: algorithm.algorithm(graph, startingVertex),
     });
   };
 

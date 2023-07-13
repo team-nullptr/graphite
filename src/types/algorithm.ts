@@ -1,9 +1,9 @@
 import { Graph } from "../core/simulator/graph";
-import { Instruction } from "../core/simulator/instruction";
+import { Step } from "../core/simulator/step";
 
 export type Algorithm = {
   name: string;
   description: string;
   tags: string[];
-  instructionsResolver: (graph: Graph, startingVertex: string) => Instruction[];
+  algorithm: (graph: Graph, startingVertex: string) => Step[];
 };

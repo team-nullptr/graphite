@@ -60,8 +60,8 @@ export class Interpreter implements ExprVisitor<Obj>, StmtVisitor<void> {
             const to = assertVertex(args[1]);
             const weight = args[2] ? assertNumber(args[2]) : 1;
 
-            // TODO: This is broken ...
             interpreter.edges[id] = new Edge(id, from, to, weight, false);
+
             interpreter.vertices[from].outs.push(id);
             interpreter.vertices[from].ins.push(id);
 
@@ -82,6 +82,7 @@ export class Interpreter implements ExprVisitor<Obj>, StmtVisitor<void> {
             const weight = args[2] ? assertNumber(args[2]) : 1;
 
             interpreter.edges[id] = new Edge(id, from, to, weight, true);
+
             interpreter.vertices[from].outs.push(id);
             interpreter.vertices[to].ins.push(id);
           }

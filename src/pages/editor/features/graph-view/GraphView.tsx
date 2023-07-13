@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Highlights } from "../../../../core/simulator/instruction";
+import { Highlights } from "../../../../core/simulator/step";
 import { useEditorStore } from "../../context/editor";
 import { Edge } from "./components/Edge";
 import { Vertex } from "./components/Vertex";

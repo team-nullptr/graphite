@@ -2,7 +2,7 @@ import { createStore } from "zustand";
 import { devtools } from "zustand/middleware";
 import { Graph } from "../../../core/simulator/graph";
 import { Project, ProjectMetadata } from "../../../types/project";
-import { Instruction } from "../../../core/simulator/instruction";
+import { Step } from "../../../core/simulator/step";
 
 type Mode =
   | {
@@ -10,7 +10,7 @@ type Mode =
     }
   | {
       mode: "SIMULATION";
-      instructions: Instruction[];
+      steps: Step[];
     };
 
 export type EditorState = {
@@ -34,6 +34,7 @@ export const createEditorStore = ({ project }: CreateEditorStoreOpts) => {
   return createStore<EditorState>()(
     devtools((set) => ({
       metadata: project.metadata,
+
       // mode
       mode: {
         mode: "IDLE",
@@ -43,6 +44,7 @@ export const createEditorStore = ({ project }: CreateEditorStoreOpts) => {
           mode,
         });
       },
+
       // graph
       graph: initialGraph,
       setGraph: (graph) => {
@@ -50,7 +52,6 @@ export const createEditorStore = ({ project }: CreateEditorStoreOpts) => {
           graph,
         });
       },
-      instructions: [],
     }))
   );
 };
