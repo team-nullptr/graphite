@@ -29,7 +29,8 @@ const pickClosest = (
 };
 
 function* dijkstraInstructionGenerator(
-  graph: Graph
+  graph: Graph,
+  startingVertex: string
 ): IterableIterator<Instruction> {
   // init instructions
   const permamentHighlights: [string, number][] = [];
@@ -39,7 +40,7 @@ function* dijkstraInstructionGenerator(
   const distances = new Map(vertices.map((vertex) => [vertex.id, Infinity]));
   const unvisited = new Set(vertices);
 
-  const start = vertices.at(0)!;
+  const start = graph.vertices[startingVertex];
   distances.set(start.id, 0);
 
   yield {
@@ -100,8 +101,8 @@ function* dijkstraInstructionGenerator(
   };
 }
 
-const dijkstraInstructionResolver = (graph: Graph) => [
-  ...dijkstraInstructionGenerator(graph),
+const dijkstraInstructionResolver = (graph: Graph, startingVertex: string) => [
+  ...dijkstraInstructionGenerator(graph, startingVertex),
 ];
 
 export const dijkstra: Algorithm = {

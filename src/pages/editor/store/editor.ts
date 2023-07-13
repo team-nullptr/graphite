@@ -2,22 +2,23 @@ import { createStore } from "zustand";
 import { devtools } from "zustand/middleware";
 import { Graph } from "../../../core/simulator/graph";
 import { Project, ProjectMetadata } from "../../../types/project";
-import { Algorithm } from "../../../types/algorithm";
+import { Instruction } from "../../../core/simulator/instruction";
 
-export const editorModes = {
-  ASSEMBLY: "ASSEMBLY",
-  SIMULATION: "SIMULATION",
-} as const;
-
-export type EditorMode = (typeof editorModes)[keyof typeof editorModes];
+type Mode =
+  | {
+      mode: "IDLE";
+    }
+  | {
+      mode: "SIMULATION";
+      instructions: Instruction[];
+    };
 
 export type EditorState = {
   metadata: ProjectMetadata;
-  mode: EditorMode;
+  mode: Mode;
+  setMode: (mode: Mode) => void;
   graph: Graph;
-  algorithm: Algorithm | null;
   setGraph: (graph: Graph) => void;
-  setAlgorithm: (algorithm: Algorithm | null) => void;
 };
 
 export type CreateEditorStoreOpts = {
@@ -33,19 +34,23 @@ export const createEditorStore = ({ project }: CreateEditorStoreOpts) => {
   return createStore<EditorState>()(
     devtools((set) => ({
       metadata: project.metadata,
-      mode: editorModes.ASSEMBLY,
+      // mode
+      mode: {
+        mode: "IDLE",
+      },
+      setMode: (mode: Mode) => {
+        set({
+          mode,
+        });
+      },
+      // graph
       graph: initialGraph,
-      algorithm: null,
       setGraph: (graph) => {
         set({
           graph,
         });
       },
-      setAlgorithm: (algorithm) => {
-        set({
-          algorithm,
-        });
-      },
+      instructions: [],
     }))
   );
 };

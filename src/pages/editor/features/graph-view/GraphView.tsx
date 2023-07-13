@@ -102,7 +102,10 @@ export const GraphView = (props: GraphViewProps) => {
 
   return (
     <>
-      <div ref={containerRef} className={props.className + " overflow-hidden"}>
+      <div
+        ref={containerRef}
+        className={props.className + " select-none overflow-hidden"}
+      >
         <svg
           ref={svgRef}
           className="h-full w-full"

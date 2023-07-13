@@ -5,5 +5,5 @@ export type Algorithm = {
   name: string;
   description: string;
   tags: string[];
-  instructionsResolver: (graph: Graph) => Instruction[];
+  instructionsResolver: (graph: Graph, startingVertex: string) => Instruction[];
 };

@@ -5,6 +5,7 @@ import { PlayIcon } from "@heroicons/react/24/outline";
 import { useEditorStore } from "../context/editor";
 import { Select } from "../../../shared/ui/Select";
 import { SpaceshipButton } from "../../../shared/ui/SpaceshipButton";
+import { useEffect, useState } from "react";
 
 export interface AlgorithmDetails {
   algorithm: Algorithm;
@@ -12,17 +13,43 @@ export interface AlgorithmDetails {
 }
 
 export const AlgorithmDetails = ({ algorithm, onBack }: AlgorithmDetails) => {
-  const { graph, setAlgorithm } = useEditorStore(({ graph, setAlgorithm }) => ({
+  const [startingVertex, setStartingVertex] = useState<string>();
+
+  const { graph, setMode } = useEditorStore(({ graph, setMode }) => ({
     graph,
-    setAlgorithm,
+    setMode,
   }));
+
+  useEffect(() => {
+    if (startingVertex && graph.vertices[startingVertex] === undefined) {
+      setStartingVertex(undefined);
+    }
+  }, [graph, startingVertex]);
+
+  const loadInstructions = () => {
+    if (!startingVertex) {
+      return;
+    }
+
+    setMode({
+      mode: "SIMULATION",
+      instructions: algorithm.instructionsResolver(graph, startingVertex),
+    });
+  };
+
+  const handleOnBack = () => {
+    setMode({ mode: "IDLE" });
+    onBack();
+  };
+
+  const vertices = Object.keys(graph.vertices);
 
   return (
     <div className="flex h-full flex-col bg-slate-50">
       <Controls alignment="start">
         <ControlsButton
           icon={<ArrowLeftIcon className="h-5 w-5" />}
-          onClick={onBack}
+          onClick={handleOnBack}
           alt="back"
         />
       </Controls>
@@ -33,7 +60,6 @@ export const AlgorithmDetails = ({ algorithm, onBack }: AlgorithmDetails) => {
           <p className="text-slate-600">{algorithm.description}</p>
         </div>
 
-        {/* TODO: Is there any way to make this config universal so that it works with any algorithm? */}
         <div className="flex flex-col gap-8 p-4">
           <div className="flex flex-col gap-2">
             <span className="text-slate-800">
@@ -41,7 +67,9 @@ export const AlgorithmDetails = ({ algorithm, onBack }: AlgorithmDetails) => {
             </span>
             <Select
               label="Choose starting vertex"
-              values={Object.keys(graph.vertices)}
+              value={startingVertex}
+              onChange={setStartingVertex}
+              values={vertices}
             />
           </div>
         </div>
@@ -49,7 +77,8 @@ export const AlgorithmDetails = ({ algorithm, onBack }: AlgorithmDetails) => {
 
       <div className="flex-g flex justify-end border-t border-gray-300 bg-slate-50 p-4">
         <SpaceshipButton
-          onClick={() => setAlgorithm(algorithm)}
+          disabled={startingVertex === undefined}
+          onClick={loadInstructions}
           label="Run"
           icon={<PlayIcon className="h-5 w-5" />}
         />

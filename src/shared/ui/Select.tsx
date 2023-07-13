@@ -6,16 +6,17 @@ import {
 } from "@heroicons/react/24/outline";
 
 type SelectOptions = {
+  value?: string;
+  onChange: (value: string) => void;
   label: string;
   values: string[];
 };
 
-export const Select = ({ values, label }: SelectOptions) => {
-  const [value, setValue] = useState<string>();
+export const Select = ({ values, label, value, onChange }: SelectOptions) => {
   const [opened, setOpened] = useState(false);
 
   const handleValueChange = (value: string) => {
-    setValue(value);
+    onChange(value);
     setOpened(false);
   };
 

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { GraphView } from "../features/graph-view/GraphView";
 import { useEditorStore } from "../context/editor";
 import { Timeline } from "./Timeline";
@@ -7,22 +7,18 @@ import { HorizontalSplit } from "../../../layout/HorizontalSplit";
 export const Visualizer = () => {
   const [currentStep, setCurrentStep] = useState(0);
 
-  const { algorithm, graph } = useEditorStore(({ algorithm, graph }) => ({
-    algorithm,
-    graph,
-  }));
-
-  const instructions = useMemo(
-    () => algorithm?.instructionsResolver(graph) ?? [],
-    [algorithm, graph]
-  );
+  const mode = useEditorStore(({ mode }) => mode);
 
   // TODO: We might want to do this differently
   useEffect(() => {
     setCurrentStep(0);
-  }, [instructions]);
+  }, [mode]);
 
-  const currentInstruction = instructions[currentStep];
+  if (mode.mode === "IDLE") {
+    return <GraphView className="h-full w-full" />;
+  }
+
+  const currentInstruction = mode.instructions[currentStep];
 
   return (
     <HorizontalSplit
@@ -31,7 +27,7 @@ export const Visualizer = () => {
           <Timeline
             currentStep={currentStep}
             onStepChange={setCurrentStep}
-            maxStep={instructions.length - 1}
+            maxStep={mode.instructions.length - 1}
           />
           <GraphView
             className="h-full w-full"
