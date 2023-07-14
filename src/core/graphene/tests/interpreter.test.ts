@@ -6,8 +6,10 @@ import { Vertex } from "../../simulator/graph";
 
 test("Vertices are added correctly", () => {
   // arrange
-  const want = ["A", "B", "C", "D"];
-  const source = want.map((vertex) => `vertex(${vertex}, 1)`).join("\n");
+  const source = `
+vertex(A)
+vertex(B, 23)
+`;
 
   const tokens = new Lexer(source).lex();
   const stmts = new Parser(tokens).parse();
@@ -17,9 +19,10 @@ test("Vertices are added correctly", () => {
   const got = interpreter.forge();
 
   // assert
-  expect(Object.values(got.vertices)).toEqual(
-    want.map((id) => new Vertex(id, 1))
-  );
+  expect(Object.values(got.vertices)).toEqual([
+    new Vertex("A", 1),
+    new Vertex("B", 23),
+  ]);
 });
 
 test("Edges are added correctly", () => {
@@ -43,5 +46,11 @@ arc(A, B, 5)
   const got = interpreter.forge();
 
   // assert
-  expect(Object.keys(got.edges)).toHaveLength(4);
+  const edges = Object.values(got.edges);
+
+  const directed = edges.filter((edge) => edge.directed);
+  expect(directed).toHaveLength(2);
+
+  const undirected = edges.filter((edge) => !edge.directed);
+  expect(undirected).toHaveLength(2);
 });

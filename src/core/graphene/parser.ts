@@ -1,5 +1,11 @@
 import { Token, TokenType } from "./token";
-import { Expr, Variable, Literal, NumberLiteral, VertexLiteral } from "./expr";
+import {
+  Expr,
+  Variable,
+  NumberLiteral,
+  VertexLiteral,
+  VertexCollection,
+} from "./expr";
 import { Call } from "./stmt";
 import { Statement } from "./stmt";
 
@@ -42,7 +48,7 @@ export class Parser {
 
     this.consume("LEFT_PAREN", "Expected a function call.");
 
-    let args: Literal[] = [];
+    let args: Expr[] = [];
 
     if (!this.check("RIGHT_PAREN")) {
       args = this.finishArgumentList();
@@ -56,8 +62,8 @@ export class Parser {
     return new Call(calle, paren, args);
   }
 
-  private finishArgumentList(): Literal[] {
-    const args: Literal[] = [];
+  private finishArgumentList(): Expr[] {
+    const args: Expr[] = [];
 
     do {
       // TODO: Do we really need this chek?
@@ -76,7 +82,11 @@ export class Parser {
     return args;
   }
 
-  private argument(): Literal {
+  private argument(): Expr {
+    if (this.match("LEFT_SQ_BRACKET")) {
+      return this.vertexCollection();
+    }
+
     if (this.match("NUMBER")) {
       return new NumberLiteral(
         this.previous(),
@@ -89,6 +99,31 @@ export class Parser {
     }
 
     throw new ParseError(this.peek(), "Expected next function argument.");
+  }
+
+  private vertexCollection(): VertexCollection {
+    this.ignoreNewLines();
+
+    if (this.match("RIGHT_SQ_BRACKET")) {
+      return new VertexCollection(this.previous(), []);
+    }
+
+    const vertices = [];
+
+    do {
+      this.ignoreNewLines();
+      const vertex = this.consume("IDENTIFIER", "Expected a vertex.");
+      vertices.push(new VertexLiteral(vertex, vertex.lexeme));
+    } while (this.match("COMMA"));
+
+    this.ignoreNewLines();
+
+    const paren = this.consume(
+      "RIGHT_SQ_BRACKET",
+      "Expected ']' at the end of vertex collection."
+    );
+
+    return new VertexCollection(paren, vertices);
   }
 
   private ignoreNewLines() {

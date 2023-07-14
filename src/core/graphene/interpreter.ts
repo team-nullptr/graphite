@@ -6,6 +6,7 @@ import {
   Visitor as ExprVisitor,
   NumberLiteral,
   Variable,
+  VertexCollection,
   VertexLiteral,
 } from "./expr";
 import { Call } from "./stmt";
@@ -42,10 +43,20 @@ export class Interpreter implements ExprVisitor<Obj>, StmtVisitor<void> {
           arity = { min: 1, max: 2 };
 
           call(interpreter: Interpreter, args: Obj[]): void {
-            const id = assertVertex(args[0]);
             const value = args[1] ? assertNumber(args[1]) : 1;
 
-            interpreter.vertices[id] = new Vertex(id, value);
+            if (args[0].type === "VERTEX") {
+              interpreter.vertices[args[0].value] = new Vertex(
+                args[0].value,
+                value
+              );
+            } else if (args[0].type === "VERTEX_COLLECTION") {
+              for (const vertex of args[0].value) {
+                interpreter.vertices[vertex] = new Vertex(vertex, value);
+              }
+            } else {
+              throw new Error("Expected a vertex or a vertex collection.");
+            }
           }
         })(),
       ],
@@ -55,18 +66,31 @@ export class Interpreter implements ExprVisitor<Obj>, StmtVisitor<void> {
           arity = { min: 2, max: 3 };
 
           call(interpreter: Interpreter, args: Obj[]): void {
-            const id = nanoid();
             const from = assertVertex(args[0]);
-            const to = assertVertex(args[1]);
             const weight = args[2] ? assertNumber(args[2]) : 1;
 
-            interpreter.edges[id] = new Edge(id, from, to, weight, false);
+            if (args[1].type === "VERTEX") {
+              const id = nanoid();
+              const to = args[1].value;
 
-            interpreter.vertices[from].outs.push(id);
-            interpreter.vertices[from].ins.push(id);
+              interpreter.edges[id] = new Edge(id, from, to, weight, false);
+              interpreter.vertices[from].outs.push(id);
+              interpreter.vertices[from].ins.push(id);
+              interpreter.vertices[to].ins.push(id);
+              interpreter.vertices[to].outs.push(id);
+            } else if (args[1].type === "VERTEX_COLLECTION") {
+              for (const to of args[1].value) {
+                const id = nanoid();
 
-            interpreter.vertices[to].ins.push(id);
-            interpreter.vertices[to].outs.push(id);
+                interpreter.edges[id] = new Edge(id, from, to, weight, false);
+                interpreter.vertices[from].outs.push(id);
+                interpreter.vertices[from].ins.push(id);
+                interpreter.vertices[to].ins.push(id);
+                interpreter.vertices[to].outs.push(id);
+              }
+            } else {
+              throw new Error("Expected a vertex or a vertex collection.");
+            }
           }
         })(),
       ],
@@ -76,15 +100,27 @@ export class Interpreter implements ExprVisitor<Obj>, StmtVisitor<void> {
           arity = { min: 2, max: 3 };
 
           call(interpreter: Interpreter, args: Obj[]): void {
-            const id = nanoid();
             const from = assertVertex(args[0]);
-            const to = assertVertex(args[1]);
             const weight = args[2] ? assertNumber(args[2]) : 1;
 
-            interpreter.edges[id] = new Edge(id, from, to, weight, true);
+            if (args[1].type === "VERTEX") {
+              const id = nanoid();
+              const to = args[1].value;
 
-            interpreter.vertices[from].outs.push(id);
-            interpreter.vertices[to].ins.push(id);
+              interpreter.edges[id] = new Edge(id, from, to, weight, true);
+              interpreter.vertices[from].outs.push(id);
+              interpreter.vertices[to].ins.push(id);
+            } else if (args[1].type === "VERTEX_COLLECTION") {
+              for (const to of args[1].value) {
+                const id = nanoid();
+
+                interpreter.edges[id] = new Edge(id, from, to, weight, true);
+                interpreter.vertices[from].outs.push(id);
+                interpreter.vertices[to].ins.push(id);
+              }
+            } else {
+              throw new Error("Expected a vertex or a vertex collection.");
+            }
           }
         })(),
       ],
@@ -141,6 +177,15 @@ export class Interpreter implements ExprVisitor<Obj>, StmtVisitor<void> {
     return {
       type: "NUMBER",
       value: expr.value,
+    };
+  }
+
+  visitVertexCollection(expr: VertexCollection): Obj {
+    const vertices: string[] = expr.vertices.map((vertex) => vertex.value);
+
+    return {
+      type: "VERTEX_COLLECTION",
+      value: vertices,
     };
   }
 

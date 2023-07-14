@@ -1,6 +1,8 @@
 export type TokenType =
   | "LEFT_PAREN"
   | "RIGHT_PAREN"
+  | "LEFT_SQ_BRACKET"
+  | "RIGHT_SQ_BRACKET"
   | "COMMA"
   | "IDENTIFIER"
   | "NUMBER"

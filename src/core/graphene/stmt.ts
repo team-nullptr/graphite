@@ -1,4 +1,4 @@
-import { Expr, Literal } from "./expr";
+import { Expr } from "./expr";
 import { Token } from "./token";
 
 export interface Visitor<R> {
@@ -13,7 +13,7 @@ export class Call implements Statement {
   constructor(
     public readonly calle: Expr,
     public readonly paren: Token,
-    public readonly args: Literal[]
+    public readonly args: Expr[]
   ) {}
 
   accept<R>(visitor: Visitor<R>): R {

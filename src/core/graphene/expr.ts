@@ -7,12 +7,24 @@ export interface Expr {
 
 export interface Visitor<R> {
   visitVertexLiteral(expr: VertexLiteral): R;
+  visitVertexCollection(expr: VertexCollection): R;
   visitNumberLiteral(expr: NumberLiteral): R;
 
   // TODO: This should also return R. The problem is that Graphene does not have user-devlarable variables
   // and variable will always evaluate to a globally defined function. Changing this would require
   // writing useless code, so I leave this like that for now.
   visitVariableExpr(expr: Variable): Callable;
+}
+
+export class VertexCollection implements Expr {
+  constructor(
+    public readonly bracketToken: Token,
+    public readonly vertices: VertexLiteral[]
+  ) {}
+
+  accept<R>(visitor: Visitor<R>): R {
+    return visitor.visitVertexCollection(this);
+  }
 }
 
 export class VertexLiteral implements Expr {
@@ -38,5 +50,3 @@ export class Variable implements Expr {
     return visitor.visitVariableExpr(this) as R;
   }
 }
-
-export type Literal = NumberLiteral | VertexLiteral;

@@ -52,6 +52,12 @@ export class Lexer {
       case ",":
         this.addToken("COMMA");
         break;
+      case "[":
+        this.addToken("LEFT_SQ_BRACKET");
+        break;
+      case "]":
+        this.addToken("RIGHT_SQ_BRACKET");
+        break;
 
       // Whitespace
       case " ":

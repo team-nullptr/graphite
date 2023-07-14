@@ -3,7 +3,8 @@ export type Obj =
       type: "NUMBER";
       value: number;
     }
-  | { type: "VERTEX"; value: string };
+  | { type: "VERTEX"; value: string }
+  | { type: "VERTEX_COLLECTION"; value: string[] };
 
 export const assertVertex = (arg: Obj): string => {
   if (arg.type !== "VERTEX") {
