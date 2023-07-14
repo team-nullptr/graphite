@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Highlights } from "../../../../core/simulator/step";
-import { useEditorStore } from "../../context/editor";
 import { Edge } from "./components/Edge";
 import { Vertex } from "./components/Vertex";
 import { useGraphLayout } from "./hooks/useGraphLayout";
@@ -12,22 +11,28 @@ import {
   groupEdges,
   sortEdges,
 } from "./helpers/distributeEdges";
-
-export interface GraphViewProps {
-  highlights?: Highlights;
-  className: string;
-}
+import { Graph } from "../../../../core/simulator/graph";
 
 type Viewport = [x: number, y: number, width: number, height: number];
 
-export const GraphView = (props: GraphViewProps) => {
+export type GraphViewProps = {
+  highlights?: Highlights;
+  className: string;
+  graph: Graph;
+};
+
+// TODO: Make graph a prop to Graph View
+export const GraphView = ({ className, highlights, graph }: GraphViewProps) => {
   const svgRef = useRef<SVGSVGElement>(null);
+
   const containerRef = useRef<HTMLDivElement>(null);
   const containerRect = useResizeObserver(containerRef);
+  const containerDimen: [number, number] = [
+    containerRect?.width ?? 0,
+    containerRect?.height ?? 0,
+  ];
 
   const [viewport, setViewport] = useState<Viewport>([0, 0, 0, 0]);
-
-  const graph = useEditorStore((state) => state.graph);
   const { arrangement, vertexMouseDownHandler, areControlsEnabled } =
     useGraphLayout(graph, svgRef);
 
@@ -37,11 +42,6 @@ export const GraphView = (props: GraphViewProps) => {
     const { width, height } = containerRect;
     setViewport([0, 0, width, height]);
   }, [containerRect]);
-
-  const containerDimen = [
-    containerRect?.width ?? 0,
-    containerRect?.height ?? 0,
-  ] satisfies [number, number];
 
   usePan(svgRef, containerDimen, setViewport, areControlsEnabled);
   useZoom(svgRef, setViewport);
@@ -58,61 +58,55 @@ export const GraphView = (props: GraphViewProps) => {
     [graph]
   );
 
-  const vertices = useMemo(() => {
-    return Object.entries(arrangement).map(([id, pos]) => {
-      const { x, y } = pos;
-      const hue = props.highlights?.get(id);
-
-      return (
-        <Vertex
-          hue={hue}
-          key={id}
-          cx={x}
-          cy={y}
-          value={id}
-          onMouseDown={(event) => vertexMouseDownHandler(id, event)}
-        />
-      );
-    });
-  }, [arrangement, props.highlights, vertexMouseDownHandler]);
-
-  const edges = useMemo(
-    () =>
-      positionedEdges.map((positionedEdge) => {
-        const [edge, position] = positionedEdge;
-        const { x, y } = arrangement[edge.from] ?? { x: 0, y: 0 };
-        const { x: dx, y: dy } = arrangement[edge.to] ?? { x: 0, y: 0 };
-        const circular = edge.from === edge.to;
-
-        return (
-          <Edge
-            key={edge.id}
-            position={position}
-            x={x}
-            y={y}
-            dx={dx}
-            dy={dy}
-            directed={edge.directed}
-            circular={circular}
-          />
-        );
-      }),
-    [arrangement, positionedEdges]
-  );
+  const vertices = useMemo(() => Object.entries(arrangement), [arrangement]);
 
   return (
     <>
       <div
         ref={containerRef}
-        className={props.className + " select-none overflow-hidden"}
+        className={className + " select-none overflow-hidden"}
       >
         <svg
           ref={svgRef}
           className="h-full w-full"
           viewBox={viewport.join(" ")}
         >
-          {edges}
-          {vertices}
+          {/* Edges */}
+          {positionedEdges.map((positionedEdge) => {
+            const [edge, position] = positionedEdge;
+            const { x, y } = arrangement[edge.from] ?? { x: 0, y: 0 };
+            const { x: dx, y: dy } = arrangement[edge.to] ?? { x: 0, y: 0 };
+            const circular = edge.from === edge.to;
+
+            return (
+              <Edge
+                key={edge.id}
+                position={position}
+                x={x}
+                y={y}
+                dx={dx}
+                dy={dy}
+                directed={edge.directed}
+                circular={circular}
+              />
+            );
+          })}
+
+          {/* Vertices */}
+          {vertices.map(([id, pos]) => {
+            const { x, y } = pos;
+            const hue = highlights?.get(id);
+            return (
+              <Vertex
+                hue={hue}
+                key={id}
+                cx={x}
+                cy={y}
+                value={id}
+                onMouseDown={(event) => vertexMouseDownHandler(id, event)}
+              />
+            );
+          })}
         </svg>
       </div>
     </>

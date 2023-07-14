@@ -48,12 +48,8 @@ export const Timeline = ({
     return () => clearInterval(intervalId);
   }, [isPlaying, nextStepHandler]);
 
-  // const sliderChangeHandler = (event: ChangeEvent<HTMLInputElement>) => {
-  //   const value = event.target.value;
-  //   onStepChange?.(parseInt(value));
-  // };
-
   return (
+    // TODO: It looks like we are not using Controls component for anything else so we might remove it and leave just Timeline component.
     <Controls>
       <ControlsButton
         onClick={previousStepHandler}
@@ -68,17 +64,6 @@ export const Timeline = ({
         icon={<ArrowRightIcon className="h-5 w-5" />}
         alt="next"
       />
-
-      {/* TODO: Maybe we can make something better than built-in slider */}
-      {/* 
-      <input
-        className={styles.slider}
-        type="range"
-        min="0"
-        max={maxStep}
-        value={currentStep}
-        onChange={sliderChangeHandler}
-      /> */}
 
       <ControlsButton
         onClick={restartHandler}

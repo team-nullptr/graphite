@@ -1,12 +1,11 @@
 import { RefObject, useEffect, useRef, useState } from "react";
 import { Graph } from "../../../../../core/simulator/graph";
-
 import { Arrangement } from "../types/arrangement";
 import { SelectedVertex } from "../types/selectedVertex";
 import { Vec2 } from "../types/vec2";
 import { useForceSimulation } from "./useForceSimulation";
 
-// TODO: Learn more about initial arrangement for force-directed graphs
+// TODO: Learn more about initial arrangement for force-directed graphs.
 const preArrange = (graph: Graph) =>
   Object.values(graph.vertices).reduce((arrangement, v) => {
     arrangement[v.id] = new Vec2(
@@ -16,6 +15,16 @@ const preArrange = (graph: Graph) =>
 
     return arrangement;
   }, {} as Arrangement);
+
+const getPointInSvgSpace = (
+  x: number,
+  y: number,
+  svg: SVGSVGElement
+): DOMPoint => {
+  const point = new DOMPoint(x, y);
+  const svgViewportOffsetMatrix = svg.getScreenCTM()?.inverse();
+  return point.matrixTransform(svgViewportOffsetMatrix);
+};
 
 export const useGraphLayout = (
   graph: Graph,
@@ -48,8 +57,16 @@ export const useGraphLayout = (
   useForceSimulation(graph, selectedVertexRef, setArrangment);
 
   useEffect(() => {
-    // TODO: Arrange only new vertices (do not move the old ones)
-    setArrangment(preArrange(graph));
+    const updatedArrangement = preArrange(graph);
+    const currentVertices = new Set([...Object.keys(graph.vertices)]);
+
+    for (const vertex of Object.keys(arrangement)) {
+      if (currentVertices.has(vertex)) {
+        updatedArrangement[vertex] = arrangement[vertex];
+      }
+    }
+
+    setArrangment(updatedArrangement);
   }, [graph]);
 
   useEffect(() => {
@@ -66,8 +83,6 @@ export const useGraphLayout = (
 
       const { id, offset } = selectedVertexRef.current;
       const position = getPointInSvgSpace(event.clientX, event.clientY, svg);
-
-      // const scale = getSvgScale(svg);
 
       const positionWithMouseOffset = new Vec2(position.x, position.y);
       positionWithMouseOffset.substract(offset);
@@ -94,14 +109,4 @@ export const useGraphLayout = (
     selectedVertexRef,
     areControlsEnabled,
   };
-};
-
-const getPointInSvgSpace = (
-  x: number,
-  y: number,
-  svg: SVGSVGElement
-): DOMPoint => {
-  const point = new DOMPoint(x, y);
-  const svgViewportOffsetMatrix = svg.getScreenCTM()?.inverse();
-  return point.matrixTransform(svgViewportOffsetMatrix);
 };
