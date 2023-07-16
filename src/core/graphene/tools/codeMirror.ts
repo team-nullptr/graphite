@@ -4,10 +4,12 @@ import { parser } from "./gen/gdl";
 
 export const grapheneParser = parser.configure({
   props: [
-    // TODO: Work out how to make this styletags work properly
     styleTags({
-      Identifier: tags.variableName,
+      Identifier: tags.keyword,
+      Vertex: tags.variableName,
       Number: tags.number,
+      "( ) [ ]": tags.paren,
+      ",": tags.punctuation,
     }),
   ],
 });

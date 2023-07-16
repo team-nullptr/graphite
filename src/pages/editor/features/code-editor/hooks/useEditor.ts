@@ -18,12 +18,20 @@ export const editorOnChange = (cb: (value: string) => void) => {
 
 const codeThemeLight = HighlightStyle.define([
   {
+    tag: tags.keyword,
+    color: "#3b82f6",
+  },
+  {
     tag: tags.variableName,
-    color: "#6F42C1",
+    color: "#60a5fa",
   },
   {
     tag: tags.number,
-    color: "#6F42C1",
+    color: "#f59e0b",
+  },
+  {
+    tag: [tags.paren, tags.punctuation],
+    color: "#475569",
   },
 ]);
 
