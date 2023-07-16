@@ -1,8 +1,8 @@
 import { useRef, useState, useEffect, ReactNode } from "react";
 
-const useHorizontalSplit = <E extends HTMLElement>(initialTopShare: number) => {
+const useHorizontalSplit = <E extends HTMLElement>() => {
   const ref = useRef<E>(null);
-  const [topShare, setTopShare] = useState(initialTopShare);
+  const [topShare, setTopShare] = useState(50);
   const [isResizing, setIsResizing] = useState(false);
 
   useEffect(() => {
@@ -39,16 +39,11 @@ const useHorizontalSplit = <E extends HTMLElement>(initialTopShare: number) => {
 type HorizontalSplitProps = {
   top: ReactNode;
   bottom: ReactNode;
-  initialTopShare?: number;
 };
 
-export const HorizontalSplit = ({
-  top,
-  bottom,
-  initialTopShare = 50,
-}: HorizontalSplitProps) => {
+export const HorizontalSplit = ({ top, bottom }: HorizontalSplitProps) => {
   const { topShare, isResizing, setIsResizing, ref } =
-    useHorizontalSplit<HTMLDivElement>(initialTopShare);
+    useHorizontalSplit<HTMLDivElement>();
 
   return (
     <div className="flex h-full w-full flex-col" ref={ref}>

@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
+import { Interpreter } from "~/core/graphene/interpreter";
+import { Lexer } from "~/core/graphene/lexer";
+import { Parser } from "~/core/graphene/parser";
+import { HorizontalSplit } from "~/shared/layout/HorizontalSplit";
+import { useEditorStore } from "../../context/editor";
+import { DiagnosticsSummary } from "./components/Diagnostics";
 import "./editor-styles.css";
 import { editorOnChange, useEditor } from "./hooks/useEditor";
-import { HorizontalSplit } from "../../../../layout/HorizontalSplit";
-import { DiagnosticsSummary } from "./components/Diagnostics";
-import { useEditorStore } from "../../context/editor";
-import { Lexer } from "../../../../core/graphene/lexer";
-import { Parser } from "../../../../core/graphene/parser";
-import { Interpreter } from "../../../../core/graphene/interpreter";
 
 export const CodeEditor = () => {
   const setGraph = useEditorStore(({ setGraph }) => setGraph);
@@ -55,7 +55,6 @@ export const CodeEditor = () => {
 
   return (
     <HorizontalSplit
-      initialTopShare={90}
       top={<div className="h-full" ref={ref} />}
       bottom={<DiagnosticsSummary errors={errors} />}
     />

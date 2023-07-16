@@ -1,4 +1,4 @@
-import { Tab } from "../../../../../shared/Tab";
+import { Tab } from "~/shared/Tab";
 import { ErrorDescription } from "./ErrorDescription";
 
 type DiagnosticsSummaryProps = {

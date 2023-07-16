@@ -1,5 +1,5 @@
 import { MoonIcon, SunIcon, SparklesIcon } from "@heroicons/react/24/outline";
-import { useTheme } from "../context/theme";
+import { useTheme } from "~/context/theme";
 
 export const ThemeToggler = () => {
   const { mode, toggle } = useTheme();

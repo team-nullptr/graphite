@@ -1,8 +1,8 @@
 import { createStore } from "zustand";
 import { devtools } from "zustand/middleware";
-import { Graph } from "../../../core/simulator/graph";
-import { Project, ProjectMetadata } from "../../../types/project";
-import { Step } from "../../../core/simulator/step";
+import { Graph } from "~/core/simulator/graph";
+import { Project, ProjectMetadata } from "~/types/project";
+import { Step } from "~/core/simulator/step";
 
 type Mode =
   | {

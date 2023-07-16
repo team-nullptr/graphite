@@ -1,10 +1,10 @@
-import { Algorithm } from "../../../types/algorithm";
+import { Algorithm } from "~/types/algorithm";
 import { ArrowLeftIcon } from "@heroicons/react/24/outline";
-import { Controls, ControlsButton } from "../../../shared/Controls";
+import { Controls, ControlsButton } from "~/shared/Controls";
 import { PlayIcon } from "@heroicons/react/24/outline";
 import { useEditorStore } from "../context/editor";
-import { Select } from "../../../shared/ui/Select";
-import { SpaceshipButton } from "../../../shared/ui/SpaceshipButton";
+import { Select } from "~/shared/ui/Select";
+import { SpaceshipButton } from "~/shared/ui/SpaceshipButton";
 import { useEffect, useState } from "react";
 
 export interface AlgorithmDetails {

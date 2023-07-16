@@ -1,8 +1,8 @@
 import { ReactNode, useEffect, useRef, useState } from "react";
 
-const useVerticalSplit = <E extends HTMLElement>(initialLeftShare: number) => {
+const useVerticalSplit = <E extends HTMLElement>() => {
   const ref = useRef<E>(null);
-  const [leftShare, setLeftShare] = useState(initialLeftShare);
+  const [leftShare, setLeftShare] = useState(50);
   const [isResizing, setIsResizing] = useState(false);
 
   useEffect(() => {
@@ -39,16 +39,11 @@ const useVerticalSplit = <E extends HTMLElement>(initialLeftShare: number) => {
 export type SplitLayoutProps = {
   left: ReactNode;
   right: ReactNode;
-  initialLeftShare?: number;
 };
 
-export const VerticalSplit = ({
-  left,
-  right,
-  initialLeftShare = 50,
-}: SplitLayoutProps) => {
+export const VerticalSplit = ({ left, right }: SplitLayoutProps) => {
   const { leftShare, isResizing, setIsResizing, ref } =
-    useVerticalSplit<HTMLDivElement>(initialLeftShare);
+    useVerticalSplit<HTMLDivElement>();
 
   return (
     <div className="flex h-full w-full" ref={ref}>

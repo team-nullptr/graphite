@@ -6,7 +6,7 @@ import {
   StopIcon,
 } from "@heroicons/react/24/outline";
 import { useCallback, useEffect, useState } from "react";
-import { Controls, ControlsButton } from "../../../shared/Controls";
+import { Controls, ControlsButton } from "~/shared/Controls";
 
 export interface TimelineProps {
   currentStep: number;

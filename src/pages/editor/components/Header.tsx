@@ -1,4 +1,4 @@
-import { Editable } from "../../../shared/Editable";
+import { Editable } from "~/shared/Editable";
 import { ArrowLeftIcon } from "@heroicons/react/24/outline";
 
 export interface HeaderProps {

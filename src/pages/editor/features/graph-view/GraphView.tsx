@@ -1,17 +1,17 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Highlights } from "../../../../core/simulator/step";
+import { Graph } from "~/core/simulator/graph";
+import { Highlights } from "~/core/simulator/step";
 import { Edge } from "./components/Edge";
 import { Vertex } from "./components/Vertex";
-import { useGraphLayout } from "./hooks/useGraphLayout";
-import { usePan } from "./hooks/usePan";
-import { useResizeObserver } from "./hooks/useResizeObserver";
-import { useZoom } from "./hooks/useZoom";
 import {
   distributeEdges,
   groupEdges,
   sortEdges,
 } from "./helpers/distributeEdges";
-import { Graph } from "../../../../core/simulator/graph";
+import { useGraphLayout } from "./hooks/useGraphLayout";
+import { usePan } from "./hooks/usePan";
+import { useResizeObserver } from "./hooks/useResizeObserver";
+import { useZoom } from "./hooks/useZoom";
 
 type Viewport = [x: number, y: number, width: number, height: number];
 
@@ -21,10 +21,8 @@ export type GraphViewProps = {
   graph: Graph;
 };
 
-// TODO: Make graph a prop to Graph View
 export const GraphView = ({ className, highlights, graph }: GraphViewProps) => {
   const svgRef = useRef<SVGSVGElement>(null);
-
   const containerRef = useRef<HTMLDivElement>(null);
   const containerRect = useResizeObserver(containerRef);
   const containerDimen: [number, number] = [
@@ -58,6 +56,7 @@ export const GraphView = ({ className, highlights, graph }: GraphViewProps) => {
     [graph]
   );
 
+  // TODO: It looks like this use memo does not change anything
   const vertices = useMemo(() => Object.entries(arrangement), [arrangement]);
 
   return (

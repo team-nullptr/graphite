@@ -1,8 +1,8 @@
+import { useState } from "react";
+import { algorithms } from "~/algorithms";
+import { Algorithm } from "~/types/algorithm";
 import { AlgorithmDetails } from "./AlgorithmDetails";
 import { AlgorithmGrid } from "./AlgorithmGrid";
-import { algorithms } from "../../../algorithms";
-import { useState } from "react";
-import { Algorithm } from "../../../types/algorithm";
 
 export const AlgorithmPicker = () => {
   const [browsedAlgorithm, setBrowsedAlgorithm] = useState<Algorithm>();

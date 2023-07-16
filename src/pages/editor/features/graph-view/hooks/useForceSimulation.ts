@@ -1,12 +1,12 @@
 import {
-  MutableRefObject,
   Dispatch,
+  MutableRefObject,
   SetStateAction,
-  useRef,
-  useEffect,
   useCallback,
+  useEffect,
+  useRef,
 } from "react";
-import { Graph, Vertex } from "../../../../../core/simulator/graph";
+import { Graph, Vertex } from "~/core/simulator/graph";
 import { Arrangement } from "../types/arrangement";
 import { SelectedVertex } from "../types/selectedVertex";
 import { Vec2 } from "../types/vec2";
@@ -134,7 +134,7 @@ export const applyForces = (
   }
 
   if (maxForce < threshold) {
-    return arrangement;
+    return oldArrangement;
   }
 
   for (const vertex of vertices) {

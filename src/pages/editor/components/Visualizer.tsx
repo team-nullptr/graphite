@@ -1,10 +1,12 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { GraphView } from "../features/graph-view/GraphView";
 import { useEditorStore } from "../context/editor";
+import { BottomPane } from "~/shared/layout/BottomPane";
 import { Timeline } from "./Timeline";
-import { HorizontalSplit } from "../../../layout/HorizontalSplit";
 
 export const Visualizer = () => {
+  const visualizerRef = useRef(null);
+
   const [currentStepIndex, setCurrentStep] = useState(0);
 
   const { mode, graph } = useEditorStore(({ mode, graph }) => ({
@@ -17,38 +19,30 @@ export const Visualizer = () => {
     setCurrentStep(0);
   }, [mode]);
 
-  if (mode.mode === "IDLE") {
-    return <GraphView graph={graph} className="h-full w-full" />;
-  }
-
-  const currentStep = mode.steps[currentStepIndex];
-
   return (
-    <HorizontalSplit
-      top={
-        <div className="flex h-full flex-col">
-          <GraphView
-            graph={graph}
-            className="h-full w-full"
-            highlights={currentStep?.highlights}
-          />
+    <div className="relative h-full w-full" ref={visualizerRef}>
+      <GraphView graph={graph} className="h-full w-full" />
+
+      {mode.mode === "SIMULATION" && (
+        <BottomPane parentRef={visualizerRef}>
           <Timeline
             currentStep={currentStepIndex}
             onStepChange={setCurrentStep}
             maxStep={mode.steps.length - 1}
           />
-        </div>
-      }
-      bottom={
-        <div className="bg-base-200 dark:bg-base-300-dark h-full w-full">
-          {currentStep?.description}
-          <div
-            dangerouslySetInnerHTML={{
-              __html: currentStep?.stepState.replaceAll(/,(?=\[)/g, "<br/>"),
-            }}
-          />
-        </div>
-      }
-    />
+          <div className="bg-base-200 dark:bg-base-300-dark h-full w-full">
+            {mode.steps[currentStepIndex].description}
+            <div
+              dangerouslySetInnerHTML={{
+                __html: mode.steps[currentStepIndex].stepState.replaceAll(
+                  /,(?=\[)/g,
+                  "<br/>"
+                ),
+              }}
+            />
+          </div>
+        </BottomPane>
+      )}
+    </div>
   );
 };

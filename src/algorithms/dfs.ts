@@ -1,6 +1,6 @@
-import { Graph, Vertex } from "../core/simulator/graph";
-import { Step } from "../core/simulator/step";
-import { Algorithm } from "../types/algorithm";
+import { Graph, Vertex } from "~/core/simulator/graph";
+import { Step } from "~/core/simulator/step";
+import { Algorithm } from "~/types/algorithm";
 
 function* dfsInstructionGenerator(graph: Graph): IterableIterator<Step> {
   const visited = new Set<string>();

@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 
-import { Graph, Vertex } from "../core/simulator/graph";
-import { Step } from "../core/simulator/step";
-import { Algorithm } from "../types/algorithm";
+import { Graph, Vertex } from "~/core/simulator/graph";
+import { Step } from "~/core/simulator/step";
+import { Algorithm } from "~/types/algorithm";
 
 // TODO: Check if algorithm can be run on a graph.
 // TODO: Do we want to use i18 to support multiple languages (en / pl)?
