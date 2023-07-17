@@ -1,19 +1,20 @@
 import { useMemo } from "react";
 import { Vec2 } from "../types/vec2";
+import type { Color } from "~/types/color";
+import colors from "tailwindcss/colors";
 
 interface ArrowProps {
   position: Vec2;
   angle?: number;
-  hue?: number;
+  color?: Color;
 }
 
-export const Arrow = ({ position, angle = 0, hue }: ArrowProps) => {
+export const Arrow = ({ position, angle = 0, color = "slate" }: ArrowProps) => {
   const path = useMemo(() => {
     return buildArrowPath(position, angle);
   }, [position, angle]);
 
-  const fill =
-    hue !== undefined ? `hsl(${hue}, 50%, 65%)` : "rgb(175, 175, 175)";
+  const fill = colors[color][700];
 
   return <path className="transition-[fill]" d={path} style={{ fill }} />;
 };

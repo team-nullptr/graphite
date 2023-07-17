@@ -94,11 +94,11 @@ export const GraphView = ({ className, highlights, graph }: GraphViewProps) => {
           {/* Vertices */}
           {vertices.map(([id, pos]) => {
             const { x, y } = pos;
-            const hue = highlights?.get(id);
+            const color = highlights?.get(id);
             return (
               <Vertex
-                hue={hue}
                 key={id}
+                color={color}
                 cx={x}
                 cy={y}
                 value={id}

@@ -1,5 +1,7 @@
+import type { Color } from "~/types/color";
 import { Vec2 } from "../types/vec2";
 import { Arrow } from "./Arrow";
+import colors from "tailwindcss/colors";
 
 const vertexRadius = 19;
 
@@ -11,7 +13,7 @@ export interface EdgeProps {
   directed?: boolean;
   position?: number;
   circular?: boolean;
-  hue?: number;
+  color?: Color;
 }
 
 export const Edge = (props: EdgeProps) => {
@@ -19,12 +21,19 @@ export const Edge = (props: EdgeProps) => {
   return <StraightEdge {...props} />;
 };
 
-const StraightEdge = (props: EdgeProps) => {
-  const width = props.dx - props.x;
-  const height = props.dy - props.y;
+const StraightEdge = ({
+  x,
+  y,
+  dx,
+  dy,
+  directed,
+  position = 0,
+  color = "slate",
+}: EdgeProps) => {
+  const width = dx - x;
+  const height = dy - y;
   const length = Math.sqrt(Math.pow(width, 2) + Math.pow(height, 2));
 
-  const position = props.position ?? 0;
   const angle = position * 0.25;
 
   const start = new Vec2(vertexRadius, 0).rotate(angle);
@@ -39,13 +48,10 @@ const StraightEdge = (props: EdgeProps) => {
   const rad = Math.atan2(height, width);
   const deg = (rad * 180) / Math.PI;
 
-  const transform = `translate(${props.x} ${props.y}) rotate(${deg})`;
+  const transform = `translate(${x} ${y}) rotate(${deg})`;
   const path = getLinePath(start, end, new Vec2(mx, my));
 
-  const stroke =
-    props.hue !== undefined
-      ? `hsl(${props.hue}, 50%, 65%)`
-      : "rgb(175, 175, 175)";
+  const stroke = colors[color][400];
 
   return (
     <g transform={transform}>
@@ -54,15 +60,18 @@ const StraightEdge = (props: EdgeProps) => {
         d={path}
         stroke={stroke}
       />
-      {props.directed && (
-        <Arrow position={end} angle={-angle} hue={props.hue} />
-      )}
+      {directed && <Arrow position={end} angle={-angle} color={color} />}
     </g>
   );
 };
 
-const CircularEdge = (props: EdgeProps) => {
-  const position = props.position ?? 0;
+const CircularEdge = ({
+  x,
+  y,
+  directed,
+  position = 0,
+  color = "slate",
+}: EdgeProps) => {
   const radius = 6 * position + 15;
 
   const [cx, cy] = [vertexRadius, 0];
@@ -76,12 +85,8 @@ const CircularEdge = (props: EdgeProps) => {
   // This is due to how arrows are drawn (rotated)
   const arrowAngle = Math.atan2(cy - arrowY, cx - arrowX) * 1.2 - Math.PI / 2;
 
-  const transform = `translate(${props.x} ${props.y}) rotate(45)`;
-
-  const stroke =
-    props.hue !== undefined
-      ? `hsl(${props.hue}, 50%, 65%)`
-      : "rgb(175, 175, 175)";
+  const transform = `translate(${x} ${y}) rotate(45)`;
+  const stroke = colors[color][500];
 
   return (
     <g transform={transform}>
@@ -92,8 +97,8 @@ const CircularEdge = (props: EdgeProps) => {
         r={radius}
         stroke={stroke}
       />
-      {props.directed && (
-        <Arrow position={arrowPostion} angle={arrowAngle} hue={props.hue} />
+      {directed && (
+        <Arrow position={arrowPostion} angle={arrowAngle} color={color} />
       )}
     </g>
   );

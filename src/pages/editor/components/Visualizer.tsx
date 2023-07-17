@@ -19,9 +19,18 @@ export const Visualizer = () => {
     setCurrentStep(0);
   }, [mode]);
 
+  const highlights =
+    mode.mode === "SIMULATION"
+      ? mode.steps[currentStepIndex].highlights
+      : undefined;
+
   return (
     <div className="relative h-full w-full" ref={visualizerRef}>
-      <GraphView graph={graph} className="h-full w-full" />
+      <GraphView
+        graph={graph}
+        className="h-full w-full"
+        highlights={highlights}
+      />
 
       {mode.mode === "SIMULATION" && (
         <BottomPane parentRef={visualizerRef}>

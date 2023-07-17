@@ -3,6 +3,7 @@
 import { Graph, Vertex } from "~/core/simulator/graph";
 import { Step } from "~/core/simulator/step";
 import { Algorithm } from "~/types/algorithm";
+import type { Color } from "~/types/color";
 
 // TODO: Check if algorithm can be run on a graph.
 // TODO: Do we want to use i18 to support multiple languages (en / pl)?
@@ -29,9 +30,8 @@ const pickClosest = (
 
 const algorithm = (graph: Graph, startingVertex: string): Step[] => {
   const steps: Step[] = [];
-  const highlights: [string, number][] = [];
+  const highlights: [string, Color][] = [];
 
-  // init dijkstra
   const vertices = Object.values(graph.vertices);
   const distances = new Map(vertices.map((vertex) => [vertex.id, Infinity]));
   const unvisited = new Set(vertices);
@@ -42,7 +42,7 @@ const algorithm = (graph: Graph, startingVertex: string): Step[] => {
   steps.push({
     description: "Set distance to starting vertext to 0.",
     stepState: JSON.stringify([...distances.entries()]),
-    highlights: new Map([[start.id, 270]]),
+    highlights: new Map([[start.id, "sky"]]),
   });
 
   while (unvisited.size > 0) {
@@ -51,10 +51,10 @@ const algorithm = (graph: Graph, startingVertex: string): Step[] => {
     steps.push({
       description: "Pick the closest vertex from all unvisited vertices.",
       stepState: JSON.stringify([...distances.entries()]),
-      highlights: new Map([...highlights, [current.id, 90]]),
+      highlights: new Map([...highlights, [current.id, "purple"]]),
     });
 
-    const outsHighlights: [string, number][] = [];
+    const outsHighlights: [string, Color][] = [];
 
     for (const edgeId of current.outs) {
       const edge = graph.edges[edgeId];
@@ -76,23 +76,27 @@ const algorithm = (graph: Graph, startingVertex: string): Step[] => {
         )
       );
 
-      outsHighlights.push([adjacent.id, 180]);
+      outsHighlights.push([adjacent.id, "sky"]);
     }
 
     steps.push({
       description:
         "Iterate over all adjacent unvisited nodes and update their min length.",
       stepState: JSON.stringify([...distances.entries()]),
-      highlights: new Map([...highlights, ...outsHighlights]),
+      highlights: new Map([
+        ...highlights,
+        ...outsHighlights,
+        [current.id, "purple"],
+      ]),
     });
 
-    highlights.push([current.id, 225]);
+    highlights.push([current.id, "slate"]);
     unvisited.delete(current);
 
     steps.push({
       description: "Mark current node as visited.",
       stepState: JSON.stringify([...distances.entries()]),
-      highlights: new Map([...highlights, [current.id, 0]]),
+      highlights: new Map([...highlights]),
     });
   }
 

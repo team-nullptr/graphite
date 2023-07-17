@@ -6,7 +6,9 @@ statement { ExprStmt }
 ExprStmt { Call }
 Call { Identifier "(" Arguments? ")" }
 Arguments { Argument ( "," Argument )* }
-Argument { Number | Vertex }
+Argument { VertexCollection | Number | Vertex }
+
+VertexCollection { "[" Vertex ( "," Vertex )* "]" }
 
 @tokens {
   "("

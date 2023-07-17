@@ -12,14 +12,17 @@ import { SelectedVertex } from "../types/selectedVertex";
 import { Vec2 } from "../types/vec2";
 
 const repulsiveForce = (source: Vec2, adj: Vec2): Vec2 => {
-  const forceStrength = 50;
+  const forceStrength = 100;
   const forceChillout = 1 / 20;
 
   return adj
     .vecTo(source)
     .multiply(
-      forceStrength /
-        (1 + Math.pow(Math.E, forceChillout * source.distanceTo(adj)))
+      Math.min(
+        forceStrength /
+          (1 + Math.pow(Math.E, forceChillout * source.distanceTo(adj))),
+        0.4
+      )
     );
 };
 
@@ -29,7 +32,9 @@ const attractiveForce = (source: Vec2, adj: Vec2): Vec2 => {
 
   return source
     .vecTo(adj)
-    .multiply(spring * Math.log(adj.distanceTo(source) / springLength));
+    .multiply(
+      Math.min(spring * Math.log(adj.distanceTo(source) / springLength), 0.4)
+    );
 };
 
 const computeRepulsiveForce = (

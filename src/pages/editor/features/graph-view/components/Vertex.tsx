@@ -1,62 +1,56 @@
 import { useEffect, useRef } from "react";
+import colors from "tailwindcss/colors";
+import type { Color } from "~/types/color";
 
 export type VertexProps = {
   cx: number;
   cy: number;
   value: string;
   onMouseDown?: (event: MouseEvent) => void;
-  hue?: number;
+  /** Vertex's color (slate is the default one) */
+  color?: Color;
 };
 
-export const Vertex = (props: VertexProps) => {
+export const Vertex = ({ cx, cy, value, onMouseDown, color }: VertexProps) => {
   const ref = useRef<SVGGElement>(null);
 
   useEffect(() => {
     const vertexElement = ref.current;
-    if (!vertexElement) return;
 
-    const mouseDownHandler = props.onMouseDown;
-    if (!mouseDownHandler) return;
+    if (!vertexElement) return;
+    if (!onMouseDown) return;
 
     // Registering mousedown event this way is crucial for the app to function properly.
     // The addEventListener method allows for passing the options argument,
     // which will force the event to be delivered in the earlier phase (capture phase)
-    vertexElement.addEventListener("mousedown", mouseDownHandler, true);
+    vertexElement.addEventListener("mousedown", onMouseDown, true);
+
     return () => {
-      vertexElement.removeEventListener("mousedown", mouseDownHandler);
+      vertexElement.removeEventListener("mousedown", onMouseDown);
     };
-  }, [props.onMouseDown]);
+  }, [onMouseDown]);
 
-  const fillColor =
-    props.hue !== undefined
-      ? `hsl(${props.hue}, 80%, 80%)`
-      : "rgb(247, 247, 247)";
-
-  const strokeColor =
-    props.hue !== undefined
-      ? `hsl(${props.hue}, 50%, 65%)`
-      : "rgb(175, 175, 175)";
-
-  const textColor =
-    props.hue !== undefined ? `hsl(${props.hue}, 50%, 30%)` : "rgb(0, 0, 0)";
+  const fillColor = color ? colors[color][200] : colors["slate"][100];
+  const strokeColor = color ? colors[color][500] : colors["slate"][300];
+  const textColor = colors[color ?? "slate"][900];
 
   return (
     <g ref={ref} className="font-[JetBrains]">
       <circle
         className="stroke-1 transition-[fill,_stroke]"
-        cx={props.cx}
-        cy={props.cy}
+        cx={cx}
+        cy={cy}
         r={19}
         fill={fillColor}
         stroke={strokeColor}
       />
       <text
         className="transition-[fill] [dominant-baseline:central] [text-anchor:middle]"
-        x={props.cx}
-        y={props.cy}
+        x={cx}
+        y={cy}
         fill={textColor}
       >
-        {props.value}
+        {value}
       </text>
     </g>
   );
