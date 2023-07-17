@@ -8,7 +8,7 @@ import { SpaceshipButton } from "~/shared/ui/SpaceshipButton";
 import { useEffect, useState } from "react";
 
 export interface AlgorithmDetails {
-  algorithm: Algorithm;
+  algorithm: Algorithm<unknown>;
   onBack: () => void;
 }
 

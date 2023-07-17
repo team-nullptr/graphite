@@ -10,7 +10,7 @@ type Mode =
     }
   | {
       mode: "SIMULATION";
-      steps: Step[];
+      steps: Step<unknown>[];
     };
 
 export type EditorState = {

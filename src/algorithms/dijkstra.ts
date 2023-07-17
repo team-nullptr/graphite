@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 
+import { createColumnHelper } from "@tanstack/react-table";
 import { Graph, Vertex } from "~/core/simulator/graph";
 import { Step } from "~/core/simulator/step";
 import { Algorithm } from "~/types/algorithm";
@@ -7,6 +8,22 @@ import type { Color } from "~/types/color";
 
 // TODO: Check if algorithm can be run on a graph.
 // TODO: Do we want to use i18 to support multiple languages (en / pl)?
+
+type DijkstraStepState = {
+  vertex: string;
+  distance: number;
+};
+
+const columnHelper = createColumnHelper<DijkstraStepState>();
+
+const columns = [
+  columnHelper.accessor("vertex", {
+    header: "Vertex",
+  }),
+  columnHelper.accessor("distance", {
+    header: "Distance",
+  }),
+];
 
 const pickClosest = (
   unvisited: IterableIterator<Vertex>,
@@ -28,8 +45,11 @@ const pickClosest = (
   return next;
 };
 
-const algorithm = (graph: Graph, startingVertex: string): Step[] => {
-  const steps: Step[] = [];
+const algorithm = (
+  graph: Graph,
+  startingVertex: string
+): Step<DijkstraStepState>[] => {
+  const steps: Step<DijkstraStepState>[] = [];
   const highlights: [string, Color][] = [];
 
   const vertices = Object.values(graph.vertices);
@@ -41,7 +61,13 @@ const algorithm = (graph: Graph, startingVertex: string): Step[] => {
 
   steps.push({
     description: "Set distance to starting vertext to 0.",
-    stepState: JSON.stringify([...distances.entries()]),
+    state: {
+      columns,
+      data: [...distances.entries()].map(([vertex, distance]) => ({
+        vertex,
+        distance,
+      })),
+    },
     highlights: new Map([[start.id, "sky"]]),
   });
 
@@ -50,8 +76,14 @@ const algorithm = (graph: Graph, startingVertex: string): Step[] => {
 
     steps.push({
       description: "Pick the closest vertex from all unvisited vertices.",
-      stepState: JSON.stringify([...distances.entries()]),
-      highlights: new Map([...highlights, [current.id, "purple"]]),
+      state: {
+        columns,
+        data: [...distances.entries()].map(([vertex, distance]) => ({
+          vertex,
+          distance,
+        })),
+      },
+      highlights: new Map([...highlights, [current.id, "sky"]]),
     });
 
     const outsHighlights: [string, Color][] = [];
@@ -82,11 +114,17 @@ const algorithm = (graph: Graph, startingVertex: string): Step[] => {
     steps.push({
       description:
         "Iterate over all adjacent unvisited nodes and update their min length.",
-      stepState: JSON.stringify([...distances.entries()]),
+      state: {
+        columns,
+        data: [...distances.entries()].map(([vertex, distance]) => ({
+          vertex,
+          distance,
+        })),
+      },
       highlights: new Map([
         ...highlights,
         ...outsHighlights,
-        [current.id, "purple"],
+        [current.id, "orange"],
       ]),
     });
 
@@ -95,21 +133,33 @@ const algorithm = (graph: Graph, startingVertex: string): Step[] => {
 
     steps.push({
       description: "Mark current node as visited.",
-      stepState: JSON.stringify([...distances.entries()]),
+      state: {
+        columns,
+        data: [...distances.entries()].map(([vertex, distance]) => ({
+          vertex,
+          distance,
+        })),
+      },
       highlights: new Map([...highlights]),
     });
   }
 
   steps.push({
     description: "There is no more unvisited vertices, end the algorithm!",
-    stepState: JSON.stringify([...distances.entries()]),
+    state: {
+      columns,
+      data: [...distances.entries()].map(([vertex, distance]) => ({
+        vertex,
+        distance,
+      })),
+    },
     highlights: new Map([...highlights]),
   });
 
   return steps;
 };
 
-export const dijkstra: Algorithm = {
+export const dijkstra: Algorithm<DijkstraStepState> = {
   name: "Dijkstra",
   description:
     "Dijkstra algorithm allows you to find shortest path from starting node to every other node.",

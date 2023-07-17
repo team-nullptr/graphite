@@ -2,9 +2,14 @@ import { useEffect, useState, RefObject, PropsWithChildren } from "react";
 
 type BottomPaneProps = PropsWithChildren<{
   parentRef: RefObject<HTMLElement>;
+  className?: string;
 }>;
 
-export const BottomPane = ({ children, parentRef }: BottomPaneProps) => {
+export const BottomPane = ({
+  children,
+  parentRef,
+  className = "",
+}: BottomPaneProps) => {
   const [isResizing, setIsResizing] = useState(false);
   const [height, setHeight] = useState(50);
 
@@ -33,7 +38,7 @@ export const BottomPane = ({ children, parentRef }: BottomPaneProps) => {
 
   return (
     <div
-      className="absolute bottom-0 w-full bg-slate-50"
+      className={`absolute bottom-0 w-full bg-slate-50 ${className}`}
       style={{
         height: `${height}%`,
       }}
