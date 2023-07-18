@@ -17,14 +17,15 @@ export const StepStateTable = ({ state }: StepStateTableProps) => {
   });
 
   return (
-    <table className="w-full table-auto border-collapse border border-slate-300">
-      <thead>
+    <table className="w-full table-auto border-collapse">
+      <thead className="sticky top-0 bg-slate-50">
         {table.getHeaderGroups().map((headerGroup) => (
-          <tr key={headerGroup.id}>
+          <tr key={headerGroup.id} className="divide-x divide-slate-300">
             {headerGroup.headers.map((header) => (
+              // It's impossible to have a working border on sticky element inside a table with border-collapse. I hate my life.
               <th
                 key={header.id}
-                className="border border-slate-300 bg-slate-50 p-2"
+                className="px-4 py-2 text-left font-medium after:absolute after:-bottom-[1px] after:left-0 after:w-full after:border-b after:border-slate-300"
               >
                 {header.isPlaceholder
                   ? null
@@ -37,11 +38,11 @@ export const StepStateTable = ({ state }: StepStateTableProps) => {
           </tr>
         ))}
       </thead>
-      <tbody>
+      <tbody className="divide-y divide-slate-200 bg-slate-50">
         {table.getRowModel().rows.map((row) => (
-          <tr key={row.id}>
+          <tr key={row.id} className="divide-x divide-slate-200">
             {row.getVisibleCells().map((cell) => (
-              <td key={cell.id} className="border border-slate-300 p-2">
+              <td key={cell.id} className="px-4 py-2">
                 {flexRender(cell.column.columnDef.cell, cell.getContext())}
               </td>
             ))}

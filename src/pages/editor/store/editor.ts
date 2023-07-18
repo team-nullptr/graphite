@@ -6,10 +6,10 @@ import { Step } from "~/core/simulator/step";
 
 type Mode =
   | {
-      mode: "IDLE";
+      type: "IDLE";
     }
   | {
-      mode: "SIMULATION";
+      type: "SIMULATION";
       steps: Step<unknown>[];
     };
 
@@ -37,7 +37,7 @@ export const createEditorStore = ({ project }: CreateEditorStoreOpts) => {
 
       // mode
       mode: {
-        mode: "IDLE",
+        type: "IDLE",
       },
       setMode: (mode: Mode) => {
         set({

@@ -32,20 +32,20 @@ export const AlgorithmDetails = ({ algorithm, onBack }: AlgorithmDetails) => {
     }
 
     setMode({
-      mode: "SIMULATION",
+      type: "SIMULATION",
       steps: algorithm.algorithm(graph, startingVertex),
     });
   };
 
   const handleOnBack = () => {
-    setMode({ mode: "IDLE" });
+    setMode({ type: "IDLE" });
     onBack();
   };
 
   const vertices = Object.keys(graph.vertices);
 
   return (
-    <div className="flex h-full flex-col bg-slate-50">
+    <div className="flex h-full flex-col divide-y divide-slate-300 bg-slate-50">
       <Controls alignment="start">
         <ControlsButton
           icon={<ArrowLeftIcon className="h-5 w-5" />}
@@ -75,9 +75,10 @@ export const AlgorithmDetails = ({ algorithm, onBack }: AlgorithmDetails) => {
         </div>
       </div>
 
-      <div className="flex-g flex justify-end border-t border-gray-300 bg-slate-50 p-4">
+      <div className="flex-g flex justify-end bg-slate-50 p-4">
         <SpaceshipButton
           disabled={startingVertex === undefined}
+          disabledHint="Select the starting vertex!"
           onClick={loadInstructions}
           label="Run"
           icon={<PlayIcon className="h-5 w-5" />}

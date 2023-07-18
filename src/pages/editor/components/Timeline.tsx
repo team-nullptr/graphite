@@ -1,6 +1,6 @@
 import {
   ArrowLeftIcon,
-  ArrowPathIcon,
+  ArrowPathRoundedSquareIcon,
   ArrowRightIcon,
   PlayIcon,
   StopIcon,
@@ -67,7 +67,7 @@ export const Timeline = ({
 
       <ControlsButton
         onClick={restartHandler}
-        icon={<ArrowPathIcon className="h-5 w-5" />}
+        icon={<ArrowPathRoundedSquareIcon className="h-5 w-5" />}
         alt="restart"
       />
 
