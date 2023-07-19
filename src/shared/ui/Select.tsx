@@ -34,7 +34,7 @@ export const Select = ({ values, label, value, onChange }: SelectOptions) => {
         )}
       </div>
       {opened && (
-        <div className="absolute mt-1 max-h-48 w-full overflow-y-auto rounded-md border">
+        <div className="absolute mt-1 max-h-48 w-full overflow-y-auto rounded-md border bg-slate-50">
           {values.length > 0 ? (
             values.map((value) => (
               <div

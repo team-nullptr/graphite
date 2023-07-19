@@ -5,6 +5,8 @@ const useHorizontalSplit = <E extends HTMLElement>() => {
   const [topShare, setTopShare] = useState(50);
   const [isResizing, setIsResizing] = useState(false);
 
+  const resetTopShare = () => setTopShare(50);
+
   useEffect(() => {
     const stopResizing = () => setIsResizing(false);
     document.addEventListener("mouseup", stopResizing);
@@ -14,13 +16,14 @@ const useHorizontalSplit = <E extends HTMLElement>() => {
 
   useEffect(() => {
     const handleResize = (e: MouseEvent) => {
-      if (!isResizing || !ref.current) return;
+      if (!isResizing || !ref.current) {
+        return;
+      }
 
-      const offsetRef = e.clientY - ref.current.offsetTop;
+      const { height, top } = ref.current.getBoundingClientRect();
+      const offsetRef = e.clientY - top;
 
-      setTopShare(
-        Math.min(Math.max(offsetRef / ref.current.clientHeight, 0), 1) * 100
-      );
+      setTopShare(Math.min(Math.max(offsetRef / height, 0), 1) * 100);
     };
 
     document.addEventListener("mousemove", handleResize);
@@ -32,6 +35,7 @@ const useHorizontalSplit = <E extends HTMLElement>() => {
     topShare,
     isResizing,
     setIsResizing,
+    resetTopShare,
     ref,
   };
 };
@@ -42,7 +46,7 @@ type HorizontalSplitProps = {
 };
 
 export const HorizontalSplit = ({ top, bottom }: HorizontalSplitProps) => {
-  const { topShare, isResizing, setIsResizing, ref } =
+  const { topShare, isResizing, setIsResizing, resetTopShare, ref } =
     useHorizontalSplit<HTMLDivElement>();
 
   return (
@@ -51,8 +55,9 @@ export const HorizontalSplit = ({ top, bottom }: HorizontalSplitProps) => {
         {top}
       </div>
       <div
+        onDoubleClick={resetTopShare}
         onMouseDown={() => setIsResizing(true)}
-        className={`relative z-[999] w-full border-b border-slate-300 before:absolute before:-top-2 before:h-4 before:w-full before:bg-slate-200  before:opacity-0 before:transition-opacity hover:cursor-row-resize hover:before:opacity-30 ${
+        className={`relative z-10 w-full border-b border-slate-300 before:absolute before:-top-2 before:h-4 before:w-full before:bg-slate-200  before:opacity-0 before:transition-opacity hover:cursor-row-resize hover:before:opacity-30 ${
           isResizing && "cursor-col-resize before:opacity-30"
         }`}
       />

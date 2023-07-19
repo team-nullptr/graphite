@@ -5,6 +5,8 @@ const useVerticalSplit = <E extends HTMLElement>() => {
   const [leftShare, setLeftShare] = useState(50);
   const [isResizing, setIsResizing] = useState(false);
 
+  const resetLeftShare = () => setLeftShare(50);
+
   useEffect(() => {
     const stopResizing = () => setIsResizing(false);
     document.addEventListener("mouseup", stopResizing);
@@ -14,13 +16,14 @@ const useVerticalSplit = <E extends HTMLElement>() => {
 
   useEffect(() => {
     const handleResize = (e: MouseEvent) => {
-      if (!isResizing || !ref.current) return;
+      if (!isResizing || !ref.current) {
+        return;
+      }
 
-      const offsetRef = e.clientX - ref.current.offsetLeft;
+      const { width, left } = ref.current.getBoundingClientRect();
+      const offsetRef = e.clientX - left;
 
-      setLeftShare(
-        Math.min(Math.max(offsetRef / ref.current.clientWidth, 0), 1) * 100
-      );
+      setLeftShare(Math.min(Math.max(offsetRef / width, 0), 1) * 100);
     };
 
     document.addEventListener("mousemove", handleResize);
@@ -32,6 +35,7 @@ const useVerticalSplit = <E extends HTMLElement>() => {
     leftShare,
     isResizing,
     setIsResizing,
+    resetLeftShare,
     ref,
   };
 };
@@ -42,7 +46,7 @@ export type SplitLayoutProps = {
 };
 
 export const VerticalSplit = ({ left, right }: SplitLayoutProps) => {
-  const { leftShare, isResizing, setIsResizing, ref } =
+  const { leftShare, isResizing, setIsResizing, resetLeftShare, ref } =
     useVerticalSplit<HTMLDivElement>();
 
   return (
@@ -54,8 +58,9 @@ export const VerticalSplit = ({ left, right }: SplitLayoutProps) => {
         {left}
       </div>
       <div
+        onDoubleClick={resetLeftShare}
         onMouseDown={() => setIsResizing(true)}
-        className={`relative z-[999] h-full border-r border-slate-300 before:absolute before:-left-2 before:h-full before:w-4 before:bg-slate-200  before:opacity-0 before:transition-opacity hover:cursor-col-resize hover:before:opacity-30 ${
+        className={`relative z-10 h-full border-r border-slate-300 transition-all before:absolute before:-left-2 before:h-full before:w-4 before:bg-slate-200 before:opacity-0  before:transition-opacity hover:cursor-col-resize hover:border-slate-500 hover:before:opacity-30 ${
           isResizing && "cursor-col-resize before:opacity-30"
         }`}
       />

@@ -1,8 +1,10 @@
 import { useEffect, useRef, useState } from "react";
-import { GraphView } from "../features/graph-view/GraphView";
-import { useEditorStore } from "../context/editor";
 import { BottomPane } from "~/shared/layout/BottomPane";
+import { useEditorStore } from "../context/editor";
+import { GraphView } from "../features/graph-view/GraphView";
 import { Timeline } from "./Timeline";
+import { StepStateTable } from "./StepStateTable";
+import { VerticalSplit } from "~/shared/layout/VerticalSplit";
 
 export const Visualizer = () => {
   const visualizerRef = useRef(null);
@@ -20,34 +22,40 @@ export const Visualizer = () => {
   }, [mode]);
 
   const highlights =
-    mode.mode === "SIMULATION"
+    mode.type === "SIMULATION"
       ? mode.steps[currentStepIndex].highlights
       : undefined;
 
   return (
-    <div className="relative h-full w-full" ref={visualizerRef}>
+    <div className="relative flex h-full w-full flex-col" ref={visualizerRef}>
       <GraphView
         graph={graph}
         className="h-full w-full"
         highlights={highlights}
       />
 
-      {mode.mode === "SIMULATION" && (
+      {mode.type === "SIMULATION" && (
         <BottomPane parentRef={visualizerRef}>
-          <Timeline
-            currentStep={currentStepIndex}
-            onStepChange={setCurrentStep}
-            maxStep={mode.steps.length - 1}
-          />
-          <div className="bg-base-200 dark:bg-base-300-dark h-full w-full">
-            {mode.steps[currentStepIndex].description}
-            <div
-              dangerouslySetInnerHTML={{
-                __html: mode.steps[currentStepIndex].stepState.replaceAll(
-                  /,(?=\[)/g,
-                  "<br/>"
-                ),
-              }}
+          <div className="flex h-full w-full flex-col divide-y divide-slate-300">
+            <Timeline
+              currentStep={currentStepIndex}
+              onStepChange={setCurrentStep}
+              maxStep={mode.steps.length - 1}
+            />
+            <VerticalSplit
+              left={
+                <div className="flex flex-col gap-1 p-4">
+                  <span className="font-bold text-slate-800">
+                    Step {currentStepIndex + 1} / {mode.steps.length}
+                  </span>
+                  <p className="text-slate-800">
+                    {mode.steps[currentStepIndex].description}
+                  </p>
+                </div>
+              }
+              right={
+                <StepStateTable state={mode.steps[currentStepIndex].state} />
+              }
             />
           </div>
         </BottomPane>

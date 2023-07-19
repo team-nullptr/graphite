@@ -18,11 +18,7 @@ export const editorOnChange = (cb: (value: string) => void) => {
 
 const codeThemeLight = HighlightStyle.define([
   {
-    tag: tags.keyword,
-    color: "#3b82f6",
-  },
-  {
-    tag: tags.variableName,
+    tag: [tags.variableName, tags.keyword],
     color: "#60a5fa",
   },
   {
