@@ -1,10 +1,11 @@
 import { useEffect, useRef, useState } from "react";
 import { BottomPane } from "~/shared/layout/BottomPane";
+import { VerticalSplit } from "~/shared/layout/VerticalSplit";
 import { useEditorStore } from "../context/editor";
 import { GraphView } from "../features/graph-view/GraphView";
-import { Timeline } from "./Timeline";
 import { StepStateTable } from "./StepStateTable";
-import { VerticalSplit } from "~/shared/layout/VerticalSplit";
+import { Timeline } from "./Timeline";
+import { AlgorithmControls } from "./AlgorithmControls";
 
 export const Visualizer = () => {
   const visualizerRef = useRef(null);
@@ -37,10 +38,13 @@ export const Visualizer = () => {
       {mode.type === "SIMULATION" && (
         <BottomPane parentRef={visualizerRef}>
           <div className="flex h-full w-full flex-col divide-y divide-slate-300">
-            <Timeline
+            <AlgorithmControls
               currentStep={currentStepIndex}
               onStepChange={setCurrentStep}
-              maxStep={mode.steps.length - 1}
+              numberOfSteps={mode.steps.length}
+              playerSettings={{
+                speed: 1.5 * 1000,
+              }}
             />
             <VerticalSplit
               left={

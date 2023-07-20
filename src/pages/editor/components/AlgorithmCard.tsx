@@ -1,7 +1,7 @@
 import { Algorithm } from "~/types/algorithm";
 
 type AlgorithmCardProps = {
-  algorithm: Algorithm;
+  algorithm: Algorithm<unknown>;
   onClick: () => void;
 };
 
