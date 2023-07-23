@@ -18,3 +18,5 @@ Some notes that might make browsing the code easier.
 - `context` keeps globally accessible contexts, for example app theme
 - `layout` keeps layouts
 - `shared` keeps components that are meant to be shared across the whole app
+
+<br/>
