@@ -13,6 +13,8 @@ If you want to be sure it works
 
 ## Quick Start
 
+### Vertices
+
 Creating a single vertex
 
 ```rust
@@ -36,6 +38,8 @@ vertex([B, C, D, E, F, G, H, I, J], 37)
 
 <br/>
 
+### Edges
+
 Connecting two vertices with an edge
 
 ```rust
@@ -51,7 +55,13 @@ edge(A, B, 4)
 We can connect vertex with many vertices using single `edge` statement
 
 ```rust
-edge(A, [B, C, D, E, F, G], 4)
+edge(A, [B, C, D, E, F, G], 2)
+```
+
+There is separate statement for directed edges called an `arc`. It can be used **exactly the same as an `edge` statement**.
+
+```rust
+arc(A, [B, C, D, E, F, G], 0)
 ```
 
 Example
