@@ -1,5 +1,5 @@
 import { Player, PlayerSettings } from "./Player";
-import { Timeline } from "./Timeline";
+// import { Timeline } from "./Timeline";
 
 export type AlgorithmControlsProps = {
   currentStep: number;
@@ -15,19 +15,19 @@ export const AlgorithmControls = ({
   playerSettings,
 }: AlgorithmControlsProps) => {
   return (
-    <div>
+    <div className="divide-y-slate-300 divide-y">
       <Player
         currentStep={currentStep}
         numberOfSteps={numberOfSteps}
         onStepChange={onStepChange}
         settings={playerSettings}
-        className="border-b border-slate-300"
       />
-      <Timeline
+      {/* TODO: This is not good enough */}
+      {/* <Timeline
         currentStep={currentStep}
         numberOfSteps={numberOfSteps}
         onStepChange={onStepChange}
-      />
+      /> */}
     </div>
   );
 };

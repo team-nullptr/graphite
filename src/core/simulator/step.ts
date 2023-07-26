@@ -4,15 +4,26 @@ import { ColumnDef } from "@tanstack/react-table";
 
 export type Highlights = Map<string, Color>;
 
-export type StepState<D> = {
-  data: D[];
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  columns: ColumnDef<D, any>[];
+export type DijkstraStepStateData = {
+  vertex: {
+    id: string;
+    color?: Color;
+  };
+  distance: {
+    value: number;
+    justUpdated: boolean;
+  };
 };
 
-export type Step<D> = {
+export type DijkstraStepState = {
+  data: DijkstraStepStateData[];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  columns: ColumnDef<DijkstraStepStateData, any>[];
+};
+
+export type Step<S> = {
   description: string;
-  state: StepState<D>;
+  state: S;
   highlights: Highlights;
 };
 

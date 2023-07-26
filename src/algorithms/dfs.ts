@@ -1,51 +1,89 @@
 import { Graph, Vertex } from "~/core/simulator/graph";
-import { Step } from "~/core/simulator/step";
+import { Highlights, Step } from "~/core/simulator/step";
 import { Algorithm } from "~/types/algorithm";
+import { Color } from "~/types/color";
 
-function* dfsInstructionGenerator(graph: Graph): IterableIterator<Step> {
+const algorithm = (graph: Graph): Step<undefined>[] => {
+  const steps: Step<undefined>[] = [];
+  const savedHighlights: [string, Color][] = [];
+
   const visited = new Set<string>();
   const stack: string[] = [];
 
   let current: Vertex | undefined = Object.values(graph.vertices)[0];
 
-  while (current) {
-    yield {
-      description: "Mark vertex as visited.",
-      stepState: "",
-      highlights: new Map(),
-    };
+  while (current && !visited.has(current.id)) {
+    {
+      const highlights: Highlights = new Map([
+        [current.id, "sky"],
+        ...savedHighlights,
+      ]);
+
+      steps.push({
+        description: "Mark vertex as visited.",
+        state: undefined,
+        highlights,
+      });
+    }
 
     visited.add(current.id);
 
-    yield {
-      description: "Put all adjacent vertices to the stack.",
-      stepState: "",
-      highlights: new Map(),
-    };
+    const outsHighlights: Highlights = new Map();
 
     for (const id of current.outs) {
-      if (!visited.has(id)) {
-        stack.push(id);
+      const targetVertexId = graph.edges[id].to;
+
+      if (!visited.has(targetVertexId)) {
+        stack.push(targetVertexId);
+        outsHighlights.set(targetVertexId, "sky");
       }
     }
 
-    yield {
-      description: "Pop next element from the stack",
-      stepState: "",
-      highlights: new Map(),
-    };
+    {
+      const highlights: Highlights = new Map([
+        ...outsHighlights,
+        ...savedHighlights,
+        [current.id, "orange"],
+      ]);
 
-    current = graph.vertices[stack.pop() as string];
+      steps.push({
+        description:
+          "Put all adjacent vertices that were not visited to the stack.",
+        state: undefined,
+        highlights,
+      });
+    }
+
+    savedHighlights.push([current.id, "slate"]);
+    current = graph.vertices[stack.pop()!];
+
+    {
+      const highlights = new Map([...savedHighlights]);
+
+      steps.push({
+        description: "Pop next element from the stack.",
+        state: undefined,
+        highlights,
+      });
+    }
   }
-}
 
-const dfsInstructionResolver = (graph: Graph) => [
-  ...dfsInstructionGenerator(graph),
-];
+  {
+    const highlights = new Map([...savedHighlights]);
 
-export const dfs: Algorithm = {
+    steps.push({
+      description: "There is no more vertices on the stack.",
+      state: undefined,
+      highlights,
+    });
+  }
+
+  return steps;
+};
+
+export const dfs: Algorithm<undefined> = {
   name: "Depth First Search",
   description: "Depth First Search algorithm visit all nodes of a graph.",
   tags: ["exploration"],
-  algorithm: dfsInstructionResolver,
+  algorithm,
 };

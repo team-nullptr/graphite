@@ -2,7 +2,12 @@
 
 import { createColumnHelper } from "@tanstack/react-table";
 import { Graph, Vertex } from "~/core/simulator/graph";
-import { Highlights, Step } from "~/core/simulator/step";
+import {
+  DijkstraStepStateData,
+  DijkstraStepState,
+  Highlights,
+  Step,
+} from "~/core/simulator/step";
 import { VertexPreview } from "~/shared/ui/VertexPreview";
 import { Algorithm } from "~/types/algorithm";
 import type { Color } from "~/types/color";
@@ -10,18 +15,7 @@ import type { Color } from "~/types/color";
 // TODO: Check if algorithm can be run on a graph.
 // TODO: Do we want to use i18 to support multiple languages (en / pl)?
 
-type DijkstraStepState = {
-  vertex: {
-    id: string;
-    color?: Color;
-  };
-  distance: {
-    value: number;
-    justUpdated: boolean;
-  };
-};
-
-const columnHelper = createColumnHelper<DijkstraStepState>();
+const columnHelper = createColumnHelper<DijkstraStepStateData>();
 
 const columns = [
   columnHelper.accessor("vertex", {

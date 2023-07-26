@@ -4,7 +4,6 @@ import { VerticalSplit } from "~/shared/layout/VerticalSplit";
 import { useEditorStore } from "../context/editor";
 import { GraphView } from "../features/graph-view/GraphView";
 import { StepStateTable } from "./StepStateTable";
-import { Timeline } from "./Timeline";
 import { AlgorithmControls } from "./AlgorithmControls";
 
 export const Visualizer = () => {
@@ -34,7 +33,6 @@ export const Visualizer = () => {
         className="h-full w-full"
         highlights={highlights}
       />
-
       {mode.type === "SIMULATION" && (
         <BottomPane parentRef={visualizerRef}>
           <div className="flex h-full w-full flex-col divide-y divide-slate-300">
@@ -46,21 +44,33 @@ export const Visualizer = () => {
                 speed: 1.5 * 1000,
               }}
             />
-            <VerticalSplit
-              left={
-                <div className="flex flex-col gap-1 p-4">
-                  <span className="font-bold text-slate-800">
-                    Step {currentStepIndex + 1} / {mode.steps.length}
-                  </span>
-                  <p className="text-slate-800">
-                    {mode.steps[currentStepIndex].description}
-                  </p>
-                </div>
-              }
-              right={
-                <StepStateTable state={mode.steps[currentStepIndex].state} />
-              }
-            />
+            {/* TODO: Make component from the "left" */}
+            {mode.steps[currentStepIndex].state !== undefined ? (
+              <VerticalSplit
+                left={
+                  <div className="flex flex-col gap-1 p-4">
+                    <span className="font-bold text-slate-800">
+                      Step {currentStepIndex + 1} / {mode.steps.length}
+                    </span>
+                    <p className="text-slate-800">
+                      {mode.steps[currentStepIndex].description}
+                    </p>
+                  </div>
+                }
+                right={
+                  <StepStateTable state={mode.steps[currentStepIndex].state} />
+                }
+              />
+            ) : (
+              <div className="flex flex-col gap-1 p-4">
+                <span className="font-bold text-slate-800">
+                  Step {currentStepIndex + 1} / {mode.steps.length}
+                </span>
+                <p className="text-slate-800">
+                  {mode.steps[currentStepIndex].description}
+                </p>
+              </div>
+            )}
           </div>
         </BottomPane>
       )}
