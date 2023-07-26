@@ -8,36 +8,18 @@ import { DiagnosticsSummary } from "./components/Diagnostics";
 import "./editor-styles.css";
 import { editorOnChange, useEditor } from "./hooks/useEditor";
 
-const initialEditorValue = `# Check out detailed graphene guide at
+const initialEditorValue = `# Check out Graphene Docs
 # https://github.com/team-nullptr/graphite/tree/dev/src/core/graphene
 
-# Create vertex or many vertices
-vertex(A)
-vertex([B, C, D, E, F, G, H, I])
+vertex([A, B, C, D, E, F, G])
 
-# Pass optional vertex's value after it's id
-# (default value is 1)
-vertex(J, 4)
-vertex([K, L], 2)
+edge(A, [B, C, D, E], 5)
+edge(D, C)
+edge(F, B)
+edge(B, C)
 
-# Create edges between two vertices
-edge(D, I)
-edge(B, F)
-edge(E, C)
-edge(A, H)
-edge(D, B, 10)
-# Or create edge from one vertex to many other vertices
-edge(A, [B, C, D], 2)
-
-# Create directed edges
-arc(E, I)
-arc(I, G)
-arc(G, F)
-arc(F, H)
-edge(J, L)
-edge(L, K)
-edge(K, J)
-arc(I, L, 10)
+arc(A, [F, G])
+arc(E, C, 8)
 `;
 
 export const CodeEditor = () => {
