@@ -1,42 +1,86 @@
-import { Graph, Vertex } from "~/core/simulator/graph";
+import { Graph } from "~/core/simulator/graph";
 import { Highlights, Step } from "~/core/simulator/step";
 import { Algorithm } from "~/types/algorithm";
 import { Color } from "~/types/color";
 
-const algorithm = (graph: Graph): Step<undefined>[] => {
+const algorithm = (graph: Graph, startingVertex: string): Step<undefined>[] => {
   const steps: Step<undefined>[] = [];
   const savedHighlights: [string, Color][] = [];
 
   const visited = new Set<string>();
   const stack: string[] = [];
 
-  let current: Vertex | undefined = Object.values(graph.vertices)[0];
+  stack.push(startingVertex);
 
-  while (current && !visited.has(current.id)) {
+  {
+    const highlights: Highlights = new Map([[startingVertex, "sky"]]);
+
+    steps.push({
+      description: `Put starting vertex ${startingVertex} on the stack.`,
+      state: undefined,
+      highlights,
+    });
+  }
+
+  while (stack.length !== 0) {
+    const currentId = stack.pop()!;
+    const current = graph.vertices[currentId]!;
+
     {
       const highlights: Highlights = new Map([
-        [current.id, "sky"],
         ...savedHighlights,
+        [currentId, "sky"],
       ]);
 
       steps.push({
-        description: "Mark vertex as visited.",
+        description: `Pop vertex ${currentId} from the stack.`,
         state: undefined,
         highlights,
       });
     }
 
+    if (visited.has(currentId)) {
+      {
+        const highlights: Highlights = new Map([
+          ...savedHighlights,
+          [currentId, "slate"],
+        ]);
+
+        steps.push({
+          description: `Vertex ${currentId} was already visited. Continue to the next step.`,
+          state: undefined,
+          highlights,
+        });
+      }
+
+      continue;
+    }
+
     visited.add(current.id);
+
+    {
+      const highlights: Highlights = new Map([
+        [current.id, "slate"],
+        ...savedHighlights,
+      ]);
+
+      steps.push({
+        description: `Mark vertex ${currentId} as visited.`,
+        state: undefined,
+        highlights,
+      });
+    }
 
     const outsHighlights: Highlights = new Map();
 
-    for (const id of current.outs) {
-      const targetVertexId = graph.edges[id].to;
+    for (const edgeId of current.outs) {
+      const edge = graph.edges[edgeId];
 
-      if (!visited.has(targetVertexId)) {
-        stack.push(targetVertexId);
-        outsHighlights.set(targetVertexId, "sky");
-      }
+      const adjacentId =
+        edge.to === current.id && !edge.directed ? edge.from : edge.to;
+
+      stack.push(adjacentId);
+      outsHighlights.set(adjacentId, "sky");
     }
 
     {
@@ -47,32 +91,20 @@ const algorithm = (graph: Graph): Step<undefined>[] => {
       ]);
 
       steps.push({
-        description:
-          "Put all adjacent vertices that were not visited to the stack.",
+        description: "Put all adjacent vertices to the stack.",
         state: undefined,
         highlights,
       });
     }
 
     savedHighlights.push([current.id, "slate"]);
-    current = graph.vertices[stack.pop()!];
-
-    {
-      const highlights = new Map([...savedHighlights]);
-
-      steps.push({
-        description: "Pop next element from the stack.",
-        state: undefined,
-        highlights,
-      });
-    }
   }
 
   {
     const highlights = new Map([...savedHighlights]);
 
     steps.push({
-      description: "There is no more vertices on the stack.",
+      description: "There is no more vertices on the stack. End the algorithm.",
       state: undefined,
       highlights,
     });

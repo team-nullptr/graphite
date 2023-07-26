@@ -8,9 +8,41 @@ import { DiagnosticsSummary } from "./components/Diagnostics";
 import "./editor-styles.css";
 import { editorOnChange, useEditor } from "./hooks/useEditor";
 
+const initialEditorValue = `# Check out detailed graphene guide at
+# https://github.com/team-nullptr/graphite/tree/dev/src/core/graphene
+
+# Create vertex or many vertices
+vertex(A)
+vertex([B, C, D, E, F, G, H, I])
+
+# Pass optional vertex's value after it's id
+# (default value is 1)
+vertex(J, 4)
+vertex([K, L], 2)
+
+# Create edges between two vertices
+edge(D, I)
+edge(B, F)
+edge(E, C)
+edge(A, H)
+edge(D, B, 10)
+# Or create edge from one vertex to many other vertices
+edge(A, [B, C, D], 2)
+
+# Create directed edges
+arc(E, I)
+arc(I, G)
+arc(G, F)
+arc(F, H)
+edge(J, L)
+edge(L, K)
+edge(K, J)
+arc(I, L, 10)
+`;
+
 export const CodeEditor = () => {
   const setGraph = useEditorStore(({ setGraph }) => setGraph);
-  const [value, setValue] = useState("");
+  const [value, setValue] = useState(initialEditorValue);
   const [errors, setErrors] = useState<Error[]>([]);
 
   const { view, ref } = useEditor<HTMLDivElement>([

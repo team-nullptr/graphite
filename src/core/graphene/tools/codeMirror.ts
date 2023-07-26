@@ -8,6 +8,7 @@ export const grapheneParser = parser.configure({
       Identifier: tags.keyword,
       Vertex: tags.variableName,
       Number: tags.number,
+      Comment: tags.comment,
       "( ) [ ]": tags.paren,
       ",": tags.punctuation,
     }),
