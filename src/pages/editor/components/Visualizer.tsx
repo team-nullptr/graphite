@@ -5,6 +5,7 @@ import { useEditorStore } from "../context/editor";
 import { GraphView } from "../features/graph-view/GraphView";
 import { StepStateTable } from "./StepStateTable";
 import { AlgorithmControls } from "./AlgorithmControls";
+import { DijkstraStepState } from "~/core/simulator/step";
 
 export const Visualizer = () => {
   const visualizerRef = useRef(null);
@@ -58,7 +59,11 @@ export const Visualizer = () => {
                   </div>
                 }
                 right={
-                  <StepStateTable state={mode.steps[currentStepIndex].state} />
+                  <StepStateTable
+                    state={
+                      mode.steps[currentStepIndex].state as DijkstraStepState
+                    }
+                  />
                 }
               />
             ) : (

@@ -2,8 +2,8 @@ import { Algorithm } from "~/types/algorithm";
 import { AlgorithmCard } from "./AlgorithmCard";
 
 export interface AlgorithmGridProps {
-  algorithms: Algorithm[];
-  onAlgorithmSelect?: (algorithm: Algorithm) => void;
+  algorithms: Algorithm<unknown>[];
+  onAlgorithmSelect?: (algorithm: Algorithm<unknown>) => void;
 }
 
 export const AlgorithmGrid = ({

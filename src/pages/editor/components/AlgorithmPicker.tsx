@@ -5,7 +5,8 @@ import { AlgorithmDetails } from "./AlgorithmDetails";
 import { AlgorithmGrid } from "./AlgorithmGrid";
 
 export const AlgorithmPicker = () => {
-  const [browsedAlgorithm, setBrowsedAlgorithm] = useState<Algorithm>();
+  const [browsedAlgorithm, setBrowsedAlgorithm] =
+    useState<Algorithm<unknown>>();
 
   return (
     <div className="h-full w-full bg-slate-50">

@@ -3,10 +3,10 @@ import {
   getCoreRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { StepState } from "~/core/simulator/step";
+import { DijkstraStepState } from "~/core/simulator/step";
 
 export type StepStateTableProps = {
-  state: StepState<unknown>;
+  state: DijkstraStepState;
 };
 
 export const StepStateTable = ({ state }: StepStateTableProps) => {
