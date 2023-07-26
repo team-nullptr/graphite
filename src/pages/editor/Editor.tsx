@@ -7,25 +7,12 @@ import { Visualizer } from "./components/Visualizer";
 import { EditorStoreProvider } from "./context/editor";
 
 export const Editor = () => {
-  const { projectId } = useParams<"projectId">();
   const { themeClass } = useTheme();
-  const navigate = useNavigate();
-
-  const handleNavigateUp = () => {
-    navigate("..");
-  };
 
   return (
-    <EditorStoreProvider
-      projectId={projectId ?? ""}
-      loadingFallback={<>Loading ...</>}
-    >
+    <EditorStoreProvider projectId={""} loadingFallback={<>Loading ...</>}>
       <div className={`flex h-screen flex-col overflow-hidden ${themeClass}`}>
-        <Header
-          name={""}
-          onRename={undefined}
-          onNavigateUp={handleNavigateUp}
-        />
+        <Header name={""} onRename={undefined} />
         <main className="h-[calc(100vh_-_48px)]">
           <VerticalSplit left={<Sidebar />} right={<Visualizer />} />
         </main>

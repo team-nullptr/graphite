@@ -1,22 +1,22 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import { RouterProvider, createBrowserRouter } from "react-router-dom";
+// import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import { ThemeContextProvider } from "./context/theme";
 import { Editor } from "./pages/editor/Editor";
 import "./index.css";
 
-const router = createBrowserRouter([
-  // TODO: I know this route does not make any sense .. but let's focus on features for now.
-  {
-    path: ":projectId",
-    element: <Editor />,
-  },
-]);
+// const router = createBrowserRouter([
+//   // TODO: I know this route does not make any sense .. but let's focus on features for now.
+//   {
+//     path: ":projectId",
+//     element: <Editor />,
+//   },
+// ]);
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
     <ThemeContextProvider>
-      <RouterProvider router={router} />
+      <Editor />
     </ThemeContextProvider>
   </React.StrictMode>
 );
