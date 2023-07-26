@@ -1,5 +1,5 @@
 @top Program { statement* }
-@skip { space }
+@skip { space | Comment }
 
 statement { ExprStmt }
 
@@ -16,6 +16,8 @@ VertexCollection { "[" Vertex ( "," Vertex )* "]" }
   "["
   "]"
   ","
+
+  Comment { "#" ![\n]* }
 
   Identifier { @asciiLetter+ }
   Vertex { @asciiLetter+ }

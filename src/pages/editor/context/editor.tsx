@@ -14,15 +14,13 @@ import { EditorState, EditorStore, createEditorStore } from "../store/editor";
 // TODO: temporary
 const fetchFakeProject = async (projectId: string) => {
   return new Promise<Project>((res) => {
-    setTimeout(
-      () =>
-        res({
-          metadata: {
-            id: projectId,
-            name: "fake",
-          },
-        }),
-      1000
+    setTimeout(() =>
+      res({
+        metadata: {
+          id: projectId,
+          name: "fake",
+        },
+      })
     );
   });
 };

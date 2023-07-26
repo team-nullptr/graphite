@@ -29,6 +29,10 @@ const codeThemeLight = HighlightStyle.define([
     tag: [tags.paren, tags.punctuation],
     color: "#475569",
   },
+  {
+    tag: [tags.comment],
+    color: "#64748b",
+  },
 ]);
 
 // const codeThemeDark = HighlightStyle.define([

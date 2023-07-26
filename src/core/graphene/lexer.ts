@@ -42,6 +42,11 @@ export class Lexer {
     const c = this.advance();
 
     switch (c) {
+      // Comments
+      case "#":
+        while (this.peek() !== "\n" && !this.isAtEnd()) this.advance();
+        break;
+
       // Single-character tokens
       case "(":
         this.addToken("LEFT_PAREN");

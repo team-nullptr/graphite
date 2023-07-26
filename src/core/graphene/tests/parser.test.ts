@@ -12,8 +12,11 @@ import { Token } from "../token";
 
 test("Parser parses Graphene syntax correctly", () => {
   // arrange
-  const source = `vertex(A, 4, [C, D])`;
+  const source = `vertex(A, 4, [C, D])
+# Cool huh`;
   const tokens = new Lexer(source).lex();
+
+  console.log(tokens);
 
   const want = [
     new Call(
