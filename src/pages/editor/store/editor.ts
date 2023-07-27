@@ -1,5 +1,4 @@
 import { createStore } from "zustand";
-import { devtools } from "zustand/middleware";
 import { Graph } from "~/core/simulator/graph";
 import { Project, ProjectMetadata } from "~/types/project";
 import { Step } from "~/core/simulator/step";
@@ -31,29 +30,27 @@ const initialGraph: Graph = {
 };
 
 export const createEditorStore = ({ project }: CreateEditorStoreOpts) => {
-  return createStore<EditorState>()(
-    devtools((set) => ({
-      metadata: project.metadata,
+  return createStore<EditorState>()((set) => ({
+    metadata: project.metadata,
 
-      // mode
-      mode: {
-        type: "IDLE",
-      },
-      setMode: (mode: Mode) => {
-        set({
-          mode,
-        });
-      },
+    // mode
+    mode: {
+      type: "IDLE",
+    },
+    setMode: (mode) => {
+      set({
+        mode,
+      });
+    },
 
-      // graph
-      graph: initialGraph,
-      setGraph: (graph) => {
-        set({
-          graph,
-        });
-      },
-    }))
-  );
+    // graph
+    graph: initialGraph,
+    setGraph: (graph) => {
+      set({
+        graph,
+      });
+    },
+  }));
 };
 
 export type EditorStore = ReturnType<typeof createEditorStore>;
