@@ -12,6 +12,7 @@ import { useGraphLayout } from "./hooks/useGraphLayout";
 import { usePan } from "./hooks/usePan";
 import { useResizeObserver } from "./hooks/useResizeObserver";
 import { useZoom } from "./hooks/useZoom";
+import { useSvgControls } from "./hooks/useSvgControls";
 
 type Viewport = [x: number, y: number, width: number, height: number];
 
@@ -22,47 +23,13 @@ export type GraphViewProps = {
 };
 
 export const GraphView = ({ className, highlights, graph }: GraphViewProps) => {
-  const svgRef = useRef<SVGSVGElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
-  const [containerRect, previousContainerRect] =
-    useResizeObserver(containerRef);
+  const svgRef = useRef<SVGSVGElement>(null);
 
-  const [viewport, setViewport] = useState<Viewport>([0, 0, 0, 0]);
   const { arrangement, vertexMouseDownHandler, areControlsEnabled } =
     useGraphLayout(graph, svgRef);
 
-  useEffect(() => {
-    if (!containerRect) return;
-
-    const { width, height } = containerRect;
-    const previousRect = previousContainerRect.current ?? containerRect;
-
-    setViewport((viewport) => {
-      if (!viewport) {
-        return viewport;
-      }
-      const [x, y, viewportWidth, viewportHeight] = viewport;
-      if (viewportWidth == 0 || viewportHeight == 0) {
-        return [0, 0, width, height];
-      }
-
-      return [
-        x,
-        y,
-        (viewportWidth * width) / previousRect.width,
-        (viewportHeight * height) / previousRect.height,
-      ];
-      // return undefined;
-    });
-  }, [containerRect]);
-
-  const containerDimen: [number, number] = [
-    containerRect?.width ?? 0,
-    containerRect?.height ?? 0,
-  ];
-
-  usePan(svgRef, containerDimen, setViewport, areControlsEnabled);
-  useZoom(svgRef, setViewport);
+  const viewport = useSvgControls(containerRef, svgRef, areControlsEnabled);
 
   const positionedEdges = useMemo(
     () =>
@@ -76,8 +43,8 @@ export const GraphView = ({ className, highlights, graph }: GraphViewProps) => {
     [graph]
   );
 
-  // TODO: It looks like this use memo does not change anything
-  const vertices = useMemo(() => Object.entries(arrangement), [arrangement]);
+  const vertices = Object.entries(arrangement);
+  const viewBox = viewport.join(" ");
 
   return (
     <>
@@ -85,11 +52,7 @@ export const GraphView = ({ className, highlights, graph }: GraphViewProps) => {
         ref={containerRef}
         className={className + " select-none overflow-hidden"}
       >
-        <svg
-          ref={svgRef}
-          className="h-full w-full"
-          viewBox={viewport.join(" ")}
-        >
+        <svg ref={svgRef} className="h-full w-full" viewBox={viewBox}>
           {/* Edges */}
           {positionedEdges.map((positionedEdge) => {
             const [edge, position] = positionedEdge;
