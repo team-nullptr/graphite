@@ -24,11 +24,8 @@ export type GraphViewProps = {
 export const GraphView = ({ className, highlights, graph }: GraphViewProps) => {
   const svgRef = useRef<SVGSVGElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
-  const containerRect = useResizeObserver(containerRef);
-  const containerDimen: [number, number] = [
-    containerRect?.width ?? 0,
-    containerRect?.height ?? 0,
-  ];
+  const [containerRect, previousContainerRect] =
+    useResizeObserver(containerRef);
 
   const [viewport, setViewport] = useState<Viewport>([0, 0, 0, 0]);
   const { arrangement, vertexMouseDownHandler, areControlsEnabled } =
@@ -38,8 +35,31 @@ export const GraphView = ({ className, highlights, graph }: GraphViewProps) => {
     if (!containerRect) return;
 
     const { width, height } = containerRect;
-    setViewport([0, 0, width, height]);
+    const previousRect = previousContainerRect.current ?? containerRect;
+
+    setViewport((viewport) => {
+      if (!viewport) {
+        return viewport;
+      }
+      const [x, y, viewportWidth, viewportHeight] = viewport;
+      if (viewportWidth == 0 || viewportHeight == 0) {
+        return [0, 0, width, height];
+      }
+
+      return [
+        x,
+        y,
+        (viewportWidth * width) / previousRect.width,
+        (viewportHeight * height) / previousRect.height,
+      ];
+      // return undefined;
+    });
   }, [containerRect]);
+
+  const containerDimen: [number, number] = [
+    containerRect?.width ?? 0,
+    containerRect?.height ?? 0,
+  ];
 
   usePan(svgRef, containerDimen, setViewport, areControlsEnabled);
   useZoom(svgRef, setViewport);
