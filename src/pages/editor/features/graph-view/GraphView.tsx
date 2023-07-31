@@ -1,6 +1,6 @@
-import { useEffect, useMemo, useRef, useState } from "react";
-import { Graph } from "~/core/simulator/graph";
+import { useMemo, useRef } from "react";
 import { Highlights } from "~/core/simulator/algorithm";
+import { Graph } from "~/core/simulator/graph";
 import { Edge } from "./components/Edge";
 import { Vertex } from "./components/Vertex";
 import {
@@ -9,12 +9,7 @@ import {
   sortEdges,
 } from "./helpers/distributeEdges";
 import { useGraphLayout } from "./hooks/useGraphLayout";
-import { usePan } from "./hooks/usePan";
-import { useResizeObserver } from "./hooks/useResizeObserver";
-import { useZoom } from "./hooks/useZoom";
 import { useSvgControls } from "./hooks/useSvgControls";
-
-type Viewport = [x: number, y: number, width: number, height: number];
 
 export type GraphViewProps = {
   highlights?: Highlights;
