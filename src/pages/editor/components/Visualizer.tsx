@@ -5,17 +5,17 @@ import { useEditorStore } from "../context/editor";
 import { GraphView } from "../features/graph-view/GraphView";
 import { StepStateTable } from "./StepStateTable";
 import { AlgorithmControls } from "./AlgorithmControls";
-import { DijkstraStepState } from "~/core/simulator/step";
+import { State } from "~/core/simulator/algorithm";
 
 export const Visualizer = () => {
   const visualizerRef = useRef(null);
-
-  const [currentStepIndex, setCurrentStep] = useState(0);
 
   const { mode, graph } = useEditorStore(({ mode, graph }) => ({
     mode,
     graph,
   }));
+
+  const [currentStepIndex, setCurrentStep] = useState(0);
 
   // TODO: We might want to do this differently
   useEffect(() => {
@@ -26,6 +26,17 @@ export const Visualizer = () => {
     mode.type === "SIMULATION"
       ? mode.steps[currentStepIndex].highlights
       : undefined;
+
+  const renderStepState = (state: State) => {
+    if (!state) return null;
+
+    switch (state.type) {
+      case "table":
+        return <StepStateTable state={state} />;
+      default:
+        return null;
+    }
+  };
 
   return (
     <div className="relative flex h-full w-full flex-col" ref={visualizerRef}>
@@ -45,37 +56,15 @@ export const Visualizer = () => {
                 speed: 1.5 * 1000,
               }}
             />
-            {/* TODO: Make component from the "left" */}
-            {mode.steps[currentStepIndex].state !== undefined ? (
-              <VerticalSplit
-                left={
-                  <div className="flex flex-col gap-1 p-4">
-                    <span className="font-bold text-slate-800">
-                      Step {currentStepIndex + 1} / {mode.steps.length}
-                    </span>
-                    <p className="text-slate-800">
-                      {mode.steps[currentStepIndex].description}
-                    </p>
-                  </div>
-                }
-                right={
-                  <StepStateTable
-                    state={
-                      mode.steps[currentStepIndex].state as DijkstraStepState
-                    }
-                  />
-                }
-              />
-            ) : (
-              <div className="flex flex-col gap-1 p-4">
-                <span className="font-bold text-slate-800">
-                  Step {currentStepIndex + 1} / {mode.steps.length}
-                </span>
-                <p className="text-slate-800">
-                  {mode.steps[currentStepIndex].description}
-                </p>
-              </div>
-            )}
+            <div className="flex flex-col gap-1 p-4">
+              <span className="font-bold text-slate-800">
+                Step {currentStepIndex + 1} / {mode.steps.length}
+              </span>
+              <p className="text-slate-800">
+                {mode.steps[currentStepIndex].description}
+              </p>
+            </div>
+            {renderStepState(mode.steps[currentStepIndex].state)}
           </div>
         </BottomPane>
       )}

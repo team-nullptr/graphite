@@ -1,4 +1,4 @@
-import { Algorithm } from "~/types/algorithm";
+import { Algorithm } from "~/core/simulator/algorithm";
 import { ArrowLeftIcon } from "@heroicons/react/24/outline";
 import { Controls, ControlsButton } from "~/shared/Controls";
 import { PlayIcon } from "@heroicons/react/24/outline";
@@ -8,7 +8,7 @@ import { SpaceshipButton } from "~/shared/ui/SpaceshipButton";
 import { useEffect, useState } from "react";
 
 export interface AlgorithmDetails {
-  algorithm: Algorithm<unknown>;
+  algorithm: Algorithm;
   onBack: () => void;
 }
 

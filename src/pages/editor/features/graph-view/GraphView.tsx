@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Graph } from "~/core/simulator/graph";
-import { Highlights } from "~/core/simulator/step";
+import { Highlights } from "~/core/simulator/algorithm";
 import { Edge } from "./components/Edge";
 import { Vertex } from "./components/Vertex";
 import {

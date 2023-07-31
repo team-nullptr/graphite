@@ -1,10 +1,9 @@
 import { Graph } from "~/core/simulator/graph";
-import { Highlights, Step } from "~/core/simulator/step";
-import { Algorithm } from "~/types/algorithm";
+import { Highlights, Step, Algorithm } from "~/core/simulator/algorithm";
 import { Color } from "~/types/color";
 
-const algorithm = (graph: Graph, startingVertex: string): Step<undefined>[] => {
-  const steps: Step<undefined>[] = [];
+const algorithm = (graph: Graph, startingVertex: string): Step[] => {
+  const steps: Step[] = [];
   const savedHighlights: [string, Color][] = [];
 
   const visited = new Set<string>();
@@ -113,7 +112,7 @@ const algorithm = (graph: Graph, startingVertex: string): Step<undefined>[] => {
   return steps;
 };
 
-export const dfs: Algorithm<undefined> = {
+export const dfs: Algorithm = {
   name: "Depth First Search",
   description: "Depth First Search algorithm visit all nodes of a graph.",
   tags: ["exploration"],

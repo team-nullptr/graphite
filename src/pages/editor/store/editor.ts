@@ -1,7 +1,7 @@
 import { createStore } from "zustand";
 import { Graph } from "~/core/simulator/graph";
 import { Project, ProjectMetadata } from "~/types/project";
-import { Step } from "~/core/simulator/step";
+import { Step } from "~/core/simulator/algorithm";
 
 type Mode =
   | {
@@ -9,7 +9,7 @@ type Mode =
     }
   | {
       type: "SIMULATION";
-      steps: Step<unknown>[];
+      steps: Step[];
     };
 
 export type EditorState = {
