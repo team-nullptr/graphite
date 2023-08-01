@@ -2,12 +2,7 @@
 
 import { createColumnHelper } from "@tanstack/react-table";
 import { Graph, Vertex } from "~/core/simulator/graph";
-import {
-  Highlights,
-  Step,
-  TableState,
-  Algorithm,
-} from "~/core/simulator/algorithm";
+import { Highlights, Step, Algorithm } from "~/core/simulator/algorithm";
 import { VertexPreview } from "~/shared/ui/VertexPreview";
 import type { Color } from "~/types/color";
 
