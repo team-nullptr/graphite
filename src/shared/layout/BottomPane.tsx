@@ -1,15 +1,11 @@
 import { useEffect, useState, RefObject, PropsWithChildren } from "react";
+import { cn } from "~/lib/utils";
 
 type BottomPaneProps = PropsWithChildren<{
   parentRef: RefObject<HTMLElement>;
-  className?: string;
 }>;
 
-export const BottomPane = ({
-  children,
-  parentRef,
-  className = "",
-}: BottomPaneProps) => {
+export const BottomPane = ({ children, parentRef }: BottomPaneProps) => {
   const [isResizing, setIsResizing] = useState(false);
   const [height, setHeight] = useState(50);
 
@@ -44,9 +40,10 @@ export const BottomPane = ({
       <div
         onDoubleClick={() => setHeight(50)}
         onMouseDown={() => setIsResizing(true)}
-        className={`relative z-[999] w-full border-b border-slate-300 transition-all before:absolute before:-top-2 before:h-4 before:w-full  before:bg-slate-200 before:opacity-0 before:transition-opacity hover:cursor-row-resize hover:border-slate-500 hover:before:opacity-30 ${
-          isResizing && "before:opacity-30"
-        }`}
+        className={cn(
+          "relative z-10 w-full border-b border-slate-300 before:absolute before:-top-2 before:h-4 before:w-full before:bg-slate-200  before:opacity-0 before:transition-opacity hover:cursor-row-resize hover:before:opacity-30",
+          isResizing && "cursor-col-resize before:opacity-30"
+        )}
       />
       {children}
     </div>

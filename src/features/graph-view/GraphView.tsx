@@ -10,6 +10,7 @@ import {
 } from "./helpers/distributeEdges";
 import { useGraphLayout } from "./hooks/useGraphLayout";
 import { useSvgControls } from "./hooks/useSvgControls";
+import { cn } from "~/lib/utils";
 
 export type GraphViewProps = {
   highlights?: Highlights;
@@ -23,7 +24,6 @@ export const GraphView = ({ className, highlights, graph }: GraphViewProps) => {
 
   const { arrangement, vertexMouseDownHandler, areControlsEnabled } =
     useGraphLayout(graph, svgRef);
-
   const viewport = useSvgControls(containerRef, svgRef, areControlsEnabled);
 
   const positionedEdges = useMemo(
@@ -45,10 +45,9 @@ export const GraphView = ({ className, highlights, graph }: GraphViewProps) => {
     <>
       <div
         ref={containerRef}
-        className={className + " select-none overflow-hidden"}
+        className={cn("select-none overflow-hidden", className)}
       >
         <svg ref={svgRef} className="h-full w-full" viewBox={viewBox}>
-          {/* Edges */}
           {positionedEdges.map((positionedEdge) => {
             const [edge, position] = positionedEdge;
             const { x, y } = arrangement[edge.from] ?? { x: 0, y: 0 };
@@ -68,11 +67,10 @@ export const GraphView = ({ className, highlights, graph }: GraphViewProps) => {
               />
             );
           })}
-
-          {/* Vertices */}
           {vertices.map(([id, pos]) => {
             const { x, y } = pos;
             const color = highlights?.get(id);
+
             return (
               <Vertex
                 key={id}
@@ -80,7 +78,12 @@ export const GraphView = ({ className, highlights, graph }: GraphViewProps) => {
                 cx={x}
                 cy={y}
                 value={id}
-                onMouseDown={(event) => vertexMouseDownHandler(id, event)}
+                onMouseDown={(event) => {
+                  console.log(event.button);
+                  if (event.button === 0) {
+                    vertexMouseDownHandler(id, event);
+                  }
+                }}
               />
             );
           })}

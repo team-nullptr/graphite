@@ -8,7 +8,6 @@ import {
 } from "react";
 
 type Viewport = [x: number, y: number, w: number, h: number];
-
 type Offset = [x: number, y: number];
 type Position = [x: number, y: number];
 type Dimensions = [w: number, h: number];
@@ -16,7 +15,6 @@ type Dimensions = [w: number, h: number];
 const calculatePositionOffset = (a: Position, b: Position): Offset => {
   const [ax, ay] = a;
   const [bx, by] = b;
-
   return [bx - ax, by - ay];
 };
 
@@ -30,24 +28,30 @@ export const usePan = (
   const previousMousePosition = useRef<Position>([0, 0]);
 
   const handleMouseDown = useCallback((event: MouseEvent) => {
-    if (!enabled.current) return;
-    event.preventDefault();
+    if (event.button !== 0 || !enabled.current) {
+      return;
+    }
 
     const { clientX, clientY } = event;
+
     previousMousePosition.current = [clientX, clientY];
     isMouseDown.current = true;
   }, []);
 
   const handleMouseMove = useCallback(
     (event: MouseEvent) => {
-      if (!isMouseDown.current) return;
+      if (!isMouseDown.current) {
+        return;
+      }
 
       const { clientX, clientY } = event;
       const currentMousePosition: Position = [clientX, clientY];
+
       const delta: Offset = calculatePositionOffset(
         currentMousePosition,
         previousMousePosition.current
       );
+
       previousMousePosition.current = currentMousePosition;
 
       setViewport((viewport) => {

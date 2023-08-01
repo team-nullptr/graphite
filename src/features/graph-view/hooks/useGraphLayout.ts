@@ -36,13 +36,17 @@ export const useGraphLayout = (
 
   const vertexMouseDownHandler = (id: string, event: MouseEvent) => {
     const svg = svgRef.current;
-    if (!svg) return;
+
+    if (!svg) {
+      return;
+    }
 
     const mouseInSvgSpace = getPointInSvgSpace(
       event.clientX,
       event.clientY,
       svg
     );
+
     const vertexPosition = arrangement[id];
 
     const offset = new Vec2(
@@ -53,8 +57,6 @@ export const useGraphLayout = (
     selectedVertexRef.current = { id, offset };
     areControlsEnabled.current = false;
   };
-
-  useForceSimulation(graph, selectedVertexRef, setArrangment);
 
   useEffect(() => {
     const updatedArrangement = preArrange(graph);
@@ -76,12 +78,13 @@ export const useGraphLayout = (
     };
 
     const mouseMoveHandler = (event: MouseEvent) => {
-      if (!selectedVertexRef.current) return;
+      if (!selectedVertexRef.current || !svgRef.current) {
+        return;
+      }
 
       const svg = svgRef.current;
-      if (!svg) return;
-
       const { id, offset } = selectedVertexRef.current;
+
       const position = getPointInSvgSpace(event.clientX, event.clientY, svg);
 
       const positionWithMouseOffset = new Vec2(position.x, position.y);
@@ -101,6 +104,8 @@ export const useGraphLayout = (
       removeEventListener("mouseup", mouseUpHandler);
     };
   }, []);
+
+  useForceSimulation(graph, selectedVertexRef, setArrangment);
 
   return {
     arrangement,

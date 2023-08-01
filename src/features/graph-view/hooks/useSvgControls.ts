@@ -23,11 +23,14 @@ export const useSvgControls = (
 
     setViewport((viewport) => {
       const [x, y, viewportWidth, viewportHeight] = viewport;
+
       if (viewportWidth == 0 || viewportHeight == 0) {
         return [0, 0, currentWidth, currentHeight];
       }
+
       const horizontalResizeRatio = currentWidth / previousWidth;
       const verticalResizeRatio = currentHeight / previousHeight;
+
       return [
         x,
         y,

@@ -18,12 +18,15 @@ export const useResizeObserver = (
 
     const resizeObserver = new ResizeObserver(() => {
       const newBoundingRect = element.getBoundingClientRect();
+
       setRect((currentRect) => {
         previousRect.current = currentRect;
         return newBoundingRect;
       });
     });
+
     resizeObserver.observe(element);
+
     return () => resizeObserver.disconnect();
   }, []);
 
