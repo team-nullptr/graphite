@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { BottomPane } from "~/shared/layout/BottomPane";
 import { VerticalSplit } from "~/shared/layout/VerticalSplit";
 import { useEditorStore } from "../context/editor";
-import { GraphView } from "../features/graph-view/GraphView";
+import { GraphView } from "../../../features/graph-view/GraphView";
 import { StepStateTable } from "./StepStateTable";
 import { AlgorithmControls } from "./AlgorithmControls";
 import { State } from "~/core/simulator/algorithm";

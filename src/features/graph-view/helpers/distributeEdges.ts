@@ -1,4 +1,4 @@
-import { Edge } from "../../../../../core/simulator/graph";
+import { Edge } from "../../../core/simulator/graph";
 
 export type Connection = [vertex: string, edge: Edge[]];
 

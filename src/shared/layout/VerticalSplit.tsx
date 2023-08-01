@@ -1,4 +1,5 @@
 import { ReactNode, useEffect, useRef, useState } from "react";
+import { cn } from "~/lib/utils";
 
 const useVerticalSplit = <E extends HTMLElement>() => {
   const ref = useRef<E>(null);
@@ -50,9 +51,9 @@ export const VerticalSplit = ({ left, right }: SplitLayoutProps) => {
     useVerticalSplit<HTMLDivElement>();
 
   return (
-    <div className="flex h-full w-full" ref={ref}>
+    <div className="flex h-full min-h-0 w-full overflow-hidden" ref={ref}>
       <div
-        className="h-full w-full overflow-hidden"
+        className="h-full min-h-0 overflow-hidden bg-red-400"
         style={{ width: `${leftShare}%` }}
       >
         {left}
@@ -60,11 +61,12 @@ export const VerticalSplit = ({ left, right }: SplitLayoutProps) => {
       <div
         onDoubleClick={resetLeftShare}
         onMouseDown={() => setIsResizing(true)}
-        className={`relative z-10 h-full border-r border-slate-300 transition-all before:absolute before:-left-2 before:h-full before:w-4 before:bg-slate-200 before:opacity-0  before:transition-opacity hover:cursor-col-resize hover:border-slate-500 hover:before:opacity-30 ${
+        className={cn(
+          "relative z-10 h-full border-r border-slate-300 transition-all before:absolute before:-left-2 before:h-full before:w-4 before:bg-slate-200 before:opacity-0  before:transition-opacity hover:cursor-col-resize hover:border-slate-400 hover:before:opacity-30",
           isResizing && "cursor-col-resize before:opacity-30"
-        }`}
+        )}
       />
-      <div className="w-full flex-1 overflow-hidden">{right}</div>
+      <div className="min-h-0 flex-1 overflow-hidden">{right}</div>
     </div>
   );
 };

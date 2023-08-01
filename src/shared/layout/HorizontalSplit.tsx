@@ -1,4 +1,5 @@
 import { useRef, useState, useEffect, ReactNode } from "react";
+import { cn } from "~/lib/utils";
 
 const useHorizontalSplit = <E extends HTMLElement>() => {
   const ref = useRef<E>(null);
@@ -50,16 +51,20 @@ export const HorizontalSplit = ({ top, bottom }: HorizontalSplitProps) => {
     useHorizontalSplit<HTMLDivElement>();
 
   return (
-    <div className="flex h-full w-full flex-col" ref={ref}>
-      <div className="w-full overflow-auto" style={{ height: `${topShare}%` }}>
+    <div className="flex h-full min-h-0 w-full flex-col" ref={ref}>
+      <div
+        className="w-full overflow-auto bg-blue-400"
+        style={{ height: `${topShare}%` }}
+      >
         {top}
       </div>
       <div
         onDoubleClick={resetTopShare}
         onMouseDown={() => setIsResizing(true)}
-        className={`relative z-10 w-full border-b border-slate-300 before:absolute before:-top-2 before:h-4 before:w-full before:bg-slate-200  before:opacity-0 before:transition-opacity hover:cursor-row-resize hover:before:opacity-30 ${
+        className={cn(
+          "relative z-10 w-full border-b border-slate-300 before:absolute before:-top-2 before:h-4 before:w-full before:bg-slate-200  before:opacity-0 before:transition-opacity hover:cursor-row-resize hover:before:opacity-30",
           isResizing && "cursor-col-resize before:opacity-30"
-        }`}
+        )}
       />
       <div className="w-full flex-1 overflow-auto">{bottom}</div>
     </div>

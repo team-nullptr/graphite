@@ -3,7 +3,7 @@ import { Interpreter } from "~/core/graphene/interpreter";
 import { Lexer } from "~/core/graphene/lexer";
 import { Parser } from "~/core/graphene/parser";
 import { HorizontalSplit } from "~/shared/layout/HorizontalSplit";
-import { useEditorStore } from "../../context/editor";
+import { useEditorStore } from "../../pages/editor/context/editor";
 import { DiagnosticsSummary } from "./components/Diagnostics";
 import "./editor-styles.css";
 import { editorOnChange, useEditor } from "./hooks/useEditor";

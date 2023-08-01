@@ -19,7 +19,6 @@ export const Header = (props: HeaderProps) => {
 
   return (
     <nav className="flex h-12 w-full items-center justify-center gap-3 border-b border-slate-300 bg-slate-50 p-2">
-      {/* FIXME: This is of course the stupidest place for theme switcher, but it has to be somewhere for now. */}
       <button
         onClick={navigateBackHandler}
         className="aspect-square h-full text-slate-800"
