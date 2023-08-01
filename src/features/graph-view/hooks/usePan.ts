@@ -24,6 +24,8 @@ export const usePan = (
   setViewport: Dispatch<SetStateAction<Viewport>>,
   enabled: RefObject<boolean>
 ): void => {
+  // TODO: Allow to center
+
   const isMouseDown = useRef<boolean>(false);
   const previousMousePosition = useRef<Position>([0, 0]);
 

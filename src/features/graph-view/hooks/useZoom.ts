@@ -12,24 +12,35 @@ export const useZoom = (
   element: RefObject<SVGSVGElement>,
   setViewport: Dispatch<SetStateAction<Viewport>>
 ): void => {
+  // TODO: Add minimum and maximum zoom
+  // TODO: Expose zoom percentage 100% -> normal
+
   const mouseWheelHandler = useCallback(
     (event: WheelEvent, container: SVGSVGElement) => {
       event.preventDefault();
+      const { clientX, clientY } = event;
 
       const scaleFactor = getScaleFactor(event.deltaY);
+      console.log(scaleFactor);
 
-      const { clientX, clientY } = event;
       const pointInSvgSpace = getPointInSvgSpace(clientX, clientY, container);
 
       setViewport((viewport) => {
         const [x, y, w, h] = viewport;
 
-        // prettier-ignore
-        const [scaledViewportX, scaledViewportWidth] =
-          scaleAxis(x, x + w, pointInSvgSpace.x, scaleFactor);
-        // prettier-ignore
-        const [scaledViewportY, scaledViewportHeight] =
-          scaleAxis(y, y + h, pointInSvgSpace.y, scaleFactor);
+        const [scaledViewportX, scaledViewportWidth] = scaleAxis(
+          x,
+          x + w,
+          pointInSvgSpace.x,
+          scaleFactor
+        );
+
+        const [scaledViewportY, scaledViewportHeight] = scaleAxis(
+          y,
+          y + h,
+          pointInSvgSpace.y,
+          scaleFactor
+        );
 
         return [
           scaledViewportX,
@@ -71,6 +82,7 @@ const getScaleFactor = (delta: number): number => {
   if (Math.abs(scale) >= 0.1) {
     return 1 + scale;
   }
+
   return 1 + delta / 10 / Math.abs(delta || 1);
 };
 
