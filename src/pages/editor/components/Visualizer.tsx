@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { BottomPane } from "~/shared/layout/BottomPane";
 import { useEditorStore } from "../context/editor";
-import { GraphView } from "../../../features/graph-view/GraphView";
+import { GraphView } from "../../../features/graph-view-2/GraphView";
 import { StepStateTable } from "./StepStateTable";
 import { AlgorithmControls } from "./AlgorithmControls";
 import { State } from "~/core/simulator/algorithm";
@@ -41,8 +41,8 @@ export const Visualizer = () => {
     <div className="relative flex h-full w-full flex-col" ref={visualizerRef}>
       <GraphView
         graph={graph}
-        className="h-full w-full"
-        highlights={highlights}
+        // className="h-full w-full"
+        // highlights={highlights}
       />
       {mode.type === "SIMULATION" && (
         <BottomPane parentRef={visualizerRef}>
