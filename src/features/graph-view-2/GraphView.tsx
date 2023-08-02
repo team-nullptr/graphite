@@ -13,7 +13,7 @@ export const GraphView = (props: GraphViewProps) => {
 
   const containerRect = useResizeObserver(containerRef);
 
-  const { center, zoom } = useZoom();
+  const { center, zoom } = useZoom(svgRef);
   const viewBox = getViewBox(containerRect, center, zoom);
 
   return (
@@ -22,7 +22,7 @@ export const GraphView = (props: GraphViewProps) => {
       className="h-full w-full select-none overflow-hidden"
     >
       <svg ref={svgRef} viewBox={viewBox.join(" ")}>
-        <rect x={-10} y={-10} width={20} height={20} fill="red" />
+        <rect x={0} y={0} width={20} height={20} fill="red" />
       </svg>
     </div>
   );
@@ -40,8 +40,8 @@ const getViewBox = (
   const viewportWidth = containerWidth / zoom;
   const viewportHeight = containerHeight / zoom;
 
-  const viewportX = -viewportWidth / 2 + center[0];
-  const viewportY = -viewportHeight / 2 + center[1];
+  const viewportX = -viewportWidth / 2 - center[0];
+  const viewportY = -viewportHeight / 2 - center[1];
 
   return [viewportX, viewportY, viewportWidth, viewportHeight];
 };
