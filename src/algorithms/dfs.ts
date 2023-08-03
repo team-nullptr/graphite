@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
+
 import { Graph } from "~/core/simulator/graph";
 import { Highlights, Step, Algorithm } from "~/core/simulator/algorithm";
 import { Color } from "~/types/color";
