@@ -2,6 +2,7 @@ import type { Color } from "~/types/color";
 import { Graph } from "./graph";
 import { ColumnDef } from "@tanstack/react-table";
 
+export type Highlight = [string, Color];
 export type Highlights = Map<string, Color>;
 
 export type TableState = {

@@ -28,7 +28,7 @@ const algorithm = (graph: Graph, startingVertex: string): Step[] => {
   }
 
   while (stack.length !== 0) {
-    const currentId = stack.pop()!;
+    const currentId = stack.shift()!;
     const current = graph.vertices[currentId]!;
 
     {
@@ -38,7 +38,7 @@ const algorithm = (graph: Graph, startingVertex: string): Step[] => {
       ]);
 
       steps.push({
-        description: `Pop vertex ${currentId} from the stack.`,
+        description: `Get first vertex ${currentId} from the array.`,
         state: undefined,
         highlights,
       });
@@ -118,9 +118,9 @@ const algorithm = (graph: Graph, startingVertex: string): Step[] => {
   return steps;
 };
 
-export const dfs: Algorithm = {
-  name: "Depth First Search",
-  description: "Depth First Search algorithm visit all nodes of a graph.",
+export const bfs: Algorithm = {
+  name: "Breath First Search",
+  description: "Breath First Search algorithm visits all nodes of a graph.",
   tags: ["exploration"],
   algorithm,
 };
