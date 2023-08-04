@@ -1,15 +1,24 @@
-import { RefObject, useEffect, useRef, useState } from "react";
+import {
+  Dispatch,
+  RefObject,
+  SetStateAction,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { scaleCenterToMatchTarget } from "../helpers/scale";
 import { getPointInSvgSpace } from "../helpers/svg";
 
 export type Position = [x: number, y: number];
 export type Offset = [x: number, y: number];
 
-export const useSVGControls = (
+export const useSvgControls = (
   svgRef: RefObject<SVGSVGElement>
 ): {
   center: Position;
+  setCenter: Dispatch<SetStateAction<Position>>;
   zoom: number;
+  setZoom: Dispatch<SetStateAction<number>>;
 } => {
   const [zoom, setZoom] = useState(1);
   const [center, setCenter] = useState<Position>([0, 0]);
@@ -104,7 +113,7 @@ export const useSVGControls = (
     };
   }, [zoom]);
 
-  return { center, zoom };
+  return { center, setCenter, zoom, setZoom };
 };
 
 const getScaleFactor = (delta: number): number => {

@@ -1,8 +1,14 @@
-import { useRef } from "react";
+import { Dispatch, SetStateAction, useRef } from "react";
 import { useResizeObserver } from "./hooks/useResizeObserver";
-import { Position, useSVGControls } from "./hooks/useSVGControls";
+import { Position, useSvgControls } from "./hooks/useSvgControls";
 
 export interface ControllableSvgProps {
+  controls?: (
+    zoom: number,
+    center: Position,
+    setZoom: Dispatch<SetStateAction<number>>,
+    setCenter: Dispatch<SetStateAction<Position>>
+  ) => JSX.Element | JSX.Element[];
   children?: JSX.Element | JSX.Element[];
 }
 
@@ -12,7 +18,7 @@ export const ControlledSvg = (props: ControllableSvgProps) => {
 
   const containerRect = useResizeObserver(containerRef);
 
-  const { center, zoom } = useSVGControls(svgRef);
+  const { center, zoom } = useSvgControls(svgRef);
   const viewBox = getViewBox(containerRect, center, zoom);
 
   return (

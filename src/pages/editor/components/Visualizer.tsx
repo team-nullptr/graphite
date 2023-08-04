@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { BottomPane } from "~/shared/layout/BottomPane";
 import { useEditorStore } from "../context/editor";
-import { GraphView } from "../../../features/graph-view-2/GraphView";
+import { ControlledSvg } from "../../../shared/layout/controlled-svg/ControlledSvg";
 import { StepStateTable } from "./StepStateTable";
 import { AlgorithmControls } from "./AlgorithmControls";
 import { State } from "~/core/simulator/algorithm";
@@ -39,11 +39,9 @@ export const Visualizer = () => {
 
   return (
     <div className="relative flex h-full w-full flex-col" ref={visualizerRef}>
-      <GraphView
-        graph={graph}
-        // className="h-full w-full"
-        // highlights={highlights}
-      />
+      <ControlledSvg>
+        <rect x={0} y={0} width={20} height={20} fill="blue" />
+      </ControlledSvg>
       {mode.type === "SIMULATION" && (
         <BottomPane parentRef={visualizerRef}>
           <div className="flex h-full w-full flex-col divide-y divide-slate-300">
