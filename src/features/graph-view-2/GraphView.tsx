@@ -40,8 +40,8 @@ const getViewBox = (
   const viewportWidth = containerWidth / zoom;
   const viewportHeight = containerHeight / zoom;
 
-  const viewportX = -viewportWidth / 2 - center[0];
-  const viewportY = -viewportHeight / 2 - center[1];
+  const viewportX = -viewportWidth / 2 + center[0];
+  const viewportY = -viewportHeight / 2 + center[1];
 
   return [viewportX, viewportY, viewportWidth, viewportHeight];
 };
