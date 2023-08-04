@@ -5,6 +5,7 @@ import { Graph, Vertex } from "~/core/simulator/graph";
 import { Highlights, Step, Algorithm } from "~/core/simulator/algorithm";
 import { VertexPreview } from "~/shared/ui/VertexPreview";
 import type { Color } from "~/types/color";
+import { cn } from "~/lib/utils";
 
 // TODO: Check if algorithm can be run on a graph.
 // TODO: Do we want to use i18 to support multiple languages (en / pl)?
@@ -36,9 +37,10 @@ const columns = [
       const { value, justUpdated } = info.getValue();
       return (
         <span
-          className={`block transition-all ${
+          className={cn(
+            "block transition-all",
             justUpdated && "animate-pulse text-sky-500"
-          }`}
+          )}
         >
           {value}
         </span>
@@ -83,22 +85,24 @@ const algorithm = (graph: Graph, startingVertex: string): Step[] => {
 
     steps.push({
       description: "Set distance to starting vertext to 0.",
-      state: {
-        type: "table",
-        columns,
-        data: [...distances.entries()].map(
-          ([id, distance]): DijkstraTableData => ({
-            vertex: {
-              id,
-              color: highlights.get(id),
-            },
-            distance: {
-              value: distance,
-              justUpdated: id === start.id,
-            },
-          })
-        ),
-      },
+      state: [
+        {
+          type: "table",
+          columns,
+          data: [...distances.entries()].map(
+            ([id, distance]): DijkstraTableData => ({
+              vertex: {
+                id,
+                color: highlights.get(id),
+              },
+              distance: {
+                value: distance,
+                justUpdated: id === start.id,
+              },
+            })
+          ),
+        },
+      ],
       highlights,
     });
   }
@@ -114,22 +118,24 @@ const algorithm = (graph: Graph, startingVertex: string): Step[] => {
 
       steps.push({
         description: "Pick the closest vertex from all unvisited vertices.",
-        state: {
-          type: "table",
-          columns,
-          data: [...distances.entries()].map(
-            ([id, distance]): DijkstraTableData => ({
-              vertex: {
-                id,
-                color: highlights.get(id),
-              },
-              distance: {
-                value: distance,
-                justUpdated: false,
-              },
-            })
-          ),
-        },
+        state: [
+          {
+            type: "table",
+            columns,
+            data: [...distances.entries()].map(
+              ([id, distance]): DijkstraTableData => ({
+                vertex: {
+                  id,
+                  color: highlights.get(id),
+                },
+                distance: {
+                  value: distance,
+                  justUpdated: false,
+                },
+              })
+            ),
+          },
+        ],
         highlights,
       });
     }
@@ -169,22 +175,24 @@ const algorithm = (graph: Graph, startingVertex: string): Step[] => {
       steps.push({
         description:
           "Iterate over all adjacent unvisited nodes and update their min length.",
-        state: {
-          type: "table",
-          columns,
-          data: [...distances.entries()].map(
-            ([id, distance]): DijkstraTableData => ({
-              vertex: {
-                id,
-                color: highlights.get(id),
-              },
-              distance: {
-                value: distance,
-                justUpdated: outsHighlights.has(id),
-              },
-            })
-          ),
-        },
+        state: [
+          {
+            type: "table",
+            columns,
+            data: [...distances.entries()].map(
+              ([id, distance]): DijkstraTableData => ({
+                vertex: {
+                  id,
+                  color: highlights.get(id),
+                },
+                distance: {
+                  value: distance,
+                  justUpdated: outsHighlights.has(id),
+                },
+              })
+            ),
+          },
+        ],
         highlights,
       });
     }
@@ -197,7 +205,36 @@ const algorithm = (graph: Graph, startingVertex: string): Step[] => {
 
       steps.push({
         description: "Mark current node as visited.",
-        state: {
+        state: [
+          {
+            type: "table",
+            columns,
+            data: [...distances.entries()].map(
+              ([id, distance]): DijkstraTableData => ({
+                vertex: {
+                  id,
+                  color: highlights.get(id),
+                },
+                distance: {
+                  value: distance,
+                  justUpdated: false,
+                },
+              })
+            ),
+          },
+        ],
+        highlights,
+      });
+    }
+  }
+
+  {
+    const highlights: Highlights = new Map([...savedHighlights]);
+
+    steps.push({
+      description: "There is no more unvisited vertices, end the algorithm!",
+      state: [
+        {
           type: "table",
           columns,
           data: [...distances.entries()].map(
@@ -213,32 +250,7 @@ const algorithm = (graph: Graph, startingVertex: string): Step[] => {
             })
           ),
         },
-        highlights,
-      });
-    }
-  }
-
-  {
-    const highlights: Highlights = new Map([...savedHighlights]);
-
-    steps.push({
-      description: "There is no more unvisited vertices, end the algorithm!",
-      state: {
-        type: "table",
-        columns,
-        data: [...distances.entries()].map(
-          ([id, distance]): DijkstraTableData => ({
-            vertex: {
-              id,
-              color: highlights.get(id),
-            },
-            distance: {
-              value: distance,
-              justUpdated: false,
-            },
-          })
-        ),
-      },
+      ],
       highlights: new Map([...savedHighlights]),
     });
   }

@@ -22,7 +22,20 @@ const algorithm = (graph: Graph, startingVertex: string): Step[] => {
 
     steps.push({
       description: `Put starting vertex ${startingVertex} on the stack.`,
-      state: undefined,
+      state: [
+        {
+          type: "array",
+          title: "Stack",
+          data: [...stack],
+          highlighted: new Set([stack.length - 1]),
+        },
+        {
+          type: "array",
+          title: "Visit Order",
+          data: [...visited],
+          highlighted: new Set(),
+        },
+      ],
       highlights,
     });
   }
@@ -39,7 +52,20 @@ const algorithm = (graph: Graph, startingVertex: string): Step[] => {
 
       steps.push({
         description: `Pop vertex ${currentId} from the stack.`,
-        state: undefined,
+        state: [
+          {
+            type: "array",
+            title: "Stack",
+            data: [...stack, currentId],
+            highlighted: new Set([stack.length]),
+          },
+          {
+            type: "array",
+            title: "Visit Order",
+            data: [...visited],
+            highlighted: new Set(),
+          },
+        ],
         highlights,
       });
     }
@@ -53,7 +79,20 @@ const algorithm = (graph: Graph, startingVertex: string): Step[] => {
 
         steps.push({
           description: `Vertex ${currentId} was already visited. Continue to the next step.`,
-          state: undefined,
+          state: [
+            {
+              type: "array",
+              title: "Stack",
+              data: [...stack],
+              highlighted: new Set(),
+            },
+            {
+              type: "array",
+              title: "Visit Order",
+              data: [...visited],
+              highlighted: new Set(),
+            },
+          ],
           highlights,
         });
       }
@@ -71,19 +110,37 @@ const algorithm = (graph: Graph, startingVertex: string): Step[] => {
 
       steps.push({
         description: `Mark vertex ${currentId} as visited.`,
-        state: undefined,
+        state: [
+          {
+            type: "array",
+            title: "Stack",
+            data: [...stack],
+            highlighted: new Set(),
+          },
+          {
+            type: "array",
+            title: "Visit Order",
+            data: [...visited],
+            highlighted: new Set(),
+          },
+        ],
         highlights,
       });
     }
 
     const outsHighlights: Highlights = new Map();
+    const addedIndexes = [];
 
     for (const edgeId of current.outs) {
       const edge = graph.edges[edgeId];
-
       const adjacentId =
         edge.to === current.id && !edge.directed ? edge.from : edge.to;
 
+      if (visited.has(adjacentId)) {
+        continue;
+      }
+
+      addedIndexes.push(stack.length);
       stack.push(adjacentId);
       outsHighlights.set(adjacentId, "sky");
     }
@@ -97,7 +154,20 @@ const algorithm = (graph: Graph, startingVertex: string): Step[] => {
 
       steps.push({
         description: "Put all adjacent vertices to the stack.",
-        state: undefined,
+        state: [
+          {
+            type: "array",
+            title: "Stack",
+            data: [...stack],
+            highlighted: new Set(addedIndexes),
+          },
+          {
+            type: "array",
+            title: "Visit Order",
+            data: [...visited],
+            highlighted: new Set(),
+          },
+        ],
         highlights,
       });
     }
@@ -110,7 +180,20 @@ const algorithm = (graph: Graph, startingVertex: string): Step[] => {
 
     steps.push({
       description: "There is no more vertices on the stack. End the algorithm.",
-      state: undefined,
+      state: [
+        {
+          type: "array",
+          title: "Stack",
+          data: stack.slice(),
+          highlighted: new Set(),
+        },
+        {
+          type: "array",
+          title: "Visit Order",
+          data: [...visited],
+          highlighted: new Set(),
+        },
+      ],
       highlights,
     });
   }

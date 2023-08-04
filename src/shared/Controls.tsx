@@ -1,4 +1,5 @@
 import type { PropsWithChildren } from "react";
+import { cn } from "~/lib/utils";
 
 export type Alignment = "start" | "center" | "end" | "between";
 
@@ -7,12 +8,20 @@ export type ControlsProps = PropsWithChildren<{
   alignment?: Alignment;
 }>;
 
-export const Controls = ({ children, alignment = "center" }: ControlsProps) => {
+export const Controls = ({
+  children,
+  alignment = "center",
+  className,
+}: ControlsProps) => {
   const alignmentStyle = `justify-${alignment}`;
 
   return (
     <nav
-      className={`flex items-center ${alignmentStyle} gap-4 bg-slate-50 p-2`}
+      className={cn(
+        "flex items-center gap-4 bg-slate-50 h-12 border-b border-b-slate-300",
+        alignmentStyle,
+        className
+      )}
     >
       {children}
     </nav>

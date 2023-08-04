@@ -22,7 +22,7 @@ const algorithm = (graph: Graph, startingVertex: string): Step[] => {
 
     steps.push({
       description: `Put starting vertex ${startingVertex} on the stack.`,
-      state: undefined,
+      state: [],
       highlights,
     });
   }
@@ -39,7 +39,7 @@ const algorithm = (graph: Graph, startingVertex: string): Step[] => {
 
       steps.push({
         description: `Get first vertex ${currentId} from the array.`,
-        state: undefined,
+        state: [],
         highlights,
       });
     }
@@ -53,7 +53,7 @@ const algorithm = (graph: Graph, startingVertex: string): Step[] => {
 
         steps.push({
           description: `Vertex ${currentId} was already visited. Continue to the next step.`,
-          state: undefined,
+          state: [],
           highlights,
         });
       }
@@ -71,7 +71,7 @@ const algorithm = (graph: Graph, startingVertex: string): Step[] => {
 
       steps.push({
         description: `Mark vertex ${currentId} as visited.`,
-        state: undefined,
+        state: [],
         highlights,
       });
     }
@@ -97,7 +97,7 @@ const algorithm = (graph: Graph, startingVertex: string): Step[] => {
 
       steps.push({
         description: "Put all adjacent vertices to the stack.",
-        state: undefined,
+        state: [],
         highlights,
       });
     }
@@ -110,7 +110,7 @@ const algorithm = (graph: Graph, startingVertex: string): Step[] => {
 
     steps.push({
       description: "There is no more vertices on the stack. End the algorithm.",
-      state: undefined,
+      state: [],
       highlights,
     });
   }

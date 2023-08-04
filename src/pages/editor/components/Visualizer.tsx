@@ -1,10 +1,11 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, Fragment } from "react";
 import { BottomPane } from "~/shared/layout/BottomPane";
 import { useEditorStore } from "../context/editor";
 import { GraphView } from "../../../features/graph-view/GraphView";
-import { StepStateTable } from "./StepStateTable";
+import { TableStep } from "./TableStep";
 import { AlgorithmControls } from "./AlgorithmControls";
 import { State } from "~/core/simulator/algorithm";
+import { ArrayStep } from "./ArrayStep";
 
 export const Visualizer = () => {
   const visualizerRef = useRef(null);
@@ -31,7 +32,10 @@ export const Visualizer = () => {
 
     switch (state.type) {
       case "table":
-        return <StepStateTable state={state} />;
+        return <TableStep state={state} />;
+      case "array":
+        console.log("rendering array");
+        return <ArrayStep state={state} />;
       default:
         return null;
     }
@@ -46,7 +50,7 @@ export const Visualizer = () => {
       />
       {mode.type === "SIMULATION" && (
         <BottomPane parentRef={visualizerRef}>
-          <div className="flex h-full w-full flex-col divide-y divide-slate-300">
+          <div className="flex h-full w-full flex-col">
             <AlgorithmControls
               currentStep={currentStepIndex}
               onStepChange={setCurrentStep}
@@ -63,7 +67,9 @@ export const Visualizer = () => {
                 {mode.steps[currentStepIndex].description}
               </p>
             </div>
-            {renderStepState(mode.steps[currentStepIndex].state)}
+            {mode.steps[currentStepIndex].state.map((s, i) => (
+              <Fragment key={i}>{renderStepState(s)}</Fragment>
+            ))}
           </div>
         </BottomPane>
       )}

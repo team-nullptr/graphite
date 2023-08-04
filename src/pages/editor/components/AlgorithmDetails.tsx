@@ -45,7 +45,7 @@ export const AlgorithmDetails = ({ algorithm, onBack }: AlgorithmDetails) => {
   const vertices = Object.keys(graph.vertices);
 
   return (
-    <div className="flex h-full flex-col divide-y divide-slate-300 bg-slate-50">
+    <div className="flex h-full flex-col bg-slate-50">
       <Controls alignment="start">
         <ControlsButton
           icon={<ArrowLeftIcon className="h-5 w-5" />}

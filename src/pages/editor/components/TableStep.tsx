@@ -9,7 +9,7 @@ export type StepStateTableProps = {
   state: TableState;
 };
 
-export const StepStateTable = ({ state }: StepStateTableProps) => {
+export const TableStep = ({ state }: StepStateTableProps) => {
   const table = useReactTable({
     data: state.data,
     columns: state.columns,
@@ -20,7 +20,10 @@ export const StepStateTable = ({ state }: StepStateTableProps) => {
     <table className="w-full table-auto border-collapse">
       <thead className="sticky top-0 bg-slate-50">
         {table.getHeaderGroups().map((headerGroup) => (
-          <tr key={headerGroup.id} className="divide-x divide-slate-300">
+          <tr
+            key={headerGroup.id}
+            className="border-t border-slate-300 divide-x divide-slate-300"
+          >
             {headerGroup.headers.map((header) => (
               // It's impossible to have a working border on sticky element inside a table with border-collapse. I hate my life.
               <th
