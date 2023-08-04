@@ -39,7 +39,25 @@ export const Visualizer = () => {
 
   return (
     <div className="relative flex h-full w-full flex-col" ref={visualizerRef}>
-      <ControlledSvg>
+      <ControlledSvg
+        controls={(zoom, center, setZoom, setCenter) => {
+          return (
+            <>
+              <p>zoom is {zoom}</p>
+              <p>center is at {center.join(",")}</p>
+              <button
+                className="pointer-events-auto"
+                onClick={() => {
+                  setCenter([0, 0]);
+                  setZoom(1);
+                }}
+              >
+                my button
+              </button>
+            </>
+          );
+        }}
+      >
         <rect x={0} y={0} width={20} height={20} fill="blue" />
       </ControlledSvg>
       {mode.type === "SIMULATION" && (
