@@ -1,13 +1,12 @@
 import { useRef } from "react";
-import { Graph } from "~/core/simulator/graph";
 import { useResizeObserver } from "./hooks/useResizeObserver";
 import { Position, useSVGControls } from "./hooks/useSVGControls";
 
-export interface GraphViewProps {
-  graph: Graph;
+export interface ControllableSvgProps {
+  children?: JSX.Element | JSX.Element[];
 }
 
-export const GraphView = (props: GraphViewProps) => {
+export const ControlledSvg = (props: ControllableSvgProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const svgRef = useRef<SVGSVGElement>(null);
 
@@ -22,7 +21,7 @@ export const GraphView = (props: GraphViewProps) => {
       className="h-full w-full select-none overflow-hidden"
     >
       <svg ref={svgRef} viewBox={viewBox.join(" ")}>
-        <rect x={0} y={0} width={20} height={20} fill="red" />
+        {props.children}
       </svg>
     </div>
   );
