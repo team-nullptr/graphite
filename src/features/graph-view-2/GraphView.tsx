@@ -1,7 +1,7 @@
 import { useRef } from "react";
 import { Graph } from "~/core/simulator/graph";
 import { useResizeObserver } from "./hooks/useResizeObserver";
-import { Position, useZoom } from "./hooks/useZoom";
+import { Position, useSVGControls } from "./hooks/useSVGControls";
 
 export interface GraphViewProps {
   graph: Graph;
@@ -13,7 +13,7 @@ export const GraphView = (props: GraphViewProps) => {
 
   const containerRect = useResizeObserver(containerRef);
 
-  const { center, zoom } = useZoom(svgRef);
+  const { center, zoom } = useSVGControls(svgRef);
   const viewBox = getViewBox(containerRect, center, zoom);
 
   return (
