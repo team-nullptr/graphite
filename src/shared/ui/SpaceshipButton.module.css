@@ -1,9 +1,7 @@
 .swoosh_mask {
   /* Mask gradient so that it is displayed where padding is. */
-  mask-composite: xor;
   mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  -webkit-mask-composite: xor;
-  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask-composite: subtract;
 }
 
 .glow {

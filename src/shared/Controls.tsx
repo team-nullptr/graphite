@@ -18,7 +18,7 @@ export const Controls = ({
   return (
     <nav
       className={cn(
-        "flex items-center gap-4 bg-slate-50 h-12 border-b border-b-slate-300",
+        "flex items-center px-4 gap-4 bg-slate-50 h-12 border-b border-b-slate-300",
         alignmentStyle,
         className
       )}
