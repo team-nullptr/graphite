@@ -40,11 +40,7 @@ export const Visualizer = () => {
 
   return (
     <div className="relative flex h-full w-full flex-col" ref={visualizerRef}>
-      <GraphView
-        graph={graph}
-        className="h-full w-full"
-        highlights={highlights}
-      />
+      <GraphView graph={graph} highlights={highlights} />
       {mode.type === "SIMULATION" && (
         <BottomPane parentRef={visualizerRef}>
           <div className="flex h-full w-full flex-col divide-y divide-slate-300">

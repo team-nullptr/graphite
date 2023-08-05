@@ -1,8 +1,6 @@
 import { useMemo, useRef } from "react";
 import { Highlights } from "~/core/simulator/algorithm";
 import { Graph } from "~/core/simulator/graph";
-import { Edge } from "./components/Edge";
-import { Vertex } from "./components/Vertex";
 import {
   distributeEdges,
   groupEdges,
@@ -10,14 +8,15 @@ import {
 } from "./helpers/distributeEdges";
 import { useGraphLayout } from "./hooks/useGraphLayout";
 import { ControlledSvg } from "~/shared/layout/controlled-svg/ControlledSvg";
+import { Edges } from "./components/Edges";
+import { Vertices } from "./components/Vertices";
 
 export type GraphViewProps = {
   highlights?: Highlights;
-  className: string;
   graph: Graph;
 };
 
-export const GraphView = ({ className, highlights, graph }: GraphViewProps) => {
+export const GraphView = ({ highlights, graph }: GraphViewProps) => {
   const svgRef = useRef<SVGSVGElement>(null);
 
   const { arrangement, vertexMouseDownHandler, areControlsEnabled } =
@@ -37,45 +36,17 @@ export const GraphView = ({ className, highlights, graph }: GraphViewProps) => {
 
   return (
     <ControlledSvg>
-      {positionedEdges.map((positionedEdge) => {
-        const [edge, position] = positionedEdge;
-        const { x, y } = arrangement[edge.from] ?? { x: 0, y: 0 };
-        const { x: dx, y: dy } = arrangement[edge.to] ?? { x: 0, y: 0 };
-        const circular = edge.from === edge.to;
-
-        return (
-          <Edge
-            key={edge.id}
-            position={position}
-            x={x}
-            y={y}
-            dx={dx}
-            dy={dy}
-            directed={edge.directed}
-            circular={circular}
-          />
-        );
-      })}
-      {Object.entries(arrangement).map(([id, pos]) => {
-        const { x, y } = pos;
-        const color = highlights?.get(id);
-
-        return (
-          <Vertex
-            key={id}
-            color={color}
-            cx={x}
-            cy={y}
-            value={id}
-            onMouseDown={(event) => {
-              console.log(event.button);
-              if (event.button === 0) {
-                vertexMouseDownHandler(id, event);
-              }
-            }}
-          />
-        );
-      })}
+      {/* prettier-ignore */}
+      <Edges
+        positionedEdges={positionedEdges}
+        arrangement={arrangement}
+      />
+      <Vertices
+        vertices={Object.values(graph.vertices)}
+        highlights={highlights}
+        arrangement={arrangement}
+        onVertexMouseDown={vertexMouseDownHandler}
+      />
     </ControlledSvg>
   );
 };
