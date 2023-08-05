@@ -53,7 +53,7 @@ export const VerticalSplit = ({ left, right }: SplitLayoutProps) => {
   return (
     <div className="flex h-full min-h-0 w-full overflow-hidden" ref={ref}>
       <div
-        className="h-full min-h-0 overflow-hidden bg-red-400"
+        className="h-full min-h-0 overflow-hidden"
         style={{ width: `${leftShare}%` }}
       >
         {left}

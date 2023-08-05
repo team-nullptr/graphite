@@ -1,4 +1,5 @@
 import { ReactNode, useState } from "react";
+import { cn } from "~/lib/utils";
 
 export type Tab = {
   id: string;
@@ -53,7 +54,7 @@ export const VerticalTabs = (props: VerticalTabsProps) => {
       </div>
       {props.tabs.map((tab) => (
         <div
-          className={`w-full ${currentTab?.id !== tab.id ? "hidden" : ""}`}
+          className={cn("w-full", currentTab?.id !== tab.id ? "hidden" : "")}
           key={tab.id}
         >
           {tab.element}

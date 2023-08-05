@@ -52,10 +52,7 @@ export const HorizontalSplit = ({ top, bottom }: HorizontalSplitProps) => {
 
   return (
     <div className="flex h-full min-h-0 w-full flex-col" ref={ref}>
-      <div
-        className="w-full overflow-auto bg-blue-400"
-        style={{ height: `${topShare}%` }}
-      >
+      <div className="w-full overflow-auto" style={{ height: `${topShare}%` }}>
         {top}
       </div>
       <div
