@@ -53,7 +53,7 @@ export const SpaceshipButton = ({
 
             {/* Glow */}
             <div
-              className={`pointer-events-none absolute -z-10 h-full w-full overflow-hidden rounded-lg blur-lg`}
+              className={`pointer-events-none absolute -z-20 h-full w-full overflow-hidden rounded-lg blur-lg`}
             >
               <div
                 className={`absolute left-1/2 top-1/2 aspect-square w-[120%] -translate-x-1/2 -translate-y-1/2 overflow-hidden rounded-lg bg-cover ${styles.glow}`}

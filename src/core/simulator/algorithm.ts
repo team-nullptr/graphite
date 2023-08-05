@@ -12,11 +12,18 @@ export type TableState = {
   columns: ColumnDef<any, any>[];
 };
 
-export type State = TableState | undefined;
+export type ArrayState = {
+  type: "array";
+  title: string;
+  data: string[];
+  highlighted: Set<number>;
+};
+
+export type State = TableState | ArrayState | undefined;
 
 export type Step = {
   description: string;
-  state: State;
+  state: State[];
   highlights: Highlights;
 };
 
