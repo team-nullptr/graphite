@@ -1,4 +1,4 @@
-import { Dispatch, Fragment, SetStateAction, useRef } from "react";
+import { Dispatch, ReactNode, SetStateAction, useRef } from "react";
 import { useResizeObserver } from "./hooks/useResizeObserver";
 import { Position, useSvgControls } from "./hooks/useSvgControls";
 
@@ -7,11 +7,11 @@ export type ControllableSvgControls = (
   center: Position,
   setZoom: Dispatch<SetStateAction<number>>,
   setCenter: Dispatch<SetStateAction<Position>>
-) => JSX.Element | JSX.Element[];
+) => ReactNode;
 
 export interface ControllableSvgProps {
   controls?: ControllableSvgControls;
-  children?: JSX.Element | JSX.Element[];
+  children?: ReactNode;
 }
 
 export const ControlledSvg = (props: ControllableSvgProps) => {
