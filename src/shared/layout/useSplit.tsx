@@ -1,8 +1,16 @@
 import { useRef, useState, useEffect } from "react";
 
-export type SplitVariant = "vertical" | "horizontal";
+export type Orientation = "vertical" | "horizontal";
 
-export const useSplit = <E extends HTMLElement>(variant: SplitVariant) => {
+type SplitOptions = {
+  orientation: Orientation;
+  reverse?: boolean;
+};
+
+export const useSplit = <E extends HTMLElement>({
+  orientation,
+  reverse = false,
+}: SplitOptions) => {
   const splitRef = useRef<E>(null);
   const [share, setShare] = useState(50);
   const [isResizing, setIsResizing] = useState(false);
@@ -25,11 +33,12 @@ export const useSplit = <E extends HTMLElement>(variant: SplitVariant) => {
         splitRef.current.getBoundingClientRect();
 
       const ratio =
-        variant === "horizontal"
+        orientation === "horizontal"
           ? (e.clientY - top) / height
           : (e.clientX - left) / width;
 
-      setShare(Math.min(Math.max(ratio, 0), 1) * 100);
+      const share = Math.min(Math.max(ratio, 0), 1) * 100;
+      setShare(reverse ? 100 - share : share);
     };
 
     document.addEventListener("mousemove", handleResize);
@@ -38,6 +47,7 @@ export const useSplit = <E extends HTMLElement>(variant: SplitVariant) => {
 
   return {
     share,
+    setShare,
     isResizing,
     setIsResizing,
     resetShare,

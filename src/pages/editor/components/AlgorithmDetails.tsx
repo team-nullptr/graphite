@@ -46,7 +46,7 @@ export const AlgorithmDetails = ({ algorithm, onBack }: AlgorithmDetails) => {
 
   return (
     <div className="flex h-full flex-col bg-slate-50">
-      <Controls alignment="start">
+      <Controls alignment="start" className="border-b border-slate-300">
         <ControlsButton
           icon={<ArrowLeftIcon className="h-5 w-5" />}
           onClick={handleOnBack}

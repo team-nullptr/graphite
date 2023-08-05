@@ -1,6 +1,7 @@
-import type { PropsWithChildren } from "react";
+import type { PropsWithChildren, ReactNode } from "react";
 import { cn } from "~/lib/utils";
 
+// TODO: Remove this and allow to use regular css (tailwind classes)
 export type Alignment = "start" | "center" | "end" | "between";
 
 export type ControlsProps = PropsWithChildren<{
@@ -18,7 +19,7 @@ export const Controls = ({
   return (
     <nav
       className={cn(
-        "flex items-center px-4 gap-4 bg-slate-50 h-12 border-b border-b-slate-300",
+        "flex h-10 items-center gap-4 bg-slate-50 px-4",
         alignmentStyle,
         className
       )}
@@ -32,7 +33,7 @@ export type ControlsButtonProps = React.DetailedHTMLProps<
   React.ButtonHTMLAttributes<HTMLButtonElement>,
   HTMLButtonElement
 > & {
-  icon: JSX.Element;
+  icon: ReactNode;
   alt?: string;
 };
 

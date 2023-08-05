@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Interpreter } from "~/core/graphene/interpreter";
 import { Lexer } from "~/core/graphene/lexer";
 import { Parser } from "~/core/graphene/parser";
-import { HorizontalSplit } from "~/shared/layout/Split";
+import { Split } from "~/shared/layout/Split";
 import { useEditorStore } from "../../pages/editor/context/editor";
 import { DiagnosticsSummary } from "./components/Diagnostics";
 import "./editor-styles.css";
@@ -68,9 +68,10 @@ export const CodeEditor = () => {
   }, [setGraph, value]);
 
   return (
-    <HorizontalSplit
-      top={<div className="h-full" ref={ref} />}
-      bottom={<DiagnosticsSummary errors={errors} />}
+    <Split
+      orientation="horizontal"
+      first={<div className="h-full" ref={ref} />}
+      second={<DiagnosticsSummary errors={errors} />}
     />
   );
 };
