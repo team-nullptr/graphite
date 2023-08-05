@@ -9,8 +9,8 @@ import { useForceSimulation } from "./useForceSimulation";
 const preArrange = (graph: Graph) =>
   Object.values(graph.vertices).reduce((arrangement, v) => {
     arrangement[v.id] = new Vec2(
-      Math.random() * 200 + 100,
-      Math.random() * 200 + 100
+      Math.random() * 200 - 100,
+      Math.random() * 200 - 100
     );
 
     return arrangement;
@@ -30,7 +30,7 @@ export const useGraphLayout = (
   graph: Graph,
   svgRef: RefObject<SVGSVGElement>
 ) => {
-  const areControlsEnabled = useRef<boolean>(false);
+  const areControlsEnabled = useRef<boolean>(true);
   const selectedVertexRef = useRef<SelectedVertex>();
   const [arrangement, setArrangment] = useState<Arrangement>(preArrange(graph));
 
@@ -74,6 +74,7 @@ export const useGraphLayout = (
   useEffect(() => {
     const mouseUpHandler = () => {
       selectedVertexRef.current = undefined;
+      console.log("enabling back again");
       areControlsEnabled.current = true;
     };
 

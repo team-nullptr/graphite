@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState, Fragment } from "react";
 import { useEditorStore } from "../context/editor";
+
 import { GraphView } from "../../../features/graph-view/GraphView";
 import { TableStep } from "./TableStep";
 import { State } from "~/core/simulator/algorithm";
@@ -7,6 +8,7 @@ import { ArrayStep } from "./ArrayStep";
 import { DynamicSplit } from "~/shared/layout/Split";
 import { useLayoutSettingsStore } from "../store/layout";
 import { Player } from "./Player";
+
 
 export const Visualizer = () => {
   const visualizerRef = useRef(null);
