@@ -2,6 +2,7 @@ import type { Color } from "~/types/color";
 import { Graph } from "./graph";
 import { ColumnDef } from "@tanstack/react-table";
 
+export type Highlight = [string, Color];
 export type Highlights = Map<string, Color>;
 
 export type TableState = {
@@ -11,11 +12,18 @@ export type TableState = {
   columns: ColumnDef<any, any>[];
 };
 
-export type State = TableState | undefined;
+export type ArrayState = {
+  type: "array";
+  title: string;
+  data: string[];
+  highlighted: Set<number>;
+};
+
+export type State = TableState | ArrayState | undefined;
 
 export type Step = {
   description: string;
-  state: State;
+  state: State[];
   highlights: Highlights;
 };
 

@@ -57,42 +57,40 @@ export const Player = ({
   }, [settings, isPlaying, nextStepHandler]);
 
   return (
-    <div className={className}>
-      <Controls>
-        <ControlsButton
-          onClick={previousStepHandler}
-          disabled={currentStep === 0}
-          icon={<ArrowLeftIcon className="h-5 w-5" />}
-          alt="previous"
-        />
+    <Controls className={className}>
+      <ControlsButton
+        onClick={previousStepHandler}
+        disabled={currentStep === 0}
+        icon={<ArrowLeftIcon className="h-5 w-5" />}
+        alt="previous"
+      />
 
-        <ControlsButton
-          onClick={nextStepHandler}
-          disabled={currentStep === numberOfSteps - 1}
-          icon={<ArrowRightIcon className="h-5 w-5" />}
-          alt="next"
-        />
+      <ControlsButton
+        onClick={nextStepHandler}
+        disabled={currentStep === numberOfSteps - 1}
+        icon={<ArrowRightIcon className="h-5 w-5" />}
+        alt="next"
+      />
 
-        <ControlsButton
-          onClick={restartHandler}
-          icon={<ArrowPathRoundedSquareIcon className="h-5 w-5" />}
-          alt="restart"
-        />
+      <ControlsButton
+        onClick={restartHandler}
+        icon={<ArrowPathRoundedSquareIcon className="h-5 w-5" />}
+        alt="restart"
+      />
 
-        {isPlaying ? (
-          <ControlsButton
-            onClick={() => setIsPlaying(false)}
-            icon={<StopIcon className="h-5 w-5" />}
-            alt="stop"
-          />
-        ) : (
-          <ControlsButton
-            onClick={() => setIsPlaying(true)}
-            icon={<PlayIcon className="h-5 w-5" />}
-            alt="play"
-          />
-        )}
-      </Controls>
-    </div>
+      {isPlaying ? (
+        <ControlsButton
+          onClick={() => setIsPlaying(false)}
+          icon={<StopIcon className="h-5 w-5" />}
+          alt="stop"
+        />
+      ) : (
+        <ControlsButton
+          onClick={() => setIsPlaying(true)}
+          icon={<PlayIcon className="h-5 w-5" />}
+          alt="play"
+        />
+      )}
+    </Controls>
   );
 };
