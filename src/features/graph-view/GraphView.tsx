@@ -19,7 +19,8 @@ export type GraphViewProps = {
 export const GraphView = ({ highlights, graph }: GraphViewProps) => {
   const svgRef = useRef<SVGSVGElement>(null);
 
-  const { arrangement, vertexMouseDownHandler, areControlsEnabled } =
+  // prettier-ignore
+  const { arrangement, vertexMouseDownHandler, areControlsEnabled: isPanEnabled } =
     useGraphLayout(graph, svgRef);
 
   const positionedEdges = useMemo(
@@ -35,7 +36,7 @@ export const GraphView = ({ highlights, graph }: GraphViewProps) => {
   );
 
   return (
-    <ControlledSvg>
+    <ControlledSvg isPanEnabled={isPanEnabled}>
       {/* prettier-ignore */}
       <Edges
         positionedEdges={positionedEdges}

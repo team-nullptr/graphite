@@ -1,4 +1,4 @@
-import { Dispatch, ReactNode, SetStateAction, useRef } from "react";
+import { Dispatch, ReactNode, RefObject, SetStateAction, useRef } from "react";
 import { useResizeObserver } from "./hooks/useResizeObserver";
 import { Position, useSvgControls } from "./hooks/useSvgControls";
 
@@ -12,6 +12,8 @@ export type ControllableSvgControls = (
 export interface ControllableSvgProps {
   controls?: ControllableSvgControls;
   children?: ReactNode;
+  isZoomEnabled?: RefObject<boolean>;
+  isPanEnabled?: RefObject<boolean>;
 }
 
 export const ControlledSvg = (props: ControllableSvgProps) => {
@@ -20,7 +22,9 @@ export const ControlledSvg = (props: ControllableSvgProps) => {
 
   const containerRect = useResizeObserver(containerRef);
 
-  const { center, setCenter, zoom, setZoom } = useSvgControls(svgRef);
+  // prettier-ignore
+  const { center, setCenter, zoom, setZoom } =
+    useSvgControls(svgRef, props.isZoomEnabled, props.isPanEnabled);
   const viewBox = getViewBox(containerRect, center, zoom);
 
   return (

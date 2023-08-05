@@ -13,7 +13,9 @@ export type Position = [x: number, y: number];
 export type Offset = [x: number, y: number];
 
 export const useSvgControls = (
-  svgRef: RefObject<SVGSVGElement>
+  svgRef: RefObject<SVGSVGElement>,
+  isZoomEnabled?: RefObject<boolean>,
+  isPanEnabled?: RefObject<boolean>
 ): {
   center: Position;
   setCenter: Dispatch<SetStateAction<Position>>;
@@ -33,6 +35,10 @@ export const useSvgControls = (
 
     const mouseWheelHandler = (event: WheelEvent) => {
       event.preventDefault();
+
+      if (isZoomEnabled?.current === false) {
+        return;
+      }
 
       const scale = getScaleFactor(-event.deltaY);
       setZoom((zoom) => {
@@ -92,6 +98,9 @@ export const useSvgControls = (
 
     const mouseMoveHandler = (event: MouseEvent) => {
       if (!isMouseDownRef.current) {
+        return;
+      }
+      if (isPanEnabled?.current === false) {
         return;
       }
       const previousMousePosition = previousMousePositionRef.current;
