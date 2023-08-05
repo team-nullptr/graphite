@@ -41,7 +41,7 @@ export const VerticalTabs = (props: VerticalTabsProps) => {
   };
 
   return (
-    <div className="flex h-full w-full">
+    <div className="flex h-full w-full min-w-[300px]">
       <div className="flex w-12 flex-shrink-0 flex-col border-r border-r-slate-300 bg-slate-50">
         {props.tabs.map((tab) => (
           <TabIcon
@@ -54,7 +54,10 @@ export const VerticalTabs = (props: VerticalTabsProps) => {
       </div>
       {props.tabs.map((tab) => (
         <div
-          className={cn("w-full", currentTab?.id !== tab.id ? "hidden" : "")}
+          className={cn(
+            "min-w-0 flex-1",
+            currentTab?.id !== tab.id ? "hidden" : ""
+          )}
           key={tab.id}
         >
           {tab.element}

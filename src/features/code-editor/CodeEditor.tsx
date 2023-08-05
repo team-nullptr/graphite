@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Interpreter } from "~/core/graphene/interpreter";
 import { Lexer } from "~/core/graphene/lexer";
 import { Parser } from "~/core/graphene/parser";
-import { HorizontalSplit } from "~/shared/layout/HorizontalSplit";
+import { HorizontalSplit } from "~/shared/layout/Split";
 import { useEditorStore } from "../../pages/editor/context/editor";
 import { DiagnosticsSummary } from "./components/Diagnostics";
 import "./editor-styles.css";
