@@ -82,11 +82,11 @@ export const useSvgControls = (
     };
 
     svgElement.addEventListener("mousedown", mouseDownHandler);
-    svgElement.addEventListener("mouseup", mouseUpHandler);
+    addEventListener("mouseup", mouseUpHandler);
 
     return () => {
       svgElement.removeEventListener("mousedown", mouseDownHandler);
-      svgElement.removeEventListener("mouseup", mouseUpHandler);
+      removeEventListener("mouseup", mouseUpHandler);
     };
   }, []);
 
