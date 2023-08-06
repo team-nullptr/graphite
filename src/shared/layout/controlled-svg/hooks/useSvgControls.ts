@@ -1,16 +1,14 @@
-import {
-  Dispatch,
-  RefObject,
-  SetStateAction,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
+import { RefObject, useEffect, useRef, useState } from "react";
 import { scaleCenterToMatchTarget } from "../helpers/scale";
 import { getPointInSvgSpace } from "~/shared/helpers/svg";
 
 export type Position = [x: number, y: number];
 export type Offset = [x: number, y: number];
+
+const zoomBounds = {
+  min: 0.5,
+  max: 5,
+};
 
 export const useSvgControls = (
   svgRef: RefObject<SVGSVGElement>,
@@ -18,20 +16,26 @@ export const useSvgControls = (
   isPanEnabled?: RefObject<boolean>
 ): {
   center: Position;
-  setCenter: Dispatch<SetStateAction<Position>>;
+  setCenter: (center: Position) => void;
   zoom: number;
-  setZoom: Dispatch<SetStateAction<number>>;
+  setZoom: (zoom: number) => void;
 } => {
   const [zoom, setZoom] = useState(1);
   const [center, setCenter] = useState<Position>([0, 0]);
+
+  const normalizeZoom = (zoom: number) =>
+    Math.max(Math.min(zoom, zoomBounds.max), zoomBounds.min);
 
   // Zooming
 
   useEffect(() => {
     const svgElement = svgRef.current;
+
     if (!svgElement) {
       return;
     }
+
+    let prevZoom = 0;
 
     const mouseWheelHandler = (event: WheelEvent) => {
       event.preventDefault();
@@ -41,13 +45,25 @@ export const useSvgControls = (
       }
 
       const scale = getScaleFactor(-event.deltaY);
+
       setZoom((zoom) => {
-        return zoom * scale;
+        const newZoom = normalizeZoom(zoom * scale);
+        prevZoom = newZoom;
+        return newZoom;
       });
 
+      if (
+        (prevZoom >= zoomBounds.max && scale > 1) ||
+        (prevZoom <= zoomBounds.min && scale < 1)
+      ) {
+        return;
+      }
+
       const mousePosition: Position = [event.clientX, event.clientY];
-      // prettier-ignore
-      const mousePositionInSVGSpace = getPointInSvgSpace(mousePosition, svgElement);
+      const mousePositionInSVGSpace = getPointInSvgSpace(
+        mousePosition,
+        svgElement
+      );
 
       setCenter((center) => {
         return scaleCenterToMatchTarget(center, mousePositionInSVGSpace, scale);
@@ -59,7 +75,7 @@ export const useSvgControls = (
     return () => {
       svgElement.removeEventListener("wheel", mouseWheelHandler);
     };
-  }, []);
+  }, [isZoomEnabled, svgRef]);
 
   // Panning
 
@@ -88,7 +104,7 @@ export const useSvgControls = (
       svgElement.removeEventListener("mousedown", mouseDownHandler);
       removeEventListener("mouseup", mouseUpHandler);
     };
-  }, []);
+  }, [svgRef]);
 
   useEffect(() => {
     const svgElement = svgRef.current;
@@ -124,9 +140,10 @@ export const useSvgControls = (
     return () => {
       removeEventListener("mousemove", mouseMoveHandler);
     };
-  }, [zoom]);
+  }, [zoom, isPanEnabled, svgRef]);
 
-  return { center, setCenter, zoom, setZoom };
+  const setNormalizedZoom = (zoom: number) => setZoom(normalizeZoom(zoom));
+  return { center, setCenter, zoom, setZoom: setNormalizedZoom };
 };
 
 const getScaleFactor = (delta: number): number => {

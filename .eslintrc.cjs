@@ -20,5 +20,6 @@ module.exports = {
   plugins: ["react", "@typescript-eslint"],
   rules: {
     "no-constant-condition": ["error", { checkLoops: false }],
+    "react/display-name": "off",
   },
 };

@@ -1,15 +1,16 @@
-import { useMemo, useRef } from "react";
 import { Highlights } from "~/core/simulator/algorithm";
 import { Graph } from "~/core/simulator/graph";
+import { ControlledSvg } from "~/shared/layout/controlled-svg/ControlledSvg";
+import { Edges } from "./components/Edges";
+import { Vertices } from "./components/Vertices";
 import {
   distributeEdges,
   groupEdges,
   sortEdges,
 } from "./helpers/distributeEdges";
 import { useGraphLayout } from "./hooks/useGraphLayout";
-import { ControlledSvg } from "~/shared/layout/controlled-svg/ControlledSvg";
-import { Edges } from "./components/Edges";
-import { Vertices } from "./components/Vertices";
+import { useRef, useMemo } from "react";
+import { Toolbar } from "./components/Toolbar";
 
 export type GraphViewProps = {
   highlights?: Highlights;
@@ -36,7 +37,23 @@ export const GraphView = ({ highlights, graph }: GraphViewProps) => {
   );
 
   return (
-    <ControlledSvg isPanEnabled={isPanEnabled} ref={svgRef}>
+    <ControlledSvg
+      isPanEnabled={isPanEnabled}
+      ref={svgRef}
+      className="h-full w-full"
+      controls={(zoom, center, setZoom, setCenter) => (
+        <Toolbar
+          zoom={zoom}
+          onZoomReset={() => setZoom(1)}
+          onZoomIncrease={() => setZoom(Math.floor((zoom + 0.1) * 10) / 10)}
+          onZoomDecrease={() => setZoom(Math.ceil((zoom - 0.1) * 10) / 10)}
+          onCenter={() => {
+            setCenter([0, 0]);
+            console.log("japierdole");
+          }}
+        />
+      )}
+    >
       {/* prettier-ignore */}
       <Edges
         positionedEdges={positionedEdges}
