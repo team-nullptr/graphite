@@ -9,7 +9,6 @@ import { DynamicSplit } from "~/shared/layout/Split";
 import { useLayoutSettingsStore } from "../store/layout";
 import { Player } from "./Player";
 
-
 export const Visualizer = () => {
   const visualizerRef = useRef(null);
   const orientation = useLayoutSettingsStore(({ orientation }) => orientation);
@@ -50,13 +49,7 @@ export const Visualizer = () => {
       <DynamicSplit
         orientation={orientation}
         active={mode.type === "SIMULATION"}
-        staticPane={
-          <GraphView
-            graph={graph}
-            className="h-full w-full"
-            highlights={highlights}
-          />
-        }
+        staticPane={<GraphView graph={graph} highlights={highlights} />}
         dynamicPane={
           mode.type === "SIMULATION" && (
             <div className="flex h-full w-full min-w-[350px] flex-col">

@@ -35,7 +35,12 @@ export const ControlledSvg = (props: ControllableSvgProps) => {
       <div className="pointer-events-none absolute left-0 top-0 h-full w-full">
         {props.controls?.(zoom, center, setZoom, setCenter)}
       </div>
-      <svg ref={svgRef} viewBox={viewBox.join(" ")}>
+      <svg
+        ref={svgRef}
+        style={{ width: containerRect.width, height: containerRect.height }}
+        className="h-full w-full"
+        viewBox={viewBox.join(" ")}
+      >
         {props.children}
       </svg>
     </div>
