@@ -38,7 +38,7 @@ export const SidebarLayout = ({ children }: SidebarLayoutProps) => {
       />
       <DynamicSplit
         orientation="vertical"
-        initialShare={25}
+        initialShare={75}
         active={!!currentTab}
         dynamicPane={tabs.map((tab) => (
           <div

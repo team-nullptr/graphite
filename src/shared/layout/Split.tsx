@@ -99,26 +99,28 @@ export const DynamicSplit = ({
   dynamicPane,
 }: DynamicSplitProps) => {
   const { share, setShare, isResizing, setIsResizing, resetShare, splitRef } =
-    useSplit<HTMLDivElement>({ orientation, initialShare });
+    useSplit<HTMLDivElement>({
+      orientation,
+      initialShare,
+      reverse: orientation === "vertical",
+    });
 
   useEffect(() => {
-    setShare(active ? initialShare : orientation === "horizontal" ? 100 : 0);
-  }, [active, orientation, setShare]);
+    setShare(active ? initialShare : 100);
+  }, [active, setShare, initialShare]);
 
   return (
     <div
+      ref={splitRef}
       className={cn(
         "flex h-full w-full overflow-hidden",
         orientation === "horizontal" ? "flex-col" : "flex-row-reverse"
       )}
-      ref={splitRef}
     >
       <div
         className="overflow-hidden bg-slate-50"
         style={{
-          [orientationToDimention[orientation]]: `${
-            orientation === "horizontal" ? share : 100 - share
-          }%`,
+          [orientationToDimention[orientation]]: `${share}%`,
         }}
       >
         {staticPane}
@@ -134,9 +136,7 @@ export const DynamicSplit = ({
           <div
             className="overflow-auto bg-slate-50"
             style={{
-              [orientationToDimention[orientation]]: `${
-                orientation === "horizontal" ? 100 - share : share
-              }%`,
+              [orientationToDimention[orientation]]: `${100 - share}%`,
             }}
           >
             {dynamicPane}

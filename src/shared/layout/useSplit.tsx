@@ -1,4 +1,4 @@
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState, useEffect, useCallback } from "react";
 
 export type Orientation = "vertical" | "horizontal";
 
@@ -17,6 +17,11 @@ export const useSplit = <E extends HTMLElement>({
   const [share, setShare] = useState(initialShare);
   const [isResizing, setIsResizing] = useState(false);
 
+  const setProcessedShare = useCallback(
+    (share: number) => setShare(reverse ? 100 - share : share),
+    [reverse]
+  );
+
   const resetShare = () => setShare(initialShare);
 
   useEffect(() => {
@@ -30,6 +35,7 @@ export const useSplit = <E extends HTMLElement>({
       if (!splitRef.current || !isResizing) {
         return;
       }
+      console.log(e);
 
       const { width, height, left, top } =
         splitRef.current.getBoundingClientRect();
@@ -40,12 +46,12 @@ export const useSplit = <E extends HTMLElement>({
           : (e.clientX - left) / width;
 
       const share = Math.min(Math.max(ratio, 0), 1) * 100;
-      setShare(reverse ? 100 - share : share);
+      setProcessedShare(share);
     };
 
     document.addEventListener("mousemove", handleResize);
     return () => document.removeEventListener("mousemove", handleResize);
-  });
+  }, [setProcessedShare, isResizing, orientation]);
 
   return {
     share,

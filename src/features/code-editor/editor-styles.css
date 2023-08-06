@@ -3,7 +3,7 @@
 }
 
 .cm-editor * {
-  @apply font-[ZedMono];
+  @apply font-[JetBrains];
 }
 
 .cm-scroller {

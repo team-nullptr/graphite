@@ -31,6 +31,8 @@ const codeThemeLight = HighlightStyle.define([
   {
     tag: [tags.comment],
     color: "#c0c9d3",
+    fontStyle: "italic",
+    fontWeight: 300,
   },
 ]);
 
