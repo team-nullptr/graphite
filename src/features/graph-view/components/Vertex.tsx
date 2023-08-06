@@ -26,7 +26,7 @@ export const Vertex = ({ cx, cy, value, onMouseDown, color }: VertexProps) => {
     vertexElement.addEventListener("mousedown", onMouseDown, true);
 
     return () => {
-      vertexElement.removeEventListener("mousedown", onMouseDown);
+      vertexElement.removeEventListener("mousedown", onMouseDown, true);
     };
   }, [onMouseDown]);
 
