@@ -4,18 +4,20 @@ export type Orientation = "vertical" | "horizontal";
 
 type SplitOptions = {
   orientation: Orientation;
+  initialShare?: number;
   reverse?: boolean;
 };
 
 export const useSplit = <E extends HTMLElement>({
   orientation,
+  initialShare = 50,
   reverse = false,
 }: SplitOptions) => {
   const splitRef = useRef<E>(null);
-  const [share, setShare] = useState(50);
+  const [share, setShare] = useState(initialShare);
   const [isResizing, setIsResizing] = useState(false);
 
-  const resetShare = () => setShare(50);
+  const resetShare = () => setShare(initialShare);
 
   useEffect(() => {
     const stopResizing = () => setIsResizing(false);

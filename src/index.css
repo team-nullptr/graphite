@@ -5,6 +5,22 @@
 @font-face {
   font-family: "JetBrains";
   src: url("./assets/fonts/JetBrainsMonoNL-Regular.woff2");
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "ZedMono";
+  src: url("./assets/fonts/zed-mono-extended.ttf");
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "ZedMono";
+  src: url("./assets/fonts/zed-mono-extendeditalic.ttf");
+  font-weight: normal;
+  font-style: italic;
 }
 
 html,

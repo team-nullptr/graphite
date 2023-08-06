@@ -1,13 +1,14 @@
-import { useEffect, useRef, useState, Fragment } from "react";
+import { Fragment, useEffect, useRef, useState } from "react";
 import { useEditorStore } from "../context/editor";
 
-import { GraphView } from "../../../features/graph-view/GraphView";
-import { TableStep } from "./TableStep";
 import { State } from "~/core/simulator/algorithm";
-import { ArrayStep } from "./ArrayStep";
 import { DynamicSplit } from "~/shared/layout/Split";
+import { GraphView } from "../../../features/graph-view/GraphView";
 import { useLayoutSettingsStore } from "../store/layout";
+import { ArrayStep } from "./ArrayStep";
 import { Player } from "./Player";
+import { TableStep } from "./TableStep";
+
 
 export const Visualizer = () => {
   const visualizerRef = useRef(null);
@@ -50,6 +51,7 @@ export const Visualizer = () => {
         orientation={orientation}
         active={mode.type === "SIMULATION"}
         staticPane={<GraphView graph={graph} highlights={highlights} />}
+        initialShare={100 / 3}
         dynamicPane={
           mode.type === "SIMULATION" && (
             <div className="flex h-full w-full min-w-[350px] flex-col">
