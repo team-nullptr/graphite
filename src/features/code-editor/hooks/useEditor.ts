@@ -30,7 +30,7 @@ const codeThemeLight = HighlightStyle.define([
   },
   {
     tag: [tags.comment],
-    color: "#64748b",
+    color: "#c0c9d3",
   },
 ]);
 

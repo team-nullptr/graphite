@@ -8,18 +8,21 @@ import { DiagnosticsSummary } from "./components/Diagnostics";
 import "./editor-styles.css";
 import { editorOnChange, useEditor } from "./hooks/useEditor";
 
-const initialEditorValue = `# Check out Graphene Docs
-# https://github.com/team-nullptr/graphite/tree/dev/src/core/graphene
-
+const initialEditorValue = `# Declare vertices
 vertex([A, B, C, D, E, F, G])
 
+# Add edges
 edge(A, [B, C, D, E], 5)
 edge(D, C)
 edge(F, B)
 edge(B, C)
 
+# Add directed edges
 arc(A, [F, G])
 arc(E, C, 8)
+
+# Learn more at Graphene Docs
+# https://github.com/team-nullptr/graphite
 `;
 
 export const CodeEditor = () => {
@@ -69,6 +72,7 @@ export const CodeEditor = () => {
 
   return (
     <Split
+      initialShare={75}
       orientation="horizontal"
       first={<div className="h-full" ref={ref} />}
       second={<DiagnosticsSummary errors={errors} />}
