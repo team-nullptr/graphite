@@ -10,12 +10,12 @@
 <br/>
 
 ## Project Structure
+
 Some notes that might make browsing the code easier.
 
 - `pages` keeps pages
 - `features` keeps complex components that consist of other smaller compoents, state or hooks.
 - `components` keeps `page` or `feature` specific components.
-- `context` keeps globally accessible contexts, for example app theme
 - `layout` keeps layouts
 - `shared` keeps components that are meant to be shared across the whole app
 

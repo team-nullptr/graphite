@@ -2,20 +2,26 @@
 
 import { createColumnHelper } from "@tanstack/react-table";
 import { Graph, Vertex } from "~/core/simulator/graph";
-import {
-  DijkstraStepStateData,
-  DijkstraStepState,
-  Highlights,
-  Step,
-} from "~/core/simulator/step";
+import { Highlights, Step, Algorithm } from "~/core/simulator/algorithm";
 import { VertexPreview } from "~/shared/ui/VertexPreview";
-import { Algorithm } from "~/types/algorithm";
 import type { Color } from "~/types/color";
+import { cn } from "~/lib/utils";
 
 // TODO: Check if algorithm can be run on a graph.
 // TODO: Do we want to use i18 to support multiple languages (en / pl)?
 
-const columnHelper = createColumnHelper<DijkstraStepStateData>();
+export type DijkstraTableData = {
+  vertex: {
+    id: string;
+    color?: Color;
+  };
+  distance: {
+    value: number;
+    justUpdated: boolean;
+  };
+};
+
+const columnHelper = createColumnHelper<DijkstraTableData>();
 
 const columns = [
   columnHelper.accessor("vertex", {
@@ -31,9 +37,10 @@ const columns = [
       const { value, justUpdated } = info.getValue();
       return (
         <span
-          className={`block transition-all ${
+          className={cn(
+            "block transition-all",
             justUpdated && "animate-pulse text-sky-500"
-          }`}
+          )}
         >
           {value}
         </span>
@@ -62,11 +69,8 @@ const pickClosest = (
   return next;
 };
 
-const algorithm = (
-  graph: Graph,
-  startingVertex: string
-): Step<DijkstraStepState>[] => {
-  const steps: Step<DijkstraStepState>[] = [];
+const algorithm = (graph: Graph, startingVertex: string): Step[] => {
+  const steps: Step[] = [];
   const savedHighlights: [string, Color][] = [];
 
   const vertices = Object.values(graph.vertices);
@@ -81,19 +85,24 @@ const algorithm = (
 
     steps.push({
       description: "Set distance to starting vertext to 0.",
-      state: {
-        columns,
-        data: [...distances.entries()].map(([id, distance]) => ({
-          vertex: {
-            id,
-            color: highlights.get(id),
-          },
-          distance: {
-            value: distance,
-            justUpdated: id === start.id,
-          },
-        })),
-      },
+      state: [
+        {
+          type: "table",
+          columns,
+          data: [...distances.entries()].map(
+            ([id, distance]): DijkstraTableData => ({
+              vertex: {
+                id,
+                color: highlights.get(id),
+              },
+              distance: {
+                value: distance,
+                justUpdated: id === start.id,
+              },
+            })
+          ),
+        },
+      ],
       highlights,
     });
   }
@@ -109,19 +118,24 @@ const algorithm = (
 
       steps.push({
         description: "Pick the closest vertex from all unvisited vertices.",
-        state: {
-          columns,
-          data: [...distances.entries()].map(([id, distance]) => ({
-            vertex: {
-              id,
-              color: highlights.get(id),
-            },
-            distance: {
-              value: distance,
-              justUpdated: false,
-            },
-          })),
-        },
+        state: [
+          {
+            type: "table",
+            columns,
+            data: [...distances.entries()].map(
+              ([id, distance]): DijkstraTableData => ({
+                vertex: {
+                  id,
+                  color: highlights.get(id),
+                },
+                distance: {
+                  value: distance,
+                  justUpdated: false,
+                },
+              })
+            ),
+          },
+        ],
         highlights,
       });
     }
@@ -161,19 +175,24 @@ const algorithm = (
       steps.push({
         description:
           "Iterate over all adjacent unvisited nodes and update their min length.",
-        state: {
-          columns,
-          data: [...distances.entries()].map(([id, distance]) => ({
-            vertex: {
-              id,
-              color: highlights.get(id),
-            },
-            distance: {
-              value: distance,
-              justUpdated: outsHighlights.has(id),
-            },
-          })),
-        },
+        state: [
+          {
+            type: "table",
+            columns,
+            data: [...distances.entries()].map(
+              ([id, distance]): DijkstraTableData => ({
+                vertex: {
+                  id,
+                  color: highlights.get(id),
+                },
+                distance: {
+                  value: distance,
+                  justUpdated: outsHighlights.has(id),
+                },
+              })
+            ),
+          },
+        ],
         highlights,
       });
     }
@@ -186,19 +205,24 @@ const algorithm = (
 
       steps.push({
         description: "Mark current node as visited.",
-        state: {
-          columns,
-          data: [...distances.entries()].map(([id, distance]) => ({
-            vertex: {
-              id,
-              color: highlights.get(id),
-            },
-            distance: {
-              value: distance,
-              justUpdated: false,
-            },
-          })),
-        },
+        state: [
+          {
+            type: "table",
+            columns,
+            data: [...distances.entries()].map(
+              ([id, distance]): DijkstraTableData => ({
+                vertex: {
+                  id,
+                  color: highlights.get(id),
+                },
+                distance: {
+                  value: distance,
+                  justUpdated: false,
+                },
+              })
+            ),
+          },
+        ],
         highlights,
       });
     }
@@ -209,19 +233,24 @@ const algorithm = (
 
     steps.push({
       description: "There is no more unvisited vertices, end the algorithm!",
-      state: {
-        columns,
-        data: [...distances.entries()].map(([id, distance]) => ({
-          vertex: {
-            id,
-            color: highlights.get(id),
-          },
-          distance: {
-            value: distance,
-            justUpdated: false,
-          },
-        })),
-      },
+      state: [
+        {
+          type: "table",
+          columns,
+          data: [...distances.entries()].map(
+            ([id, distance]): DijkstraTableData => ({
+              vertex: {
+                id,
+                color: highlights.get(id),
+              },
+              distance: {
+                value: distance,
+                justUpdated: false,
+              },
+            })
+          ),
+        },
+      ],
       highlights: new Map([...savedHighlights]),
     });
   }
@@ -229,7 +258,7 @@ const algorithm = (
   return steps;
 };
 
-export const dijkstra: Algorithm<DijkstraStepState> = {
+export const dijkstra: Algorithm = {
   name: "Dijkstra",
   description:
     "Dijkstra algorithm allows you to find shortest path from starting node to every other node.",

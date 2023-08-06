@@ -1,7 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 // import { RouterProvider, createBrowserRouter } from "react-router-dom";
-import { ThemeContextProvider } from "./context/theme";
 import { Editor } from "./pages/editor/Editor";
 import "./index.css";
 
@@ -15,8 +14,6 @@ import "./index.css";
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
-    <ThemeContextProvider>
-      <Editor />
-    </ThemeContextProvider>
+    <Editor />
   </React.StrictMode>
 );

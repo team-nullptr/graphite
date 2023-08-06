@@ -1,9 +1,9 @@
-import { Algorithm } from "~/types/algorithm";
 import { AlgorithmCard } from "./AlgorithmCard";
+import { Algorithm } from "~/core/simulator/algorithm";
 
 export interface AlgorithmGridProps {
-  algorithms: Algorithm<unknown>[];
-  onAlgorithmSelect?: (algorithm: Algorithm<unknown>) => void;
+  algorithms: Algorithm[];
+  onAlgorithmSelect?: (algorithm: Algorithm) => void;
 }
 
 export const AlgorithmGrid = ({

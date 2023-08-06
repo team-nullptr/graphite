@@ -4,13 +4,43 @@
 
 @font-face {
   font-family: "JetBrains";
-  src: url("./assets/fonts/JetBrainsMonoNL-Regular.woff2");
+  src: url("./assets/fonts/JetBrainsMono-Regular.woff2");
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "JetBrains";
+  src: url("./assets/fonts/JetBrainsMono-LightItalic.woff2");
+  font-weight: 300;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: "Manrope";
+  src: url("./assets/fonts/Manrope-Regular.ttf");
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Manrope";
+  src: url("./assets/fonts/Manrope-Medium.ttf");
+  font-weight: 500;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Manrope";
+  src: url("./assets/fonts/Manrope-Bold.ttf");
+  font-weight: 700;
+  font-style: normal;
 }
 
 html,
 body,
 #root {
-  @apply h-full;
+  @apply h-full font-[Manrope];
 }
 
 @layer utilities {

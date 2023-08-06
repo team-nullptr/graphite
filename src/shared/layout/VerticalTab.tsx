@@ -1,4 +1,4 @@
-import { ReactNode, useState } from "react";
+import { ReactNode } from "react";
 
 export type Tab = {
   id: string;
@@ -28,36 +28,28 @@ const TabIcon = ({ tab, highlight, onClick }: TabIconProps) => {
 
 export type VerticalTabsProps = {
   tabs: Tab[];
+  currentTab?: Tab;
+  onTabChange: (tab: Tab) => void;
 };
 
-export const VerticalTabs = (props: VerticalTabsProps) => {
-  const [currentTab, setCurrentTab] = useState<Tab | undefined>(
-    props.tabs.at(0)
-  );
-
-  const switchTab = (tabId: string) => {
-    setCurrentTab(props.tabs.find((tab) => tab.id === tabId));
+export const VerticalTabs = ({
+  tabs,
+  currentTab,
+  onTabChange,
+}: VerticalTabsProps) => {
+  const switchTab = (tab: Tab) => {
+    onTabChange(tab);
   };
 
   return (
-    <div className="flex h-full w-full">
-      <div className="flex w-12 flex-shrink-0 flex-col border-r border-r-slate-300 bg-slate-50">
-        {props.tabs.map((tab) => (
-          <TabIcon
-            key={tab.id}
-            tab={tab}
-            onClick={() => switchTab(tab.id)}
-            highlight={tab.id === currentTab?.id}
-          />
-        ))}
-      </div>
-      {props.tabs.map((tab) => (
-        <div
-          className={`w-full ${currentTab?.id !== tab.id ? "hidden" : ""}`}
+    <div className="flex h-full w-12 flex-shrink-0 flex-col border-r border-r-slate-300 bg-slate-50">
+      {tabs.map((tab) => (
+        <TabIcon
           key={tab.id}
-        >
-          {tab.element}
-        </div>
+          tab={tab}
+          onClick={() => switchTab(tab)}
+          highlight={tab.id === currentTab?.id}
+        />
       ))}
     </div>
   );

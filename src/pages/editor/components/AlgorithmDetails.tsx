@@ -1,4 +1,4 @@
-import { Algorithm } from "~/types/algorithm";
+import { Algorithm } from "~/core/simulator/algorithm";
 import { ArrowLeftIcon } from "@heroicons/react/24/outline";
 import { Controls, ControlsButton } from "~/shared/Controls";
 import { PlayIcon } from "@heroicons/react/24/outline";
@@ -8,7 +8,7 @@ import { SpaceshipButton } from "~/shared/ui/SpaceshipButton";
 import { useEffect, useState } from "react";
 
 export interface AlgorithmDetails {
-  algorithm: Algorithm<unknown>;
+  algorithm: Algorithm;
   onBack: () => void;
 }
 
@@ -45,8 +45,8 @@ export const AlgorithmDetails = ({ algorithm, onBack }: AlgorithmDetails) => {
   const vertices = Object.keys(graph.vertices);
 
   return (
-    <div className="flex h-full flex-col divide-y divide-slate-300 bg-slate-50">
-      <Controls alignment="start">
+    <div className="flex h-full flex-col bg-slate-50">
+      <Controls alignment="start" className="border-b border-slate-300">
         <ControlsButton
           icon={<ArrowLeftIcon className="h-5 w-5" />}
           onClick={handleOnBack}

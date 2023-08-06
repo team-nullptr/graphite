@@ -9,7 +9,6 @@ module.exports = {
     "plugin:react/recommended",
     "plugin:react/jsx-runtime",
     "plugin:@typescript-eslint/recommended",
-    "plugin:prettier/recommended",
     "plugin:react-hooks/recommended",
   ],
   overrides: [],
@@ -21,5 +20,6 @@ module.exports = {
   plugins: ["react", "@typescript-eslint"],
   rules: {
     "no-constant-condition": ["error", { checkLoops: false }],
+    "react/display-name": "off",
   },
 };

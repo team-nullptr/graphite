@@ -22,26 +22,13 @@ const algorithm = (graph: Graph, startingVertex: string): Step[] => {
 
     steps.push({
       description: `Put starting vertex ${startingVertex} on the stack.`,
-      state: [
-        {
-          type: "array",
-          title: "Stack",
-          data: [...stack],
-          highlighted: new Set([stack.length - 1]),
-        },
-        {
-          type: "array",
-          title: "Visit Order",
-          data: [...visited],
-          highlighted: new Set(),
-        },
-      ],
+      state: [],
       highlights,
     });
   }
 
   while (stack.length !== 0) {
-    const currentId = stack.pop()!;
+    const currentId = stack.shift()!;
     const current = graph.vertices[currentId]!;
 
     {
@@ -51,21 +38,8 @@ const algorithm = (graph: Graph, startingVertex: string): Step[] => {
       ]);
 
       steps.push({
-        description: `Pop vertex ${currentId} from the stack.`,
-        state: [
-          {
-            type: "array",
-            title: "Stack",
-            data: [...stack, currentId],
-            highlighted: new Set([stack.length]),
-          },
-          {
-            type: "array",
-            title: "Visit Order",
-            data: [...visited],
-            highlighted: new Set(),
-          },
-        ],
+        description: `Get first vertex ${currentId} from the array.`,
+        state: [],
         highlights,
       });
     }
@@ -79,20 +53,7 @@ const algorithm = (graph: Graph, startingVertex: string): Step[] => {
 
         steps.push({
           description: `Vertex ${currentId} was already visited. Continue to the next step.`,
-          state: [
-            {
-              type: "array",
-              title: "Stack",
-              data: [...stack],
-              highlighted: new Set(),
-            },
-            {
-              type: "array",
-              title: "Visit Order",
-              data: [...visited],
-              highlighted: new Set(),
-            },
-          ],
+          state: [],
           highlights,
         });
       }
@@ -110,37 +71,19 @@ const algorithm = (graph: Graph, startingVertex: string): Step[] => {
 
       steps.push({
         description: `Mark vertex ${currentId} as visited.`,
-        state: [
-          {
-            type: "array",
-            title: "Stack",
-            data: [...stack],
-            highlighted: new Set(),
-          },
-          {
-            type: "array",
-            title: "Visit Order",
-            data: [...visited],
-            highlighted: new Set(),
-          },
-        ],
+        state: [],
         highlights,
       });
     }
 
     const outsHighlights: Highlights = new Map();
-    const addedIndexes = [];
 
     for (const edgeId of current.outs) {
       const edge = graph.edges[edgeId];
+
       const adjacentId =
         edge.to === current.id && !edge.directed ? edge.from : edge.to;
 
-      if (visited.has(adjacentId)) {
-        continue;
-      }
-
-      addedIndexes.push(stack.length);
       stack.push(adjacentId);
       outsHighlights.set(adjacentId, "sky");
     }
@@ -154,20 +97,7 @@ const algorithm = (graph: Graph, startingVertex: string): Step[] => {
 
       steps.push({
         description: "Put all adjacent vertices to the stack.",
-        state: [
-          {
-            type: "array",
-            title: "Stack",
-            data: [...stack],
-            highlighted: new Set(addedIndexes),
-          },
-          {
-            type: "array",
-            title: "Visit Order",
-            data: [...visited],
-            highlighted: new Set(),
-          },
-        ],
+        state: [],
         highlights,
       });
     }
@@ -180,20 +110,7 @@ const algorithm = (graph: Graph, startingVertex: string): Step[] => {
 
     steps.push({
       description: "There is no more vertices on the stack. End the algorithm.",
-      state: [
-        {
-          type: "array",
-          title: "Stack",
-          data: stack.slice(),
-          highlighted: new Set(),
-        },
-        {
-          type: "array",
-          title: "Visit Order",
-          data: [...visited],
-          highlighted: new Set(),
-        },
-      ],
+      state: [],
       highlights,
     });
   }
@@ -201,9 +118,9 @@ const algorithm = (graph: Graph, startingVertex: string): Step[] => {
   return steps;
 };
 
-export const dfs: Algorithm = {
-  name: "Depth First Search",
-  description: "Depth First Search algorithm visit all nodes of a graph.",
+export const bfs: Algorithm = {
+  name: "Breath First Search",
+  description: "Breath First Search algorithm visits all nodes of a graph.",
   tags: ["exploration"],
   algorithm,
 };

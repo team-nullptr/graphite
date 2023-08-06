@@ -1,12 +1,11 @@
 import { useState } from "react";
 import { algorithms } from "~/algorithms";
-import { Algorithm } from "~/types/algorithm";
+import { Algorithm } from "~/core/simulator/algorithm";
 import { AlgorithmDetails } from "./AlgorithmDetails";
 import { AlgorithmGrid } from "./AlgorithmGrid";
 
 export const AlgorithmPicker = () => {
-  const [browsedAlgorithm, setBrowsedAlgorithm] =
-    useState<Algorithm<unknown>>();
+  const [browsedAlgorithm, setBrowsedAlgorithm] = useState<Algorithm>();
 
   return (
     <div className="h-full w-full bg-slate-50">
