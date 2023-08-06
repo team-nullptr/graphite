@@ -9,6 +9,7 @@ import { ArrayStep } from "./ArrayStep";
 import { Player } from "./Player";
 import { TableStep } from "./TableStep";
 
+
 export const Visualizer = () => {
   const visualizerRef = useRef(null);
   const orientation = useLayoutSettingsStore(({ orientation }) => orientation);

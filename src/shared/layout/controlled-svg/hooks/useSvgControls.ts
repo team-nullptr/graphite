@@ -7,7 +7,7 @@ import {
   useState,
 } from "react";
 import { scaleCenterToMatchTarget } from "../helpers/scale";
-import { getPointInSvgSpace } from "../helpers/svg";
+import { getPointInSvgSpace } from "~/shared/helpers/svg";
 
 export type Position = [x: number, y: number];
 export type Offset = [x: number, y: number];
@@ -103,22 +103,26 @@ export const useSvgControls = (
       if (isPanEnabled?.current === false) {
         return;
       }
+      event.preventDefault(); // Prevent selecting text
       const previousMousePosition = previousMousePositionRef.current;
       const currentMousePosition: Position = [event.clientX, event.clientY];
-      const delta = [
+      const mousePositionDelta = [
         currentMousePosition[0] - previousMousePosition[0],
         currentMousePosition[1] - previousMousePosition[1],
       ];
       previousMousePositionRef.current = currentMousePosition;
       setCenter((center) => {
-        return [center[0] - delta[0] / zoom, center[1] - delta[1] / zoom];
+        return [
+          center[0] - mousePositionDelta[0] / zoom,
+          center[1] - mousePositionDelta[1] / zoom,
+        ];
       });
     };
 
-    svgElement.addEventListener("mousemove", mouseMoveHandler);
+    addEventListener("mousemove", mouseMoveHandler);
 
     return () => {
-      svgElement.removeEventListener("mousemove", mouseMoveHandler);
+      removeEventListener("mousemove", mouseMoveHandler);
     };
   }, [zoom]);
 

@@ -1,9 +1,10 @@
-import { RefObject, useEffect, useRef, useState } from "react";
+import { RefObject, useCallback, useEffect, useRef, useState } from "react";
 import { Graph } from "../../../core/simulator/graph";
 import { Arrangement } from "../types/arrangement";
 import { SelectedVertex } from "../types/selectedVertex";
 import { Vec2 } from "../types/vec2";
 import { useForceSimulation } from "./useForceSimulation";
+import { getPointInSvgSpace } from "~/shared/helpers/svg";
 
 // TODO: Learn more about initial arrangement for force-directed graphs.
 const preArrange = (graph: Graph) =>
@@ -16,15 +17,7 @@ const preArrange = (graph: Graph) =>
     return arrangement;
   }, {} as Arrangement);
 
-const getPointInSvgSpace = (
-  x: number,
-  y: number,
-  svg: SVGSVGElement
-): DOMPoint => {
-  const point = new DOMPoint(x, y);
-  const svgViewportOffsetMatrix = svg.getScreenCTM()?.inverse();
-  return point.matrixTransform(svgViewportOffsetMatrix);
-};
+type Position = [x: number, y: number];
 
 export const useGraphLayout = (
   graph: Graph,
@@ -34,67 +27,70 @@ export const useGraphLayout = (
   const selectedVertexRef = useRef<SelectedVertex>();
   const [arrangement, setArrangment] = useState<Arrangement>(preArrange(graph));
 
-  const vertexMouseDownHandler = (id: string, event: MouseEvent) => {
-    const svg = svgRef.current;
+  const vertexMouseDownHandler = useCallback(
+    (id: string, event: MouseEvent) => {
+      const svgElement = svgRef.current;
+      if (!svgElement) {
+        return;
+      }
 
-    if (!svg) {
-      return;
-    }
+      const mousePositionOnScreen: Position = [event.clientX, event.clientY];
+      // prettier-ignore
+      const mouseInSvgSpace = getPointInSvgSpace(mousePositionOnScreen, svgElement);
 
-    const mouseInSvgSpace = getPointInSvgSpace(
-      event.clientX,
-      event.clientY,
-      svg
-    );
+      const vertexPosition = arrangement[id] ?? new Vec2(0, 0);
 
-    const vertexPosition = arrangement[id];
+      const mouseOffset = new Vec2(...mouseInSvgSpace);
+      mouseOffset.substract(vertexPosition);
 
-    const offset = new Vec2(
-      mouseInSvgSpace.x - vertexPosition.x,
-      mouseInSvgSpace.y - vertexPosition.y
-    );
-
-    selectedVertexRef.current = { id, offset };
-    areControlsEnabled.current = false;
-  };
+      selectedVertexRef.current = { id, offset: mouseOffset };
+      areControlsEnabled.current = false;
+    },
+    [svgRef.current, arrangement]
+  );
 
   useEffect(() => {
-    const updatedArrangement = preArrange(graph);
-    const currentVertices = new Set([...Object.keys(graph.vertices)]);
+    setArrangment((arrangement) => {
+      const updatedArrangement = preArrange(graph);
+      const currentVertices = new Set([...Object.keys(graph.vertices)]);
 
-    for (const vertex of Object.keys(arrangement)) {
-      if (currentVertices.has(vertex)) {
-        updatedArrangement[vertex] = arrangement[vertex];
+      for (const vertex of Object.keys(arrangement)) {
+        if (currentVertices.has(vertex)) {
+          updatedArrangement[vertex] = arrangement[vertex];
+        }
       }
-    }
 
-    setArrangment(updatedArrangement);
+      return updatedArrangement;
+    });
   }, [graph]);
 
   useEffect(() => {
     const mouseUpHandler = () => {
       selectedVertexRef.current = undefined;
-      console.log("enabling back again");
       areControlsEnabled.current = true;
     };
 
     const mouseMoveHandler = (event: MouseEvent) => {
-      if (!selectedVertexRef.current || !svgRef.current) {
+      const selectedVertex = selectedVertexRef.current;
+      const svgElement = svgRef.current;
+      if (!selectedVertex || !svgElement) {
         return;
       }
 
-      const svg = svgRef.current;
-      const { id, offset } = selectedVertexRef.current;
+      event.preventDefault(); // Prevent selecting text
 
-      const position = getPointInSvgSpace(event.clientX, event.clientY, svg);
+      const { id: vertexId, offset: mouseOffset } = selectedVertex;
 
-      const positionWithMouseOffset = new Vec2(position.x, position.y);
-      positionWithMouseOffset.substract(offset);
+      const mousePositionOnScreen: Position = [event.clientX, event.clientY];
+      // prettier-ignore
+      const mouseInSvgSpace = getPointInSvgSpace(mousePositionOnScreen, svgElement);
 
-      setArrangment((arrangement) => ({
-        ...arrangement,
-        [id]: positionWithMouseOffset,
-      }));
+      const positionWithMouseOffset = new Vec2(...mouseInSvgSpace);
+      positionWithMouseOffset.substract(mouseOffset);
+
+      setArrangment((arrangement) => {
+        return { ...arrangement, [vertexId]: positionWithMouseOffset };
+      });
     };
 
     addEventListener("mousemove", mouseMoveHandler);

@@ -36,7 +36,7 @@ export const GraphView = ({ highlights, graph }: GraphViewProps) => {
   );
 
   return (
-    <ControlledSvg isPanEnabled={isPanEnabled}>
+    <ControlledSvg isPanEnabled={isPanEnabled} ref={svgRef}>
       {/* prettier-ignore */}
       <Edges
         positionedEdges={positionedEdges}
