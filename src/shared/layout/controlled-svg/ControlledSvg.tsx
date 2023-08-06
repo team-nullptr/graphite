@@ -1,4 +1,12 @@
-import { Dispatch, ReactNode, RefObject, SetStateAction, useRef } from "react";
+import {
+  Dispatch,
+  ReactNode,
+  RefObject,
+  SetStateAction,
+  forwardRef,
+  useRef,
+} from "react";
+import { combineRefs } from "~/features/graph-view/helpers/combineRefs";
 import { useResizeObserver } from "./hooks/useResizeObserver";
 import { Position, useSvgControls } from "./hooks/useSvgControls";
 
@@ -16,36 +24,38 @@ export interface ControllableSvgProps {
   isPanEnabled?: RefObject<boolean>;
 }
 
-export const ControlledSvg = (props: ControllableSvgProps) => {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const svgRef = useRef<SVGSVGElement>(null);
+export const ControlledSvg = forwardRef<SVGSVGElement, ControllableSvgProps>(
+  (props, ref) => {
+    const containerRef = useRef<HTMLDivElement>(null);
+    const svgRef = useRef<SVGSVGElement>(null);
 
-  const containerRect = useResizeObserver(containerRef);
+    const containerRect = useResizeObserver(containerRef);
 
-  // prettier-ignore
-  const { center, setCenter, zoom, setZoom } =
-    useSvgControls(svgRef, props.isZoomEnabled, props.isPanEnabled);
-  const viewBox = getViewBox(containerRect, center, zoom);
+    // prettier-ignore
+    const { center, setCenter, zoom, setZoom } =
+      useSvgControls(svgRef, props.isZoomEnabled, props.isPanEnabled);
+    const viewBox = getViewBox(containerRect, center, zoom);
 
-  return (
-    <div
-      ref={containerRef}
-      className="relative h-full w-full select-none overflow-hidden"
-    >
-      <div className="pointer-events-none absolute left-0 top-0 h-full w-full">
-        {props.controls?.(zoom, center, setZoom, setCenter)}
-      </div>
-      <svg
-        ref={svgRef}
-        style={{ width: containerRect.width, height: containerRect.height }}
-        className="h-full w-full"
-        viewBox={viewBox.join(" ")}
+    return (
+      <div
+        ref={containerRef}
+        className="relative h-full w-full select-none overflow-hidden"
       >
-        {props.children}
-      </svg>
-    </div>
-  );
-};
+        <div className="pointer-events-none absolute left-0 top-0 h-full w-full">
+          {props.controls?.(zoom, center, setZoom, setCenter)}
+        </div>
+        <svg
+          ref={combineRefs(svgRef, ref)}
+          style={{ width: containerRect.width, height: containerRect.height }}
+          className="h-full w-full"
+          viewBox={viewBox.join(" ")}
+        >
+          {props.children}
+        </svg>
+      </div>
+    );
+  }
+);
 
 export type ViewBox = [x: number, y: number, w: number, h: number];
 
