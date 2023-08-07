@@ -1,15 +1,14 @@
 import { ChangeEvent, KeyboardEvent, useRef, useState } from "react";
 
-export interface EditableProps {
+export type EditableProps = {
   value: string;
   placeholder?: string;
   className?: string;
   disabled?: boolean;
   onChange?: (value: string) => void;
-}
+};
 
-// TODO: What is the purpouse of this component exactly?
-export const Editable = (props: EditableProps) => {
+export function Editable(props: EditableProps) {
   const [value, setValue] = useState(props.value);
   const active = useRef<boolean>(false);
   const ref = useRef<HTMLInputElement>(null);
@@ -50,4 +49,4 @@ export const Editable = (props: EditableProps) => {
       disabled={props.disabled}
     />
   );
-};
+}

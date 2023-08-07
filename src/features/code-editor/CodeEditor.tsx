@@ -25,14 +25,12 @@ arc(E, C, 8)
 # https://github.com/team-nullptr/graphite
 `;
 
-export const CodeEditor = () => {
+export function CodeEditor() {
   const setGraph = useEditorStore(({ setGraph }) => setGraph);
   const [value, setValue] = useState(initialEditorValue);
   const [errors, setErrors] = useState<Error[]>([]);
 
-  const { view, ref } = useEditor<HTMLDivElement>([
-    editorOnChange((value) => setValue(value)),
-  ]);
+  const { view, ref } = useEditor<HTMLDivElement>([editorOnChange((value) => setValue(value))]);
 
   // TODO: It might be a good idea to extract code-mirrors specific logic.
   useEffect(() => {
@@ -78,4 +76,4 @@ export const CodeEditor = () => {
       second={<DiagnosticsSummary errors={errors} />}
     />
   );
-};
+}

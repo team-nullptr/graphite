@@ -7,22 +7,16 @@ import { useForceSimulation } from "./useForceSimulation";
 import { getPointInSvgSpace } from "~/shared/helpers/svg";
 
 // TODO: Learn more about initial arrangement for force-directed graphs.
-const preArrange = (graph: Graph) =>
-  Object.values(graph.vertices).reduce((arrangement, v) => {
-    arrangement[v.id] = new Vec2(
-      Math.random() * 200 - 100,
-      Math.random() * 200 - 100
-    );
-
+function preArrange(graph: Graph) {
+  return Object.values(graph.vertices).reduce((arrangement, v) => {
+    arrangement[v.id] = new Vec2(Math.random() * 200 - 100, Math.random() * 200 - 100);
     return arrangement;
   }, {} as Arrangement);
+}
 
 type Position = [x: number, y: number];
 
-export const useGraphLayout = (
-  graph: Graph,
-  svgRef: RefObject<SVGSVGElement>
-) => {
+export function useGraphLayout(graph: Graph, svgRef: RefObject<SVGSVGElement>) {
   const areControlsEnabled = useRef<boolean>(true);
   const selectedVertexRef = useRef<SelectedVertex>();
   const [arrangement, setArrangment] = useState<Arrangement>(preArrange(graph));
@@ -35,9 +29,7 @@ export const useGraphLayout = (
       }
 
       const mousePositionOnScreen: Position = [event.clientX, event.clientY];
-      // prettier-ignore
       const mouseInSvgSpace = getPointInSvgSpace(mousePositionOnScreen, svgElement);
-
       const vertexPosition = arrangement[id] ?? new Vec2(0, 0);
 
       const mouseOffset = new Vec2(...mouseInSvgSpace);
@@ -46,7 +38,7 @@ export const useGraphLayout = (
       selectedVertexRef.current = { id, offset: mouseOffset };
       areControlsEnabled.current = false;
     },
-    [svgRef.current, arrangement]
+    [svgRef, arrangement]
   );
 
   useEffect(() => {
@@ -100,7 +92,7 @@ export const useGraphLayout = (
       removeEventListener("mousemove", mouseMoveHandler);
       removeEventListener("mouseup", mouseUpHandler);
     };
-  }, []);
+  }, [svgRef]);
 
   useForceSimulation(graph, selectedVertexRef, setArrangment);
 
@@ -111,4 +103,4 @@ export const useGraphLayout = (
     selectedVertexRef,
     areControlsEnabled,
   };
-};
+}

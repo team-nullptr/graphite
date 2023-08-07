@@ -2,12 +2,10 @@ export type ErrorDescriptionProps = {
   error: Error;
 };
 
-export const ErrorDescription = (props: ErrorDescriptionProps) => {
-  const { message } = props.error;
-
+export function ErrorDescription({ error }: ErrorDescriptionProps) {
   return (
     <div className="border-l-4 border-red-500 px-4 py-2">
-      <div className="text-slatee-800">{message}</div>
+      <div className="text-slatee-800">{error.message}</div>
     </div>
   );
-};
+}

@@ -25,9 +25,7 @@ export const Visualizer = () => {
   }, [mode]);
 
   const highlights =
-    mode.type === "SIMULATION"
-      ? mode.steps[currentStepIndex].highlights
-      : undefined;
+    mode.type === "SIMULATION" ? mode.steps[currentStepIndex].highlights : undefined;
 
   const renderStepState = (state: State) => {
     if (!state) return null;
@@ -66,9 +64,7 @@ export const Visualizer = () => {
                 <span className="font-bold text-slate-800">
                   Step {currentStepIndex + 1} / {mode.steps.length}
                 </span>
-                <p className="text-slate-800">
-                  {mode.steps[currentStepIndex].description}
-                </p>
+                <p className="text-slate-800">{mode.steps[currentStepIndex].description}</p>
               </div>
               {mode.steps[currentStepIndex].state.map((s, i) => (
                 <Fragment key={i}>{renderStepState(s)}</Fragment>

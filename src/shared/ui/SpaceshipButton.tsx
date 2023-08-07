@@ -2,7 +2,7 @@ import { ReactNode, useRef, useState } from "react";
 import { Tooltip } from "./Tooltip";
 import styles from "./SpaceshipButton.module.css";
 
-type SpaceshipButtonProps = {
+export type SpaceshipButtonProps = {
   label: string;
   icon: ReactNode;
   disabled?: boolean;
@@ -11,13 +11,13 @@ type SpaceshipButtonProps = {
 };
 
 // This component is heavily inspired (in fact almost copied) from https://wope.com
-export const SpaceshipButton = ({
+export function SpaceshipButton({
   label,
   icon,
   disabled = false,
   disabledHint,
   onClick,
-}: SpaceshipButtonProps) => {
+}: SpaceshipButtonProps) {
   const buttonRef = useRef<HTMLDivElement>(null);
   const [mouseOver, setMouseOver] = useState(false);
 
@@ -31,9 +31,7 @@ export const SpaceshipButton = ({
 
   return (
     <>
-      {disabled && mouseOver && (
-        <Tooltip elementRef={buttonRef} label={disabledHint ?? ""} />
-      )}
+      {disabled && mouseOver && <Tooltip elementRef={buttonRef} label={disabledHint ?? ""} />}
       <div
         ref={buttonRef}
         className="relative isolate overflow-hidden rounded-lg"
@@ -73,4 +71,4 @@ export const SpaceshipButton = ({
       </div>
     </>
   );
-};
+}

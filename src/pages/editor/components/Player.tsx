@@ -5,7 +5,7 @@ import {
   StopIcon,
   PlayIcon,
 } from "@heroicons/react/24/outline";
-import { useState, useCallback, useEffect, HTMLAttributes } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { Controls, ControlsButton } from "~/shared/Controls";
 
 export type PlayerSettings = {
@@ -20,13 +20,13 @@ export type PlayerProps = {
   className?: string;
 };
 
-export const Player = ({
+export function Player({
   currentStep,
   numberOfSteps,
   onStepChange,
   settings,
   className,
-}: PlayerProps) => {
+}: PlayerProps) {
   const [isPlaying, setIsPlaying] = useState(false);
 
   const restartHandler = () => {
@@ -93,4 +93,4 @@ export const Player = ({
       )}
     </Controls>
   );
-};
+}

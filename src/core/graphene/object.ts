@@ -6,18 +6,18 @@ export type Obj =
   | { type: "VERTEX"; value: string }
   | { type: "VERTEX_COLLECTION"; value: string[] };
 
-export const assertVertex = (arg: Obj): string => {
+export function assertVertex(arg: Obj): string {
   if (arg.type !== "VERTEX") {
     throw new Error("Expected vertex.");
   }
 
   return arg.value;
-};
+}
 
-export const assertNumber = (arg: Obj): number => {
+export function assertNumber(arg: Obj): number {
   if (arg.type !== "NUMBER") {
     throw new Error("Expected a number.");
   }
 
   return arg.value;
-};
+}

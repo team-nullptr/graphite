@@ -2,27 +2,19 @@ import { Editable } from "~/shared/Editable";
 import { ArrowLeftIcon } from "@heroicons/react/24/outline";
 import { cn } from "~/lib/utils";
 import { useLayoutSettingsStore } from "../store/layout";
-import { LayoutVertical } from "~/shared/icons/LayoutVertical";
-import { LayoutHorizontal } from "~/shared/icons/LayoutHorizontal";
+import { LayoutVerticalIcon } from "~/shared/icons/LayoutVerticalIcon";
+import { LayoutHorizontalIcon } from "~/shared/icons/LayoutHorizontalIcon";
 
-export interface HeaderProps {
+export type HeaderProps = {
   name: string;
   onNavigateUp?: () => void;
   onRename?: (projectName: string) => void;
   disabled?: boolean;
   className?: string;
-}
+};
 
-export const Header = ({
-  name,
-  onNavigateUp,
-  onRename,
-  disabled,
-  className,
-}: HeaderProps) => {
-  const { orientation, switchOrientation } = useLayoutSettingsStore(
-    (store) => store
-  );
+export const Header = ({ name, onNavigateUp, onRename, disabled, className }: HeaderProps) => {
+  const { orientation, switchOrientation } = useLayoutSettingsStore((store) => store);
 
   const navigateBackHandler = () => {
     onNavigateUp?.();
@@ -39,10 +31,7 @@ export const Header = ({
         className
       )}
     >
-      <button
-        onClick={navigateBackHandler}
-        className="aspect-square h-full text-slate-800"
-      >
+      <button onClick={navigateBackHandler} className="aspect-square h-full text-slate-800">
         <ArrowLeftIcon className="h-5 w-5" />
       </button>
       <Editable
@@ -54,9 +43,9 @@ export const Header = ({
       />
       <button onClick={switchOrientation}>
         {orientation === "horizontal" ? (
-          <LayoutHorizontal className="h-5 w-5 text-slate-800" />
+          <LayoutHorizontalIcon className="h-5 w-5 text-slate-800" />
         ) : (
-          <LayoutVertical className="h-5 w-5 text-slate-800" />
+          <LayoutVerticalIcon className="h-5 w-5 text-slate-800" />
         )}
       </button>
     </nav>

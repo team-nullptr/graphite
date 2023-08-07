@@ -4,7 +4,7 @@ import { Algorithm } from "~/core/simulator/algorithm";
 import { AlgorithmDetails } from "./AlgorithmDetails";
 import { AlgorithmGrid } from "./AlgorithmGrid";
 
-export const AlgorithmPicker = () => {
+export function AlgorithmPicker() {
   const [browsedAlgorithm, setBrowsedAlgorithm] = useState<Algorithm>();
 
   return (
@@ -15,11 +15,8 @@ export const AlgorithmPicker = () => {
           onBack={() => setBrowsedAlgorithm(undefined)}
         />
       ) : (
-        <AlgorithmGrid
-          algorithms={algorithms}
-          onAlgorithmSelect={setBrowsedAlgorithm}
-        />
+        <AlgorithmGrid algorithms={algorithms} onAlgorithmSelect={setBrowsedAlgorithm} />
       )}
     </div>
   );
-};
+}

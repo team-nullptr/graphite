@@ -6,12 +6,10 @@ export type ArrayStepProps = {
   visibleCells?: number;
 };
 
-export const ArrayStep = ({ state, visibleCells = 8 }: ArrayStepProps) => {
-  console.log(state);
-
+export function ArrayStep({ state, visibleCells = 8 }: ArrayStepProps) {
   return (
-    <div className="p-4 space-y-4">
-      <span className="text-slate-800 font-md">{state.title}</span>
+    <div className="space-y-4 p-4">
+      <span className="font-md text-slate-800">{state.title}</span>
       <div className="flex gap-1">
         {/* TODO: Do not use index as a key. */}
         {Array.from({ length: visibleCells }).map((_, i) => {
@@ -21,10 +19,10 @@ export const ArrayStep = ({ state, visibleCells = 8 }: ArrayStepProps) => {
             <div
               key={i}
               className={cn(
-                "flex items-center w-12 justify-center border border-slate-300 aspect-square",
+                "flex aspect-square w-12 items-center justify-center border border-slate-300",
                 element ? "bg-slate-100" : "bg-slate-50",
                 state.highlighted.has(i) &&
-                  "bg-sky-300 animate-pulse border ring-1 ring-sky-400 border-sky-400"
+                  "animate-pulse border border-sky-400 bg-sky-300 ring-1 ring-sky-400"
               )}
             >
               {element ?? null}
@@ -34,4 +32,4 @@ export const ArrayStep = ({ state, visibleCells = 8 }: ArrayStepProps) => {
       </div>
     </div>
   );
-};
+}

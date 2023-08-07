@@ -9,25 +9,15 @@ export type ControlsProps = PropsWithChildren<{
   alignment?: Alignment;
 }>;
 
-export const Controls = ({
-  children,
-  alignment = "center",
-  className,
-}: ControlsProps) => {
+export function Controls({ children, alignment = "center", className }: ControlsProps) {
   const alignmentStyle = `justify-${alignment}`;
 
   return (
-    <nav
-      className={cn(
-        "flex h-10 items-center gap-4 bg-slate-50 px-4",
-        alignmentStyle,
-        className
-      )}
-    >
+    <nav className={cn("flex h-10 items-center gap-4 bg-slate-50 px-4", alignmentStyle, className)}>
       {children}
     </nav>
   );
-};
+}
 
 export type ControlsButtonProps = React.DetailedHTMLProps<
   React.ButtonHTMLAttributes<HTMLButtonElement>,
@@ -37,11 +27,7 @@ export type ControlsButtonProps = React.DetailedHTMLProps<
   alt?: string;
 };
 
-export const ControlsButton = ({
-  icon,
-  alt,
-  ...props
-}: ControlsButtonProps) => {
+export function ControlsButton({ icon, alt, ...props }: ControlsButtonProps) {
   return (
     <button
       aria-label={alt}
@@ -51,4 +37,4 @@ export const ControlsButton = ({
       {icon}
     </button>
   );
-};
+}

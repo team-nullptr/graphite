@@ -1,33 +1,49 @@
-import { RefObject, useEffect, useRef, useState } from "react";
+import {
+  Dispatch,
+  RefObject,
+  SetStateAction,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { scaleCenterToMatchTarget } from "../helpers/scale";
 import { getPointInSvgSpace } from "~/shared/helpers/svg";
 
 export type Position = [x: number, y: number];
 export type Offset = [x: number, y: number];
 
-const zoomBounds = {
-  min: 0.5,
-  max: 5,
+export type ZoomBounds = {
+  min: number;
+  max: number;
+};
+
+export type SvgControlsOptions = {
+  zoomBounds: ZoomBounds;
+  isZoomEnabled?: RefObject<boolean>;
+  isPanEnabled?: RefObject<boolean>;
+};
+
+export type SvgControls = {
+  center: Position;
+  setCenter: Dispatch<SetStateAction<Position>>;
+  zoom: number;
+  setZoom: Dispatch<SetStateAction<number>>;
 };
 
 export const useSvgControls = (
   svgRef: RefObject<SVGSVGElement>,
-  isZoomEnabled?: RefObject<boolean>,
-  isPanEnabled?: RefObject<boolean>
-): {
-  center: Position;
-  setCenter: (center: Position) => void;
-  zoom: number;
-  setZoom: (zoom: number) => void;
-} => {
+  { isPanEnabled, isZoomEnabled, zoomBounds }: SvgControlsOptions
+): SvgControls => {
   const [zoom, setZoom] = useState(1);
   const [center, setCenter] = useState<Position>([0, 0]);
 
-  const normalizeZoom = (zoom: number) =>
-    Math.max(Math.min(zoom, zoomBounds.max), zoomBounds.min);
+  const normalizeZoom = useCallback(
+    (zoom: number) => Math.max(Math.min(zoom, zoomBounds.max), zoomBounds.min),
+    [zoomBounds]
+  );
 
   // Zooming
-
   useEffect(() => {
     const svgElement = svgRef.current;
 
@@ -35,7 +51,10 @@ export const useSvgControls = (
       return;
     }
 
-    let prevZoom = 0;
+    // currentZoom is used only by mouseWheelHandler. It is not in sync with real zoom value.
+    // When handler fires it will hold the zoom value to which real zoom was set.
+    // Rest of the handler can decide what to do based on it then.
+    let currentZoom = 0;
 
     const mouseWheelHandler = (event: WheelEvent) => {
       event.preventDefault();
@@ -48,22 +67,19 @@ export const useSvgControls = (
 
       setZoom((zoom) => {
         const newZoom = normalizeZoom(zoom * scale);
-        prevZoom = newZoom;
+        currentZoom = newZoom;
         return newZoom;
       });
 
       if (
-        (prevZoom >= zoomBounds.max && scale > 1) ||
-        (prevZoom <= zoomBounds.min && scale < 1)
+        (currentZoom >= zoomBounds.max && scale > 1) ||
+        (currentZoom <= zoomBounds.min && scale < 1)
       ) {
         return;
       }
 
       const mousePosition: Position = [event.clientX, event.clientY];
-      const mousePositionInSVGSpace = getPointInSvgSpace(
-        mousePosition,
-        svgElement
-      );
+      const mousePositionInSVGSpace = getPointInSvgSpace(mousePosition, svgElement);
 
       setCenter((center) => {
         return scaleCenterToMatchTarget(center, mousePositionInSVGSpace, scale);
@@ -75,7 +91,7 @@ export const useSvgControls = (
     return () => {
       svgElement.removeEventListener("wheel", mouseWheelHandler);
     };
-  }, [isZoomEnabled, svgRef]);
+  }, [zoomBounds, isZoomEnabled, svgRef, normalizeZoom]);
 
   // Panning
 
@@ -128,10 +144,7 @@ export const useSvgControls = (
       ];
       previousMousePositionRef.current = currentMousePosition;
       setCenter((center) => {
-        return [
-          center[0] - mousePositionDelta[0] / zoom,
-          center[1] - mousePositionDelta[1] / zoom,
-        ];
+        return [center[0] - mousePositionDelta[0] / zoom, center[1] - mousePositionDelta[1] / zoom];
       });
     };
 
@@ -142,7 +155,13 @@ export const useSvgControls = (
     };
   }, [zoom, isPanEnabled, svgRef]);
 
-  const setNormalizedZoom = (zoom: number) => setZoom(normalizeZoom(zoom));
+  const setNormalizedZoom: Dispatch<SetStateAction<number>> = useCallback(
+    (value) => {
+      setZoom((prev) => normalizeZoom(typeof value === "function" ? value(prev) : value));
+    },
+    [normalizeZoom]
+  );
+
   return { center, setCenter, zoom, setZoom: setNormalizedZoom };
 };
 

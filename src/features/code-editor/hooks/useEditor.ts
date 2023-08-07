@@ -7,13 +7,13 @@ import { useEffect, useRef, useState } from "react";
 import { graphene } from "~/core/graphene/tools/codeMirror";
 
 // Creates onChange extension for editor.
-export const editorOnChange = (cb: (value: string) => void) => {
+export function editorOnChange(cb: (value: string) => void) {
   return EditorView.updateListener.of((it: ViewUpdate) => {
     if (!it.docChanged) return;
     const value = it.state.doc.toString();
     cb(value);
   });
-};
+}
 
 const codeThemeLight = HighlightStyle.define([
   {
@@ -47,7 +47,7 @@ const editorThemeLight = EditorView.theme({
   },
 });
 
-export const useEditor = <T extends HTMLElement>(extensions: Extension[]) => {
+export function useEditor<T extends HTMLElement>(extensions: Extension[]) {
   const ref = useRef<T>(null);
   const [view, setView] = useState<EditorView>();
 
@@ -84,4 +84,4 @@ export const useEditor = <T extends HTMLElement>(extensions: Extension[]) => {
   }, [ref]);
 
   return { view, ref };
-};
+}

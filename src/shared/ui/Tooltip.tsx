@@ -1,12 +1,14 @@
-import { RefObject, useLayoutEffect, useRef, useState } from "react";
+import { RefObject } from "react";
 
 export type TooltipProps = {
   label: string;
   elementRef: RefObject<HTMLElement>;
 };
 
-export const Tooltip = ({ elementRef, label }: TooltipProps) => {
-  if (!elementRef.current) return null;
+export function Tooltip({ elementRef, label }: TooltipProps) {
+  if (!elementRef.current) {
+    return null;
+  }
 
   const { top, left, width } = elementRef.current.getBoundingClientRect();
 
@@ -22,4 +24,4 @@ export const Tooltip = ({ elementRef, label }: TooltipProps) => {
       <div className="flex text-sm">{label}</div>
     </div>
   );
-};
+}

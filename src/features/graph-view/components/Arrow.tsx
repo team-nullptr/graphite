@@ -3,13 +3,13 @@ import { Vec2 } from "../types/vec2";
 import type { Color } from "~/types/color";
 import colors from "tailwindcss/colors";
 
-interface ArrowProps {
+type ArrowProps = {
   position: Vec2;
   angle?: number;
   color?: Color;
-}
+};
 
-export const Arrow = ({ position, angle = 0, color = "slate" }: ArrowProps) => {
+export function Arrow({ position, angle = 0, color = "slate" }: ArrowProps) {
   const path = useMemo(() => {
     return buildArrowPath(position, angle);
   }, [position, angle]);
@@ -17,9 +17,9 @@ export const Arrow = ({ position, angle = 0, color = "slate" }: ArrowProps) => {
   const fill = colors[color][700];
 
   return <path className="transition-[fill]" d={path} style={{ fill }} />;
-};
+}
 
-const buildArrowPath = (position: Vec2, angle: number) => {
+function buildArrowPath(position: Vec2, angle: number) {
   // Rotate the arrow start and both arms
   const { x: sx, y: sy } = position;
 
@@ -28,4 +28,4 @@ const buildArrowPath = (position: Vec2, angle: number) => {
 
   // Construct the final path
   return `M${sx} ${sy}L${ax} ${ay}L${bx} ${by}`;
-};
+}

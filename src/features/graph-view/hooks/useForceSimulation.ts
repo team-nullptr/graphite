@@ -1,11 +1,4 @@
-import {
-  Dispatch,
-  MutableRefObject,
-  SetStateAction,
-  useCallback,
-  useEffect,
-  useRef,
-} from "react";
+import { Dispatch, MutableRefObject, SetStateAction, useCallback, useEffect, useRef } from "react";
 import { Graph, Vertex } from "~/core/simulator/graph";
 import { Arrangement } from "../types/arrangement";
 import { SelectedVertex } from "../types/selectedVertex";
@@ -44,11 +37,7 @@ class ForceSimulator {
     this.settings = { ...this.settings, ...settings };
   }
 
-  applyForces = (
-    context: Context,
-    graph: Graph,
-    oldArrangement: Arrangement
-  ): Arrangement => {
+  applyForces = (context: Context, graph: Graph, oldArrangement: Arrangement): Arrangement => {
     const { threshold, coolingFactor } = this.settings;
     const { ignore } = context;
 
@@ -64,23 +53,11 @@ class ForceSimulator {
         continue;
       }
 
-      const repulsiveForce = this.computeRepulsiveForce(
-        context,
-        vertex,
-        vertices,
-        arrangement
-      );
+      const repulsiveForce = this.computeRepulsiveForce(context, vertex, vertices, arrangement);
 
-      const attractiveForce = this.computeAttractiveForce(
-        context,
-        vertex,
-        graph,
-        arrangement
-      );
+      const attractiveForce = this.computeAttractiveForce(context, vertex, graph, arrangement);
 
-      forces[vertex.id] = new Vec2(0, 0)
-        .add(repulsiveForce)
-        .add(attractiveForce);
+      forces[vertex.id] = new Vec2(0, 0).add(repulsiveForce).add(attractiveForce);
 
       const force = forces[vertex.id].len();
 
@@ -163,13 +140,10 @@ class ForceSimulator {
 
   repulsiveForce({ chilled }: Context, source: Vec2, adj: Vec2): Vec2 {
     const forceChillout = this.repulsiveChillout;
-    const forceStrength = chilled
-      ? this.repulsiveStrengthChilled
-      : this.repulsiveStrength;
+    const forceStrength = chilled ? this.repulsiveStrengthChilled : this.repulsiveStrength;
 
     const force = Math.min(
-      forceStrength /
-        (1 + Math.pow(Math.E, forceChillout * source.distanceTo(adj))),
+      forceStrength / (1 + Math.pow(Math.E, forceChillout * source.distanceTo(adj))),
       this.maxForce
     );
 
@@ -178,9 +152,7 @@ class ForceSimulator {
 
   attractiveForce({ chilled }: Context, source: Vec2, adj: Vec2): Vec2 {
     const targetLength = this.attractiveTargetLength;
-    const strength = chilled
-      ? this.attractiveStrengthChilled
-      : this.attractiveStrength;
+    const strength = chilled ? this.attractiveStrengthChilled : this.attractiveStrength;
 
     const force = Math.min(
       strength * Math.log(adj.distanceTo(source) / targetLength),
@@ -193,11 +165,11 @@ class ForceSimulator {
 
 const forceSimulator = new ForceSimulator();
 
-export const useForceSimulation = (
+export function useForceSimulation(
   graph: Graph,
   selectedVertexRef: MutableRefObject<SelectedVertex | undefined>,
   setArrangement: Dispatch<SetStateAction<Arrangement>>
-) => {
+) {
   const frameRef = useRef<number>();
 
   const runSimulation: FrameRequestCallback = useCallback(() => {
@@ -224,4 +196,4 @@ export const useForceSimulation = (
       }
     };
   }, [runSimulation]);
-};
+}

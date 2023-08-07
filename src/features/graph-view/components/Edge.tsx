@@ -5,7 +5,7 @@ import colors from "tailwindcss/colors";
 
 const vertexRadius = 19;
 
-export interface EdgeProps {
+export type EdgeProps = {
   x: number;
   y: number;
   dx: number;
@@ -14,22 +14,14 @@ export interface EdgeProps {
   position?: number;
   circular?: boolean;
   color?: Color;
-}
-
-export const Edge = (props: EdgeProps) => {
-  if (props.circular) return <CircularEdge {...props} />;
-  return <StraightEdge {...props} />;
 };
 
-const StraightEdge = ({
-  x,
-  y,
-  dx,
-  dy,
-  directed,
-  position = 0,
-  color = "slate",
-}: EdgeProps) => {
+export function Edge(props: EdgeProps) {
+  if (props.circular) return <CircularEdge {...props} />;
+  return <StraightEdge {...props} />;
+}
+
+function StraightEdge({ x, y, dx, dy, directed, position = 0, color = "slate" }: EdgeProps) {
   const width = dx - x;
   const height = dy - y;
   const length = Math.sqrt(Math.pow(width, 2) + Math.pow(height, 2));
@@ -37,10 +29,7 @@ const StraightEdge = ({
   const angle = position * 0.25;
 
   const start = new Vec2(vertexRadius, 0).rotate(angle);
-  const end = new Vec2(length - vertexRadius, 0).rotate(
-    -angle,
-    new Vec2(length, 0)
-  );
+  const end = new Vec2(length - vertexRadius, 0).rotate(-angle, new Vec2(length, 0));
 
   const mx = (start.x + end.x) / 2;
   const my = Math.tan(angle) * mx;
@@ -55,23 +44,13 @@ const StraightEdge = ({
 
   return (
     <g transform={transform}>
-      <path
-        className="fill-none stroke-1 transition-[stroke]"
-        d={path}
-        stroke={stroke}
-      />
+      <path className="fill-none stroke-1 transition-[stroke]" d={path} stroke={stroke} />
       {directed && <Arrow position={end} angle={-angle} color={color} />}
     </g>
   );
-};
+}
 
-const CircularEdge = ({
-  x,
-  y,
-  directed,
-  position = 0,
-  color = "slate",
-}: EdgeProps) => {
+const CircularEdge = ({ x, y, directed, position = 0, color = "slate" }: EdgeProps) => {
   const radius = 6 * position + 15;
 
   const [cx, cy] = [vertexRadius, 0];
@@ -97,9 +76,7 @@ const CircularEdge = ({
         r={radius}
         stroke={stroke}
       />
-      {directed && (
-        <Arrow position={arrowPostion} angle={arrowAngle} color={color} />
-      )}
+      {directed && <Arrow position={arrowPostion} angle={arrowAngle} color={color} />}
     </g>
   );
 };

@@ -42,14 +42,11 @@ export type SplitProps = {
   initialShare?: number;
 };
 
-export const Split = ({
-  orientation,
-  first,
-  second,
-  initialShare,
-}: SplitProps) => {
-  const { share, isResizing, setIsResizing, resetShare, splitRef } =
-    useSplit<HTMLDivElement>({ orientation, initialShare });
+export function Split({ orientation, first, second, initialShare }: SplitProps) {
+  const { share, isResizing, setIsResizing, resetShare, splitRef } = useSplit<HTMLDivElement>({
+    orientation,
+    initialShare,
+  });
 
   return (
     <div
@@ -79,9 +76,9 @@ export const Split = ({
       </div>
     </div>
   );
-};
+}
 
-type DynamicSplitProps = {
+export type DynamicSplitProps = {
   orientation: Orientation;
   active: boolean;
   initialShare?: number;
@@ -91,13 +88,13 @@ type DynamicSplitProps = {
   dynamicPane: ReactNode;
 };
 
-export const DynamicSplit = ({
+export function DynamicSplit({
   orientation,
   active,
   initialShare = 50,
   staticPane,
   dynamicPane,
-}: DynamicSplitProps) => {
+}: DynamicSplitProps) {
   const { share, setShare, isResizing, setIsResizing, resetShare, splitRef } =
     useSplit<HTMLDivElement>({
       orientation,
@@ -145,4 +142,4 @@ export const DynamicSplit = ({
       )}
     </div>
   );
-};
+}

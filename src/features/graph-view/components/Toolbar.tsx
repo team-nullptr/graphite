@@ -1,8 +1,4 @@
-import {
-  ArrowsPointingInIcon,
-  PlusIcon,
-  MinusIcon,
-} from "@heroicons/react/24/outline";
+import { ArrowsPointingInIcon, PlusIcon, MinusIcon } from "@heroicons/react/24/outline";
 import * as ToolbarPrimitive from "@radix-ui/react-toolbar";
 import { cn } from "~/lib/utils";
 import { ComponentProps, ElementRef, forwardRef } from "react";
@@ -32,14 +28,14 @@ export type ToolbarProps = {
   className?: string;
 };
 
-export const Toolbar = ({
+export function Toolbar({
   zoom,
   onCenter,
   onZoomReset,
   onZoomDecrease,
   onZoomIncrease,
   className,
-}: ToolbarProps) => {
+}: ToolbarProps) {
   return (
     <div>
       <ToolbarPrimitive.Root
@@ -53,9 +49,7 @@ export const Toolbar = ({
           <ToolbarButton onClick={onZoomDecrease}>
             <MinusIcon className="h-5 w-5 text-slate-800" />
           </ToolbarButton>
-          <ToolbarButton onClick={onZoomReset}>
-            {(zoom * 100).toFixed(0)}%
-          </ToolbarButton>
+          <ToolbarButton onClick={onZoomReset}>{(zoom * 100).toFixed(0)}%</ToolbarButton>
           <ToolbarButton onClick={onZoomIncrease}>
             <PlusIcon className="h-5 w-5 text-slate-800" />
           </ToolbarButton>
@@ -63,4 +57,4 @@ export const Toolbar = ({
       </ToolbarPrimitive.Root>
     </div>
   );
-};
+}
