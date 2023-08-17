@@ -6,7 +6,7 @@ export type VertexPreviewProps = {
   color?: Color;
 };
 
-export const VertexPreview = ({ color, label }: VertexPreviewProps) => {
+export function VertexPreview({ color, label }: VertexPreviewProps) {
   const backgroundColor = color ? colors[color][200] : colors["slate"][100];
   const borderColor = color ? colors[color][500] : colors["slate"][300];
   const textColor = colors[color ?? "slate"][900];
@@ -23,4 +23,4 @@ export const VertexPreview = ({ color, label }: VertexPreviewProps) => {
       {label}
     </div>
   );
-};
+}

@@ -11,7 +11,7 @@ export type VertexProps = {
   color?: Color;
 };
 
-export const Vertex = ({ cx, cy, value, onMouseDown, color }: VertexProps) => {
+export function Vertex({ cx, cy, value, onMouseDown, color }: VertexProps) {
   const ref = useRef<SVGGElement>(null);
 
   useEffect(() => {
@@ -54,4 +54,4 @@ export const Vertex = ({ cx, cy, value, onMouseDown, color }: VertexProps) => {
       </text>
     </g>
   );
-};
+}

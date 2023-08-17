@@ -1,18 +1,15 @@
 import { useState } from "react";
-import {
-  ChevronDownIcon,
-  ChevronUpIcon,
-  ArrowUpRightIcon,
-} from "@heroicons/react/24/outline";
+import { ChevronDownIcon, ChevronUpIcon, ArrowUpRightIcon } from "@heroicons/react/24/outline";
 
-type SelectOptions = {
+export type SelectOptions = {
   value?: string;
   onChange: (value: string) => void;
   label: string;
   values: string[];
 };
 
-export const Select = ({ values, label, value, onChange }: SelectOptions) => {
+// TODO: Use radix-ui for this
+export function Select({ values, label, value, onChange }: SelectOptions) {
   const [opened, setOpened] = useState(false);
 
   const handleValueChange = (value: string) => {
@@ -64,4 +61,4 @@ export const Select = ({ values, label, value, onChange }: SelectOptions) => {
       )}
     </div>
   );
-};
+}

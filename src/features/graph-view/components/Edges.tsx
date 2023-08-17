@@ -7,12 +7,12 @@ import { useMemo } from "react";
 
 const centerPosition = new Vec2(0, 0);
 
-export interface EdgesProps {
+export type EdgesProps = {
   positionedEdges: PositionedEdge[];
   arrangement: Arrangement;
-}
+};
 
-export const Edges = (props: EdgesProps) => {
+export function Edges(props: EdgesProps) {
   const { positionedEdges, arrangement } = props;
 
   const renderedEdges = useMemo(() => {
@@ -30,17 +30,15 @@ export const Edges = (props: EdgesProps) => {
   }, [positionedEdges, arrangement]);
 
   return <>{renderedEdges}</>;
-};
+}
 
-interface InternalEdgeComponentProps {
+type InternalEdgeComponentProps = {
   edge: EdgeType;
   positionIndex: number;
   arrangement: Arrangement;
-}
+};
 
-const InternalEdgeComponent = (props: InternalEdgeComponentProps) => {
-  const { edge, arrangement } = props;
-
+function InternalEdgeComponent({ edge, arrangement, positionIndex }: InternalEdgeComponentProps) {
   const { x: fromX, y: fromY } = arrangement[edge.from] ?? centerPosition;
   const { x: toX, y: toY } = arrangement[edge.to] ?? centerPosition;
   const isCircular = edge.from === edge.to;
@@ -52,8 +50,8 @@ const InternalEdgeComponent = (props: InternalEdgeComponentProps) => {
       dx={toX}
       dy={toY}
       directed={edge.directed}
-      position={props.positionIndex}
+      position={positionIndex}
       circular={isCircular}
     />
   );
-};
+}

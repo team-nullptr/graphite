@@ -3,7 +3,7 @@ import { Header } from "./components/Header";
 import { Visualizer } from "./components/Visualizer";
 import { EditorStoreProvider } from "./context/editor";
 
-export const Editor = () => {
+export function Editor() {
   return (
     <EditorStoreProvider projectId={""} loadingFallback={<>Loading ...</>}>
       <div className="flex h-screen w-screen flex-col">
@@ -16,4 +16,4 @@ export const Editor = () => {
       </div>
     </EditorStoreProvider>
   );
-};
+}

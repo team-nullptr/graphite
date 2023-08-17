@@ -12,7 +12,7 @@ type TabIconProps = {
   onClick: () => void;
 };
 
-const TabIcon = ({ tab, highlight, onClick }: TabIconProps) => {
+function TabIcon({ tab, highlight, onClick }: TabIconProps) {
   return (
     <div
       key={tab.id}
@@ -24,7 +24,7 @@ const TabIcon = ({ tab, highlight, onClick }: TabIconProps) => {
       <div className="h-6 w-6 text-slate-800">{tab.icon}</div>
     </div>
   );
-};
+}
 
 export type VerticalTabsProps = {
   tabs: Tab[];
@@ -32,11 +32,7 @@ export type VerticalTabsProps = {
   onTabChange: (tab: Tab) => void;
 };
 
-export const VerticalTabs = ({
-  tabs,
-  currentTab,
-  onTabChange,
-}: VerticalTabsProps) => {
+export function VerticalTabs({ tabs, currentTab, onTabChange }: VerticalTabsProps) {
   const switchTab = (tab: Tab) => {
     onTabChange(tab);
   };
@@ -53,4 +49,4 @@ export const VerticalTabs = ({
       ))}
     </div>
   );
-};
+}

@@ -7,7 +7,7 @@ export type Connection = [vertex: string, edge: Edge[]];
  * @param edges An array of edges to be grouped
  * @returns A map of grouped edges with the key being the connection name
  */
-export const groupEdges = (edges: Edge[]): Connection[] => {
+export function groupEdges(edges: Edge[]): Connection[] {
   const connections = new Map<string, Connection>();
 
   for (const edge of edges) {
@@ -25,7 +25,7 @@ export const groupEdges = (edges: Edge[]): Connection[] => {
   }
 
   return [...connections.values()];
-};
+}
 
 export type PositionedEdge = [edge: Edge, position: number];
 
@@ -35,10 +35,7 @@ export type PositionedEdge = [edge: Edge, position: number];
  * @param vertex An identifier of the beginning vertex
  * @returns An array of edges with assigned positions
  */
-export const distributeEdges = (
-  group: Edge[],
-  vertex: string
-): PositionedEdge[] => {
+export function distributeEdges(group: Edge[], vertex: string): PositionedEdge[] {
   return group.map((edge, index) => {
     // const circular = edge.a.id === edge.b.id;
     const position = false ? index : index - (group.length - 1) / 2;
@@ -47,7 +44,7 @@ export const distributeEdges = (
     const reverse = edge.from !== vertex;
     return [edge, reverse ? -position : position];
   });
-};
+}
 
 /**
  * Sorts edges by their direction relative to the beginning vertex
@@ -69,8 +66,8 @@ export const sortEdges = (edges: Edge[], vertex: string): Edge[] => {
  * @param key An identifier of the beginning vertex of a group of edges (only use for sorting multiple edges!)
  * @returns The edge discriminator
  */
-const getEdgeDiscriminator = (edge: Edge, key: string) => {
+function getEdgeDiscriminator(edge: Edge, key: string) {
   if (!edge.directed) return 0;
   if (edge.from === key) return 1;
   return -1;
-};
+}

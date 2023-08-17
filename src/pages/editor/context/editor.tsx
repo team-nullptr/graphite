@@ -12,7 +12,7 @@ import { Project } from "~/types/project";
 import { EditorState, EditorStore, createEditorStore } from "../store/editor";
 
 // TODO: temporary
-const fetchFakeProject = async (projectId: string) => {
+async function fetchFakeProject(projectId: string) {
   return new Promise<Project>((res) => {
     setTimeout(() =>
       res({
@@ -23,7 +23,7 @@ const fetchFakeProject = async (projectId: string) => {
       })
     );
   });
-};
+}
 
 export const EditorStoreContext = createContext<EditorStore | null>(null);
 
@@ -32,40 +32,40 @@ export type EditorStoreProviderProps = PropsWithChildren<{
   loadingFallback: ReactElement;
 }>;
 
-export const EditorStoreProvider = (props: EditorStoreProviderProps) => {
+export function EditorStoreProvider({
+  projectId,
+  loadingFallback,
+  children,
+}: EditorStoreProviderProps) {
   // TODO: ultimately we probably want to use ReactQuery or sth ..
   const [loading, setLoading] = useState(true);
   const storeRef = useRef<EditorStore>();
 
   useEffect(() => {
-    fetchFakeProject(props.projectId).then((project) => {
+    fetchFakeProject(projectId).then((project) => {
       storeRef.current = createEditorStore({ project });
       setLoading(false);
     });
-  }, []);
+  }, [projectId]);
 
   if (loading || !storeRef.current) {
-    return props.loadingFallback;
+    return loadingFallback;
   }
 
   return (
-    <EditorStoreContext.Provider value={storeRef.current}>
-      {props.children}
-    </EditorStoreContext.Provider>
+    <EditorStoreContext.Provider value={storeRef.current}>{children}</EditorStoreContext.Provider>
   );
-};
+}
 
-export const useEditorStore = <T,>(
+export function useEditorStore<T>(
   selector: (state: EditorState) => T,
   equalityFn?: (left: T, right: T) => boolean
-): T => {
+): T {
   const store = useContext(EditorStoreContext);
 
   if (!store) {
-    throw new Error(
-      "'useEditorStore' hook must be used inside <EditorStoreContext.Provider/>"
-    );
+    throw new Error("'useEditorStore' hook must be used inside <EditorStoreContext.Provider/>");
   }
 
   return useStore(store, selector, equalityFn);
-};
+}

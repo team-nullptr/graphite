@@ -1,6 +1,6 @@
 import { cn } from "~/lib/utils";
 
-export const LayoutHorizontal = ({ className }: { className?: string }) => {
+export function LayoutHorizontalIcon({ className }: { className?: string }) {
   return (
     <svg
       className={cn(className)}
@@ -29,4 +29,4 @@ export const LayoutHorizontal = ({ className }: { className?: string }) => {
       </defs>
     </svg>
   );
-};
+}

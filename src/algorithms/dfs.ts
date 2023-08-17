@@ -1,18 +1,13 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-
-import {
-  Algorithm,
-  Highlight,
-  Highlights,
-  Step,
-} from "~/core/simulator/algorithm";
+import { Algorithm, Highlight, Highlights, Step } from "~/core/simulator/algorithm";
 import { Graph } from "~/core/simulator/graph";
 
-const algorithm = (graph: Graph, startingVertex: string): Step[] => {
+function algorithm(graph: Graph, startingVertex: string): Step[] {
   const steps: Step[] = [];
   const savedHighlights: Highlight[] = [];
 
   const visited = new Set<string>();
+
   const stack: string[] = [];
 
   stack.push(startingVertex);
@@ -45,10 +40,7 @@ const algorithm = (graph: Graph, startingVertex: string): Step[] => {
     const current = graph.vertices[currentId]!;
 
     {
-      const highlights: Highlights = new Map([
-        ...savedHighlights,
-        [currentId, "sky"],
-      ]);
+      const highlights: Highlights = new Map([...savedHighlights, [currentId, "sky"]]);
 
       steps.push({
         description: `Pop vertex ${currentId} from the stack.`,
@@ -72,10 +64,7 @@ const algorithm = (graph: Graph, startingVertex: string): Step[] => {
 
     if (visited.has(currentId)) {
       {
-        const highlights: Highlights = new Map([
-          ...savedHighlights,
-          [currentId, "slate"],
-        ]);
+        const highlights: Highlights = new Map([...savedHighlights, [currentId, "slate"]]);
 
         steps.push({
           description: `Vertex ${currentId} was already visited. Continue to the next step.`,
@@ -103,10 +92,7 @@ const algorithm = (graph: Graph, startingVertex: string): Step[] => {
     visited.add(current.id);
 
     {
-      const highlights: Highlights = new Map([
-        [current.id, "slate"],
-        ...savedHighlights,
-      ]);
+      const highlights: Highlights = new Map([[current.id, "slate"], ...savedHighlights]);
 
       steps.push({
         description: `Mark vertex ${currentId} as visited.`,
@@ -133,8 +119,7 @@ const algorithm = (graph: Graph, startingVertex: string): Step[] => {
 
     for (const edgeId of current.outs) {
       const edge = graph.edges[edgeId];
-      const adjacentId =
-        edge.to === current.id && !edge.directed ? edge.from : edge.to;
+      const adjacentId = edge.to === current.id && !edge.directed ? edge.from : edge.to;
 
       if (visited.has(adjacentId)) {
         continue;
@@ -199,7 +184,7 @@ const algorithm = (graph: Graph, startingVertex: string): Step[] => {
   }
 
   return steps;
-};
+}
 
 export const dfs: Algorithm = {
   name: "Depth First Search",

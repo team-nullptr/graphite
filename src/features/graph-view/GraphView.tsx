@@ -3,11 +3,7 @@ import { Graph } from "~/core/simulator/graph";
 import { ControlledSvg } from "~/shared/layout/controlled-svg/ControlledSvg";
 import { Edges } from "./components/Edges";
 import { Vertices } from "./components/Vertices";
-import {
-  distributeEdges,
-  groupEdges,
-  sortEdges,
-} from "./helpers/distributeEdges";
+import { distributeEdges, groupEdges, sortEdges } from "./helpers/distributeEdges";
 import { useGraphLayout } from "./hooks/useGraphLayout";
 import { useRef, useMemo } from "react";
 import { Toolbar } from "./components/Toolbar";
@@ -17,7 +13,7 @@ export type GraphViewProps = {
   graph: Graph;
 };
 
-export const GraphView = ({ highlights, graph }: GraphViewProps) => {
+export function GraphView({ highlights, graph }: GraphViewProps) {
   const svgRef = useRef<SVGSVGElement>(null);
 
   // prettier-ignore
@@ -39,9 +35,10 @@ export const GraphView = ({ highlights, graph }: GraphViewProps) => {
   return (
     <ControlledSvg
       isPanEnabled={isPanEnabled}
+      zoomBounds={{ min: 0.5, max: 2 }}
       ref={svgRef}
       className="h-full w-full"
-      controls={(zoom, center, setZoom, setCenter) => (
+      controls={({ zoom, setZoom, setCenter }) => (
         <Toolbar
           zoom={zoom}
           onZoomReset={() => setZoom(1)}
@@ -67,4 +64,4 @@ export const GraphView = ({ highlights, graph }: GraphViewProps) => {
       />
     </ControlledSvg>
   );
-};
+}

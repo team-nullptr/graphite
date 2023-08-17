@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-
 import { createColumnHelper } from "@tanstack/react-table";
 import { Graph, Vertex } from "~/core/simulator/graph";
 import { Highlights, Step, Algorithm } from "~/core/simulator/algorithm";
@@ -10,7 +9,7 @@ import { cn } from "~/lib/utils";
 // TODO: Check if algorithm can be run on a graph.
 // TODO: Do we want to use i18 to support multiple languages (en / pl)?
 
-export type DijkstraTableData = {
+type DijkstraTableData = {
   vertex: {
     id: string;
     color?: Color;
@@ -36,12 +35,7 @@ const columns = [
     cell: (info) => {
       const { value, justUpdated } = info.getValue();
       return (
-        <span
-          className={cn(
-            "block transition-all",
-            justUpdated && "animate-pulse text-sky-500"
-          )}
-        >
+        <span className={cn("block transition-all", justUpdated && "animate-pulse text-sky-500")}>
           {value}
         </span>
       );
@@ -49,10 +43,10 @@ const columns = [
   }),
 ];
 
-const pickClosest = (
+function pickClosest(
   unvisited: IterableIterator<Vertex>,
   distances: Map<string, number>
-): Vertex | undefined => {
+): Vertex | undefined {
   let next: Vertex | undefined;
 
   for (const candidate of unvisited) {
@@ -67,9 +61,9 @@ const pickClosest = (
   }
 
   return next;
-};
+}
 
-const algorithm = (graph: Graph, startingVertex: string): Step[] => {
+function algorithm(graph: Graph, startingVertex: string): Step[] {
   const steps: Step[] = [];
   const savedHighlights: [string, Color][] = [];
 
@@ -111,10 +105,7 @@ const algorithm = (graph: Graph, startingVertex: string): Step[] => {
     const current = pickClosest(unvisited.values(), distances)!;
 
     {
-      const highlights: Highlights = new Map([
-        ...savedHighlights,
-        [current.id, "sky"],
-      ]);
+      const highlights: Highlights = new Map([...savedHighlights, [current.id, "sky"]]);
 
       steps.push({
         description: "Pick the closest vertex from all unvisited vertices.",
@@ -146,9 +137,7 @@ const algorithm = (graph: Graph, startingVertex: string): Step[] => {
       const edge = graph.edges[edgeId];
 
       const adjacent =
-        graph.vertices[
-          edge.to === current.id && !edge.directed ? edge.from : edge.to
-        ];
+        graph.vertices[edge.to === current.id && !edge.directed ? edge.from : edge.to];
 
       if (!unvisited.has(adjacent)) {
         continue;
@@ -156,10 +145,7 @@ const algorithm = (graph: Graph, startingVertex: string): Step[] => {
 
       distances.set(
         adjacent.id,
-        Math.min(
-          distances.get(adjacent.id)!,
-          distances.get(current.id)! + edge.weight!
-        )
+        Math.min(distances.get(adjacent.id)!, distances.get(current.id)! + edge.weight!)
       );
 
       outsHighlights.set(adjacent.id, "sky");
@@ -173,8 +159,7 @@ const algorithm = (graph: Graph, startingVertex: string): Step[] => {
       ]);
 
       steps.push({
-        description:
-          "Iterate over all adjacent unvisited nodes and update their min length.",
+        description: "Iterate over all adjacent unvisited nodes and update their min length.",
         state: [
           {
             type: "table",
@@ -256,7 +241,7 @@ const algorithm = (graph: Graph, startingVertex: string): Step[] => {
   }
 
   return steps;
-};
+}
 
 export const dijkstra: Algorithm = {
   name: "Dijkstra",

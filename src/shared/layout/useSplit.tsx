@@ -2,17 +2,17 @@ import { useRef, useState, useEffect, useCallback } from "react";
 
 export type Orientation = "vertical" | "horizontal";
 
-type SplitOptions = {
+export type SplitOptions = {
   orientation: Orientation;
   initialShare?: number;
   reverse?: boolean;
 };
 
-export const useSplit = <E extends HTMLElement>({
+export function useSplit<E extends HTMLElement>({
   orientation,
   initialShare = 50,
   reverse = false,
-}: SplitOptions) => {
+}: SplitOptions) {
   const splitRef = useRef<E>(null);
   const [share, setShare] = useState(initialShare);
   const [isResizing, setIsResizing] = useState(false);
@@ -22,7 +22,9 @@ export const useSplit = <E extends HTMLElement>({
     [reverse]
   );
 
-  const resetShare = () => setShare(initialShare);
+  const resetShare = () => {
+    setShare(initialShare);
+  };
 
   useEffect(() => {
     const stopResizing = () => setIsResizing(false);
@@ -35,17 +37,12 @@ export const useSplit = <E extends HTMLElement>({
       if (!splitRef.current || !isResizing) {
         return;
       }
-      console.log(e);
 
-      const { width, height, left, top } =
-        splitRef.current.getBoundingClientRect();
-
+      const { width, height, left, top } = splitRef.current.getBoundingClientRect();
       const ratio =
-        orientation === "horizontal"
-          ? (e.clientY - top) / height
-          : (e.clientX - left) / width;
-
+        orientation === "horizontal" ? (e.clientY - top) / height : (e.clientX - left) / width;
       const share = Math.min(Math.max(ratio, 0), 1) * 100;
+
       setProcessedShare(share);
     };
 
@@ -61,4 +58,4 @@ export const useSplit = <E extends HTMLElement>({
     resetShare,
     splitRef,
   };
-};
+}

@@ -29,7 +29,7 @@ const initialGraph: Graph = {
   vertices: {},
 };
 
-export const createEditorStore = ({ project }: CreateEditorStoreOpts) => {
+export function createEditorStore({ project }: CreateEditorStoreOpts) {
   return createStore<EditorState>()((set) => ({
     metadata: project.metadata,
 
@@ -51,6 +51,6 @@ export const createEditorStore = ({ project }: CreateEditorStoreOpts) => {
       });
     },
   }));
-};
+}
 
 export type EditorStore = ReturnType<typeof createEditorStore>;

@@ -1,6 +1,6 @@
 import { cn } from "~/lib/utils";
 
-export const LayoutVertical = ({ className }: { className?: string }) => {
+export function LayoutVerticalIcon({ className }: { className?: string }) {
   return (
     <svg
       className={cn(className)}
@@ -16,11 +16,7 @@ export const LayoutVertical = ({ className }: { className?: string }) => {
           stroke="currentColor"
           strokeWidth="1.5"
         />
-        <path
-          d="M8.5 1.5V22.5M15.5 1.5V22.5"
-          stroke="currentColor"
-          strokeWidth="1.5"
-        />
+        <path d="M8.5 1.5V22.5M15.5 1.5V22.5" stroke="currentColor" strokeWidth="1.5" />
       </g>
       <defs>
         <clipPath id="clip0_1_7">
@@ -29,4 +25,4 @@ export const LayoutVertical = ({ className }: { className?: string }) => {
       </defs>
     </svg>
   );
-};
+}

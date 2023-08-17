@@ -12,7 +12,7 @@ export interface AlgorithmDetails {
   onBack: () => void;
 }
 
-export const AlgorithmDetails = ({ algorithm, onBack }: AlgorithmDetails) => {
+export function AlgorithmDetails({ algorithm, onBack }: AlgorithmDetails) {
   const [startingVertex, setStartingVertex] = useState<string>();
 
   const { graph, setMode } = useEditorStore(({ graph, setMode }) => ({
@@ -53,13 +53,11 @@ export const AlgorithmDetails = ({ algorithm, onBack }: AlgorithmDetails) => {
           alt="back"
         />
       </Controls>
-
       <div className="relative flex flex-1 flex-col divide-y divide-slate-300">
         <div className="flex flex-col gap-2 p-4">
           <span className="font-medium text-slate-800">{algorithm.name}</span>
           <p className="text-slate-600">{algorithm.description}</p>
         </div>
-
         <div className="flex flex-col gap-8 p-4">
           <div className="flex flex-col gap-2">
             <span className="text-slate-800">
@@ -74,7 +72,6 @@ export const AlgorithmDetails = ({ algorithm, onBack }: AlgorithmDetails) => {
           </div>
         </div>
       </div>
-
       <div className="flex-g flex justify-end bg-slate-50 p-4">
         <SpaceshipButton
           disabled={startingVertex === undefined}
@@ -86,4 +83,4 @@ export const AlgorithmDetails = ({ algorithm, onBack }: AlgorithmDetails) => {
       </div>
     </div>
   );
-};
+}

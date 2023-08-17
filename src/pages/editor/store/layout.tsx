@@ -2,10 +2,10 @@ import { create } from "zustand";
 import { devtools, persist } from "zustand/middleware";
 import { Orientation } from "~/shared/layout/useSplit";
 
-interface LayoutSettings {
+export type LayoutSettings = {
   orientation: Orientation;
   switchOrientation: () => void;
-}
+};
 
 const orientationsChange = {
   vertical: "horizontal",
@@ -23,7 +23,7 @@ export const useLayoutSettingsStore = create<LayoutSettings>()(
           })),
       }),
       {
-        name: "bear-storage",
+        name: "layout-settings",
       }
     )
   )
