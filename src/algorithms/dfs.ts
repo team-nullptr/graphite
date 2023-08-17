@@ -1,6 +1,4 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-
-
 import { Algorithm, Highlight, Highlights, Step } from "~/core/simulator/algorithm";
 import { Graph } from "~/core/simulator/graph";
 
@@ -9,6 +7,7 @@ function algorithm(graph: Graph, startingVertex: string): Step[] {
   const savedHighlights: Highlight[] = [];
 
   const visited = new Set<string>();
+
   const stack: string[] = [];
 
   stack.push(startingVertex);

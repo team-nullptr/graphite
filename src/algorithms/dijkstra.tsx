@@ -9,7 +9,7 @@ import { cn } from "~/lib/utils";
 // TODO: Check if algorithm can be run on a graph.
 // TODO: Do we want to use i18 to support multiple languages (en / pl)?
 
-export type DijkstraTableData = {
+type DijkstraTableData = {
   vertex: {
     id: string;
     color?: Color;
