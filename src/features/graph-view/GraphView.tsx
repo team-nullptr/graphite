@@ -9,11 +9,12 @@ import { useRef, useMemo } from "react";
 import { Toolbar } from "./components/Toolbar";
 
 export type GraphViewProps = {
-  highlights?: Highlights;
+  verticesHighlights?: Highlights;
+  edgesHighlights?: Highlights;
   graph: Graph;
 };
 
-export function GraphView({ highlights, graph }: GraphViewProps) {
+export function GraphView({ verticesHighlights, edgesHighlights, graph }: GraphViewProps) {
   const svgRef = useRef<SVGSVGElement>(null);
 
   // prettier-ignore
@@ -54,11 +55,12 @@ export function GraphView({ highlights, graph }: GraphViewProps) {
       {/* prettier-ignore */}
       <Edges
         positionedEdges={positionedEdges}
+        highlights={edgesHighlights}
         arrangement={arrangement}
       />
       <Vertices
         vertices={Object.values(graph.vertices)}
-        highlights={highlights}
+        highlights={verticesHighlights}
         arrangement={arrangement}
         onVertexMouseDown={vertexMouseDownHandler}
       />

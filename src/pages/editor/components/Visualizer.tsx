@@ -24,8 +24,11 @@ export const Visualizer = () => {
     setCurrentStep(0);
   }, [mode]);
 
-  const highlights =
-    mode.type === "SIMULATION" ? mode.steps[currentStepIndex]?.highlights : undefined;
+  const verticesHighlights =
+    mode.type === "SIMULATION" ? mode.steps[currentStepIndex]?.verticesHighlights : undefined;
+
+  const edgesHighlights =
+    mode.type === "SIMULATION" ? mode.steps[currentStepIndex]?.edgesHighlights : undefined;
 
   const renderStepState = (state: State) => {
     if (!state) return null;
@@ -46,7 +49,13 @@ export const Visualizer = () => {
       <DynamicSplit
         orientation={orientation}
         active={mode.type === "SIMULATION"}
-        staticPane={<GraphView graph={graph} highlights={highlights} />}
+        staticPane={
+          <GraphView
+            graph={graph}
+            verticesHighlights={verticesHighlights}
+            edgesHighlights={edgesHighlights}
+          />
+        }
         initialShare={100 * (2 / 3)}
         dynamicPane={
           mode.type === "SIMULATION" && (

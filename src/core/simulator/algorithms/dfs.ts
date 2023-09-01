@@ -1,6 +1,8 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { Algorithm, Highlight, Highlights, Step } from "~/core/simulator/algorithm";
+import type { Algorithm } from "~/core/simulator/algorithm";
 import { Graph } from "~/core/simulator/graph";
+import type { Highlight, Highlights } from "../highlight";
+import type { Step } from "../step";
 
 function algorithm(graph: Graph, startingVertex: string): Step[] {
   const steps: Step[] = [];
@@ -187,8 +189,8 @@ function algorithm(graph: Graph, startingVertex: string): Step[] {
 }
 
 export const dfs: Algorithm = {
-  name: "Depth First Search",
-  description: "Depth First Search algorithm visit all nodes of a graph.",
+  name: "Iterative Depth First Search",
+  description: "See how iterative DFS explores your graph.",
   tags: ["exploration"],
   algorithm,
 };

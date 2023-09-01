@@ -1,26 +1,21 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { createColumnHelper } from "@tanstack/react-table";
+import type { Algorithm } from "~/core/simulator/algorithm";
 import { Graph, Vertex } from "~/core/simulator/graph";
-import { Highlights, Step, Algorithm } from "~/core/simulator/algorithm";
 import { VertexPreview } from "~/shared/ui/VertexPreview";
 import type { Color } from "~/types/color";
-import { cn } from "~/lib/utils";
+import type { Highlights } from "../highlight";
+import type { Step } from "../step";
 
-// TODO: Check if algorithm can be run on a graph.
-// TODO: Do we want to use i18 to support multiple languages (en / pl)?
-
-type DijkstraTableData = {
+type TableData = {
   vertex: {
     id: string;
     color?: Color;
   };
-  distance: {
-    value: number;
-    justUpdated: boolean;
-  };
+  distance: number;
 };
 
-const columnHelper = createColumnHelper<DijkstraTableData>();
+const columnHelper = createColumnHelper<TableData>();
 
 const columns = [
   columnHelper.accessor("vertex", {
@@ -33,12 +28,7 @@ const columns = [
   columnHelper.accessor("distance", {
     header: "Distance",
     cell: (info) => {
-      const { value, justUpdated } = info.getValue();
-      return (
-        <span className={cn("block transition-all", justUpdated && "animate-pulse text-sky-500")}>
-          {value}
-        </span>
-      );
+      return <span className="block transition-all">{info.getValue()}</span>;
     },
   }),
 ];
@@ -84,15 +74,12 @@ function algorithm(graph: Graph, startingVertex: string): Step[] {
           type: "table",
           columns,
           data: [...distances.entries()].map(
-            ([id, distance]): DijkstraTableData => ({
+            ([id, distance]): TableData => ({
               vertex: {
                 id,
                 color: highlights.get(id),
               },
-              distance: {
-                value: distance,
-                justUpdated: id === start.id,
-              },
+              distance,
             })
           ),
         },
@@ -114,15 +101,12 @@ function algorithm(graph: Graph, startingVertex: string): Step[] {
             type: "table",
             columns,
             data: [...distances.entries()].map(
-              ([id, distance]): DijkstraTableData => ({
+              ([id, distance]): TableData => ({
                 vertex: {
                   id,
                   color: highlights.get(id),
                 },
-                distance: {
-                  value: distance,
-                  justUpdated: false,
-                },
+                distance,
               })
             ),
           },
@@ -165,15 +149,12 @@ function algorithm(graph: Graph, startingVertex: string): Step[] {
             type: "table",
             columns,
             data: [...distances.entries()].map(
-              ([id, distance]): DijkstraTableData => ({
+              ([id, distance]): TableData => ({
                 vertex: {
                   id,
                   color: highlights.get(id),
                 },
-                distance: {
-                  value: distance,
-                  justUpdated: outsHighlights.has(id),
-                },
+                distance,
               })
             ),
           },
@@ -195,15 +176,12 @@ function algorithm(graph: Graph, startingVertex: string): Step[] {
             type: "table",
             columns,
             data: [...distances.entries()].map(
-              ([id, distance]): DijkstraTableData => ({
+              ([id, distance]): TableData => ({
                 vertex: {
                   id,
                   color: highlights.get(id),
                 },
-                distance: {
-                  value: distance,
-                  justUpdated: false,
-                },
+                distance,
               })
             ),
           },
@@ -223,15 +201,12 @@ function algorithm(graph: Graph, startingVertex: string): Step[] {
           type: "table",
           columns,
           data: [...distances.entries()].map(
-            ([id, distance]): DijkstraTableData => ({
+            ([id, distance]): TableData => ({
               vertex: {
                 id,
                 color: highlights.get(id),
               },
-              distance: {
-                value: distance,
-                justUpdated: false,
-              },
+              distance,
             })
           ),
         },

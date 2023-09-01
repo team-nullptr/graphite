@@ -1,7 +1,9 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 
-import { Algorithm, Highlight, Highlights, Step } from "~/core/simulator/algorithm";
+import type { Algorithm } from "~/core/simulator/algorithm";
 import { Graph } from "~/core/simulator/graph";
+import type { Highlight, Highlights } from "../highlight";
+import type { Step } from "../step";
 
 function algorithm(graph: Graph, startingVertex: string): Step[] {
   const steps: Step[] = [];

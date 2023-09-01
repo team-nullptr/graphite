@@ -13,6 +13,7 @@ import { Call } from "./stmt";
 import { Statement, Visitor as StmtVisitor } from "./stmt";
 import { Token } from "./token";
 import { Obj, assertNumber, assertVertex } from "./object";
+import { ArcFn, CompleteFn, EdgeFn, VertexFn } from "./std/callables";
 
 class ExecError extends Error {
   constructor(public readonly token: Token, message: string) {
@@ -34,101 +35,34 @@ class Environment {
 }
 
 export class Interpreter implements ExprVisitor<Obj>, StmtVisitor<void> {
-  // TODO: Is there any way to create those global functions outside of this class?
   private environment = new Environment(
     new Map<string, Callable>([
-      [
-        "vertex",
-        new (class extends Callable {
-          arity = { min: 1, max: 2 };
-
-          call(interpreter: Interpreter, args: Obj[]): void {
-            const value = args[1] ? assertNumber(args[1]) : 1;
-
-            if (args[0].type === "VERTEX") {
-              interpreter.vertices[args[0].value] = new Vertex(
-                args[0].value,
-                value
-              );
-            } else if (args[0].type === "VERTEX_COLLECTION") {
-              for (const vertex of args[0].value) {
-                interpreter.vertices[vertex] = new Vertex(vertex, value);
-              }
-            } else {
-              throw new Error("Expected a vertex or a vertex collection.");
-            }
-          }
-        })(),
-      ],
-      [
-        "edge",
-        new (class extends Callable {
-          arity = { min: 2, max: 3 };
-
-          call(interpreter: Interpreter, args: Obj[]): void {
-            const from = assertVertex(args[0]);
-            const weight = args[2] ? assertNumber(args[2]) : 1;
-
-            if (args[1].type === "VERTEX") {
-              const id = nanoid();
-              const to = args[1].value;
-
-              interpreter.edges[id] = new Edge(id, from, to, weight, false);
-              interpreter.vertices[from].outs.push(id);
-              interpreter.vertices[from].ins.push(id);
-              interpreter.vertices[to].ins.push(id);
-              interpreter.vertices[to].outs.push(id);
-            } else if (args[1].type === "VERTEX_COLLECTION") {
-              for (const to of args[1].value) {
-                const id = nanoid();
-
-                interpreter.edges[id] = new Edge(id, from, to, weight, false);
-                interpreter.vertices[from].outs.push(id);
-                interpreter.vertices[from].ins.push(id);
-                interpreter.vertices[to].ins.push(id);
-                interpreter.vertices[to].outs.push(id);
-              }
-            } else {
-              throw new Error("Expected a vertex or a vertex collection.");
-            }
-          }
-        })(),
-      ],
-      [
-        "arc",
-        new (class extends Callable {
-          arity = { min: 2, max: 3 };
-
-          call(interpreter: Interpreter, args: Obj[]): void {
-            const from = assertVertex(args[0]);
-            const weight = args[2] ? assertNumber(args[2]) : 1;
-
-            if (args[1].type === "VERTEX") {
-              const id = nanoid();
-              const to = args[1].value;
-
-              interpreter.edges[id] = new Edge(id, from, to, weight, true);
-              interpreter.vertices[from].outs.push(id);
-              interpreter.vertices[to].ins.push(id);
-            } else if (args[1].type === "VERTEX_COLLECTION") {
-              for (const to of args[1].value) {
-                const id = nanoid();
-
-                interpreter.edges[id] = new Edge(id, from, to, weight, true);
-                interpreter.vertices[from].outs.push(id);
-                interpreter.vertices[to].ins.push(id);
-              }
-            } else {
-              throw new Error("Expected a vertex or a vertex collection.");
-            }
-          }
-        })(),
-      ],
+      ["vertex", new VertexFn()],
+      ["edge", new EdgeFn()],
+      ["arc", new ArcFn()],
+      ["complete", new CompleteFn()],
     ])
   );
 
   private edges: Record<string, Edge> = {};
+
+  addEdge(key: string, edge: Edge) {
+    this.edges[key] = edge;
+  }
+
+  getEdge(key: string): Edge {
+    return this.edges[key];
+  }
+
   private vertices: Record<string, Vertex> = {};
+
+  addVertex(key: string, vertex: Vertex) {
+    this.vertices[key] = vertex;
+  }
+
+  getVertex(key: string): Vertex {
+    return this.vertices[key];
+  }
 
   constructor(private readonly stmts: Statement[]) {}
 

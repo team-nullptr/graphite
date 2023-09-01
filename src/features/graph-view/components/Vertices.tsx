@@ -6,7 +6,6 @@ import { useCallback, useMemo } from "react";
 import { Highlights } from "~/core/simulator/algorithm";
 
 const LEFT_MOUSE_BUTTON = 0;
-
 const centerPosition = new Vec2(0, 0);
 
 export type VerticesProps = {

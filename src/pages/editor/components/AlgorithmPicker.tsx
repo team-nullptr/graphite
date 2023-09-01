@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { algorithms } from "~/algorithms";
+import { algorithms } from "~/core/simulator/algorithms";
 import { Algorithm } from "~/core/simulator/algorithm";
 import { AlgorithmDetails } from "./AlgorithmDetails";
 import { AlgorithmGrid } from "./AlgorithmGrid";
