@@ -54,3 +54,17 @@ body,
     scrollbar-width: none; /* Firefox */
   }
 }
+
+@layer base {
+  ::-webkit-scrollbar {
+    @apply h-2 w-2;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply rounded-md bg-slate-300;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-slate-400;
+  }
+}
