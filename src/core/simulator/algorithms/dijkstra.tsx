@@ -5,7 +5,8 @@ import { Graph, Vertex } from "~/core/simulator/graph";
 import { VertexPreview } from "~/shared/ui/VertexPreview";
 import type { Color } from "~/types/color";
 import type { Highlights } from "../highlight";
-import type { Step } from "../step";
+import { StepBuilder, type Step } from "../step";
+import { TableStateBuilder } from "../state";
 
 type TableData = {
   vertex: {
@@ -33,6 +34,18 @@ const columns = [
   }),
 ];
 
+function buildTableData(distances: Map<string, number>, highlights: Highlights) {
+  return [...distances.entries()].map(
+    ([id, distance]): TableData => ({
+      vertex: {
+        id,
+        color: highlights.get(id),
+      },
+      distance,
+    })
+  );
+}
+
 function pickClosest(
   unvisited: IterableIterator<Vertex>,
   distances: Map<string, number>
@@ -53,9 +66,14 @@ function pickClosest(
   return next;
 }
 
+function visitedHighlights(vertices: Vertex[], unvisited: Set<Vertex>): Highlights {
+  return new Map(
+    vertices.filter((vertex) => !unvisited.has(vertex)).map((vertex) => [vertex.id, "slate"])
+  );
+}
+
 function algorithm(graph: Graph, startingVertex: string): Step[] {
   const steps: Step[] = [];
-  const savedHighlights: [string, Color][] = [];
 
   const vertices = Object.values(graph.vertices);
   const distances = new Map(vertices.map((vertex) => [vertex.id, Infinity]));
@@ -67,52 +85,37 @@ function algorithm(graph: Graph, startingVertex: string): Step[] {
   {
     const highlights: Highlights = new Map([[start.id, "sky"]]);
 
-    steps.push({
-      description: "Set distance to starting vertext to 0.",
-      state: [
-        {
-          type: "table",
-          columns,
-          data: [...distances.entries()].map(
-            ([id, distance]): TableData => ({
-              vertex: {
-                id,
-                color: highlights.get(id),
-              },
-              distance,
-            })
-          ),
-        },
-      ],
-      highlights,
-    });
+    steps.push(
+      new StepBuilder({
+        description: "Set distance to starting vertex to 0.",
+      })
+        .state([
+          new TableStateBuilder({ columns }).data(buildTableData(distances, highlights)).build(),
+        ])
+        .verticesHighlights(highlights)
+        .build()
+    );
   }
 
   while (unvisited.size > 0) {
     const current = pickClosest(unvisited.values(), distances)!;
 
     {
-      const highlights: Highlights = new Map([...savedHighlights, [current.id, "sky"]]);
+      const highlights: Highlights = new Map([
+        [current.id, "sky"],
+        ...visitedHighlights(vertices, unvisited),
+      ]);
 
-      steps.push({
-        description: "Pick the closest vertex from all unvisited vertices.",
-        state: [
-          {
-            type: "table",
-            columns,
-            data: [...distances.entries()].map(
-              ([id, distance]): TableData => ({
-                vertex: {
-                  id,
-                  color: highlights.get(id),
-                },
-                distance,
-              })
-            ),
-          },
-        ],
-        highlights,
-      });
+      steps.push(
+        new StepBuilder({
+          description: "Pick the closest vertex from all unvisited vertices.",
+        })
+          .state([
+            new TableStateBuilder({ columns }).data(buildTableData(distances, highlights)).build(),
+          ])
+          .verticesHighlights(highlights)
+          .build()
+      );
     }
 
     const outsHighlights: Highlights = new Map();
@@ -137,87 +140,58 @@ function algorithm(graph: Graph, startingVertex: string): Step[] {
 
     {
       const highlights: Highlights = new Map([
-        ...savedHighlights,
-        ...outsHighlights,
         [current.id, "orange"],
+        ...outsHighlights,
+        ...visitedHighlights(vertices, unvisited),
       ]);
 
-      steps.push({
-        description: "Iterate over all adjacent unvisited nodes and update their min length.",
-        state: [
-          {
-            type: "table",
-            columns,
-            data: [...distances.entries()].map(
-              ([id, distance]): TableData => ({
-                vertex: {
-                  id,
-                  color: highlights.get(id),
-                },
-                distance,
-              })
-            ),
-          },
-        ],
-        highlights,
-      });
+      steps.push(
+        new StepBuilder({
+          description: "Iterate over all adjacent unvisited nodes and update their min length.",
+        })
+          .state([
+            new TableStateBuilder({ columns }).data(buildTableData(distances, highlights)).build(),
+          ])
+          .verticesHighlights(highlights)
+          .build()
+      );
     }
 
-    savedHighlights.push([current.id, "slate"]);
     unvisited.delete(current);
 
     {
-      const highlights: Highlights = new Map([...savedHighlights]);
+      const highlights = visitedHighlights(vertices, unvisited);
 
-      steps.push({
-        description: "Mark current node as visited.",
-        state: [
-          {
-            type: "table",
-            columns,
-            data: [...distances.entries()].map(
-              ([id, distance]): TableData => ({
-                vertex: {
-                  id,
-                  color: highlights.get(id),
-                },
-                distance,
-              })
-            ),
-          },
-        ],
-        highlights,
-      });
+      steps.push(
+        new StepBuilder({
+          description: "Mark current node as visited.",
+        })
+          .state([
+            new TableStateBuilder({ columns }).data(buildTableData(distances, highlights)).build(),
+          ])
+          .verticesHighlights(highlights)
+          .build()
+      );
     }
   }
 
   {
-    const highlights: Highlights = new Map([...savedHighlights]);
+    const highlights = visitedHighlights(vertices, unvisited);
 
-    steps.push({
-      description: "There is no more unvisited vertices, end the algorithm!",
-      state: [
-        {
-          type: "table",
-          columns,
-          data: [...distances.entries()].map(
-            ([id, distance]): TableData => ({
-              vertex: {
-                id,
-                color: highlights.get(id),
-              },
-              distance,
-            })
-          ),
-        },
-      ],
-      highlights: new Map([...savedHighlights]),
-    });
+    steps.push(
+      new StepBuilder({
+        description: "There is no more unvisited vertices. End the algorithm.",
+      })
+        .state([
+          new TableStateBuilder({ columns }).data(buildTableData(distances, highlights)).build(),
+        ])
+        .verticesHighlights(highlights)
+        .build()
+    );
   }
 
   return steps;
 }
-
 export const dijkstra: Algorithm = {
   name: "Dijkstra",
   description:
