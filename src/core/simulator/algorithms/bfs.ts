@@ -2,111 +2,120 @@
 
 import type { Algorithm } from "~/core/simulator/algorithm";
 import { Graph } from "~/core/simulator/graph";
-import type { Highlight, Highlights } from "../highlight";
-import type { Step } from "../step";
+import type { Highlights } from "../highlight";
+import { StepBuilder, type Step } from "../step";
+import { ArrayStateBuilder } from "../state";
+
+function buildVisitOrderState(visited: string[]) {
+  return new ArrayStateBuilder({ title: "Visit Order" }).data(visited).build();
+}
+
+function buildStackState(stack: string[], highlighted: number[] = []) {
+  return new ArrayStateBuilder({ title: "Stack" })
+    .data(stack)
+    .highlighted(new Set(highlighted))
+    .build();
+}
+
+function visitedHighlights(visited: Set<string>): Highlights {
+  return new Map([...visited].map((id) => [id, "slate"]));
+}
 
 function algorithm(graph: Graph, startingVertex: string): Step[] {
   const steps: Step[] = [];
-  const savedHighlights: Highlight[] = [];
-
   const visited = new Set<string>();
   const stack: string[] = [];
 
   stack.push(startingVertex);
 
-  {
-    const highlights: Highlights = new Map([[startingVertex, "sky"]]);
-
-    steps.push({
+  steps.push(
+    new StepBuilder({
       description: `Put starting vertex ${startingVertex} on the stack.`,
-      state: [],
-      highlights,
-    });
-  }
+    })
+      .state([buildStackState([...stack], [stack.length - 1]), buildVisitOrderState([...visited])])
+      .verticesHighlights(new Map([[startingVertex, "sky"]]))
+      .build()
+  );
 
   while (stack.length !== 0) {
     const currentId = stack.shift()!;
     const current = graph.vertices[currentId]!;
 
-    {
-      const highlights: Highlights = new Map([...savedHighlights, [currentId, "sky"]]);
-
-      steps.push({
+    steps.push(
+      new StepBuilder({
         description: `Get first vertex ${currentId} from the array.`,
-        state: [],
-        highlights,
-      });
-    }
+      })
+        .state([buildStackState([currentId, ...stack], [0]), buildVisitOrderState([...visited])])
+        .verticesHighlights(new Map([[currentId, "sky"], ...visitedHighlights(visited)]))
+        .build()
+    );
 
     if (visited.has(currentId)) {
-      {
-        const highlights: Highlights = new Map([...savedHighlights, [currentId, "slate"]]);
-
-        steps.push({
+      steps.push(
+        new StepBuilder({
           description: `Vertex ${currentId} was already visited. Continue to the next step.`,
-          state: [],
-          highlights,
-        });
-      }
+        })
+          .state([buildStackState([...stack]), buildVisitOrderState([...visited])])
+          .verticesHighlights(new Map([[currentId, "slate"], ...visitedHighlights(visited)]))
+          .build()
+      );
 
       continue;
     }
 
     visited.add(current.id);
 
-    {
-      const highlights: Highlights = new Map([[current.id, "slate"], ...savedHighlights]);
-
-      steps.push({
+    steps.push(
+      new StepBuilder({
         description: `Mark vertex ${currentId} as visited.`,
-        state: [],
-        highlights,
-      });
-    }
+      })
+        .state([buildStackState([...stack]), buildVisitOrderState([...visited])])
+        .verticesHighlights(new Map([[current.id, "slate"], ...visitedHighlights(visited)]))
+        .build()
+    );
 
     const outsHighlights: Highlights = new Map();
+    const addedIndexes = [];
 
     for (const edgeId of current.outs) {
       const edge = graph.edges[edgeId];
-
       const adjacentId = edge.to === current.id && !edge.directed ? edge.from : edge.to;
 
+      if (visited.has(adjacentId)) {
+        continue;
+      }
+
+      addedIndexes.push(stack.length);
       stack.push(adjacentId);
       outsHighlights.set(adjacentId, "sky");
     }
 
-    {
-      const highlights: Highlights = new Map([
-        ...outsHighlights,
-        ...savedHighlights,
-        [current.id, "orange"],
-      ]);
-
-      steps.push({
+    steps.push(
+      new StepBuilder({
         description: "Put all adjacent vertices to the stack.",
-        state: [],
-        highlights,
-      });
-    }
-
-    savedHighlights.push([current.id, "slate"]);
+      })
+        .state([buildStackState([...stack], addedIndexes), buildVisitOrderState([...visited])])
+        .verticesHighlights(
+          new Map([[current.id, "orange"], ...outsHighlights, ...visitedHighlights(visited)])
+        )
+        .build()
+    );
   }
 
-  {
-    const highlights = new Map([...savedHighlights]);
-
-    steps.push({
+  steps.push(
+    new StepBuilder({
       description: "There is no more vertices on the stack. End the algorithm.",
-      state: [],
-      highlights,
-    });
-  }
+    })
+      .state([buildStackState([...stack]), buildVisitOrderState([...visited])])
+      .verticesHighlights(visitedHighlights(visited))
+      .build()
+  );
 
   return steps;
 }
 
 export const bfs: Algorithm = {
-  name: "Breath First Search",
+  name: "Iterative Breath First Search",
   description: "Breath First Search algorithm visits all nodes of a graph.",
   tags: ["exploration"],
   algorithm,

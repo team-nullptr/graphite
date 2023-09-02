@@ -1,120 +1,81 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
+
 import type { Algorithm } from "~/core/simulator/algorithm";
 import { Graph } from "~/core/simulator/graph";
-import type { Highlight, Highlights } from "../highlight";
-import type { Step } from "../step";
+import type { Highlights } from "../highlight";
+import { StepBuilder, type Step } from "../step";
+import { ArrayStateBuilder } from "../state";
+
+function buildVisitOrderState(visited: string[]) {
+  return new ArrayStateBuilder({ title: "Visit Order" }).data(visited).build();
+}
+
+function buildStackState(stack: string[], highlighted: number[] = []) {
+  return new ArrayStateBuilder({ title: "Stack" })
+    .data(stack)
+    .highlighted(new Set(highlighted))
+    .build();
+}
+
+function visitedHighlights(visited: Set<string>): Highlights {
+  return new Map([...visited].map((id) => [id, "slate"]));
+}
 
 function algorithm(graph: Graph, startingVertex: string): Step[] {
   const steps: Step[] = [];
-  const savedHighlights: Highlight[] = [];
-
   const visited = new Set<string>();
-
   const stack: string[] = [];
 
   stack.push(startingVertex);
 
-  {
-    const highlights: Highlights = new Map([[startingVertex, "sky"]]);
-
-    steps.push({
+  steps.push(
+    new StepBuilder({
       description: `Put starting vertex ${startingVertex} on the stack.`,
-      state: [
-        {
-          type: "array",
-          title: "Stack",
-          data: [...stack],
-          highlighted: new Set([stack.length - 1]),
-        },
-        {
-          type: "array",
-          title: "Visit Order",
-          data: [...visited],
-          highlighted: new Set(),
-        },
-      ],
-      highlights,
-    });
-  }
+    })
+      .state([buildStackState([...stack], [stack.length - 1]), buildVisitOrderState([...visited])])
+      .verticesHighlights(new Map([[startingVertex, "sky"]]))
+      .build()
+  );
 
   while (stack.length !== 0) {
     const currentId = stack.pop()!;
     const current = graph.vertices[currentId]!;
 
-    {
-      const highlights: Highlights = new Map([...savedHighlights, [currentId, "sky"]]);
-
-      steps.push({
+    steps.push(
+      new StepBuilder({
         description: `Pop vertex ${currentId} from the stack.`,
-        state: [
-          {
-            type: "array",
-            title: "Stack",
-            data: [...stack, currentId],
-            highlighted: new Set([stack.length]),
-          },
-          {
-            type: "array",
-            title: "Visit Order",
-            data: [...visited],
-            highlighted: new Set(),
-          },
-        ],
-        highlights,
-      });
-    }
+      })
+        .state([
+          buildStackState([...stack, currentId], [stack.length]),
+          buildVisitOrderState([...visited]),
+        ])
+        .verticesHighlights(new Map([[currentId, "sky"], ...visitedHighlights(visited)]))
+        .build()
+    );
 
     if (visited.has(currentId)) {
-      {
-        const highlights: Highlights = new Map([...savedHighlights, [currentId, "slate"]]);
-
-        steps.push({
+      steps.push(
+        new StepBuilder({
           description: `Vertex ${currentId} was already visited. Continue to the next step.`,
-          state: [
-            {
-              type: "array",
-              title: "Stack",
-              data: [...stack],
-              highlighted: new Set(),
-            },
-            {
-              type: "array",
-              title: "Visit Order",
-              data: [...visited],
-              highlighted: new Set(),
-            },
-          ],
-          highlights,
-        });
-      }
+        })
+          .state([buildStackState([...stack]), buildVisitOrderState([...visited])])
+          .verticesHighlights(new Map([[currentId, "slate"], ...visitedHighlights(visited)]))
+          .build()
+      );
 
       continue;
     }
 
     visited.add(current.id);
 
-    {
-      const highlights: Highlights = new Map([[current.id, "slate"], ...savedHighlights]);
-
-      steps.push({
+    steps.push(
+      new StepBuilder({
         description: `Mark vertex ${currentId} as visited.`,
-        state: [
-          {
-            type: "array",
-            title: "Stack",
-            data: [...stack],
-            highlighted: new Set(),
-          },
-          {
-            type: "array",
-            title: "Visit Order",
-            data: [...visited],
-            highlighted: new Set(),
-          },
-        ],
-        highlights,
-      });
-    }
+      })
+        .state([buildStackState([...stack]), buildVisitOrderState([...visited])])
+        .verticesHighlights(new Map([[current.id, "slate"], ...visitedHighlights(visited)]))
+        .build()
+    );
 
     const outsHighlights: Highlights = new Map();
     const addedIndexes = [];
@@ -132,58 +93,26 @@ function algorithm(graph: Graph, startingVertex: string): Step[] {
       outsHighlights.set(adjacentId, "sky");
     }
 
-    {
-      const highlights: Highlights = new Map([
-        ...outsHighlights,
-        ...savedHighlights,
-        [current.id, "orange"],
-      ]);
-
-      steps.push({
+    steps.push(
+      new StepBuilder({
         description: "Put all adjacent vertices to the stack.",
-        state: [
-          {
-            type: "array",
-            title: "Stack",
-            data: [...stack],
-            highlighted: new Set(addedIndexes),
-          },
-          {
-            type: "array",
-            title: "Visit Order",
-            data: [...visited],
-            highlighted: new Set(),
-          },
-        ],
-        highlights,
-      });
-    }
-
-    savedHighlights.push([current.id, "slate"]);
+      })
+        .state([buildStackState([...stack], addedIndexes), buildVisitOrderState([...visited])])
+        .verticesHighlights(
+          new Map([[current.id, "orange"], ...outsHighlights, ...visitedHighlights(visited)])
+        )
+        .build()
+    );
   }
 
-  {
-    const highlights = new Map([...savedHighlights]);
-
-    steps.push({
+  steps.push(
+    new StepBuilder({
       description: "There is no more vertices on the stack. End the algorithm.",
-      state: [
-        {
-          type: "array",
-          title: "Stack",
-          data: stack.slice(),
-          highlighted: new Set(),
-        },
-        {
-          type: "array",
-          title: "Visit Order",
-          data: [...visited],
-          highlighted: new Set(),
-        },
-      ],
-      highlights,
-    });
-  }
+    })
+      .state([buildStackState([...stack]), buildVisitOrderState([...visited])])
+      .verticesHighlights(visitedHighlights(visited))
+      .build()
+  );
 
   return steps;
 }
