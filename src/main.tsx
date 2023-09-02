@@ -3,6 +3,7 @@ import ReactDOM from "react-dom/client";
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import { Editor } from "./pages/editor/Editor";
 import "./index.css";
+import { BetaOverlay } from "./shared/BetaOverlay";
 
 const router = createBrowserRouter([
   {
@@ -13,6 +14,7 @@ const router = createBrowserRouter([
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
+    <BetaOverlay />
     <RouterProvider router={router} />
   </React.StrictMode>
 );
