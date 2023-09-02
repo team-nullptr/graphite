@@ -8,7 +8,6 @@ export type SelectOptions = {
   values: string[];
 };
 
-// TODO: Use radix-ui for this
 export function Select({ values, label, value, onChange }: SelectOptions) {
   const [opened, setOpened] = useState(false);
 
