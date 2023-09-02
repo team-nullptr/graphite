@@ -6,7 +6,8 @@ import { VertexPreview } from "~/shared/ui/VertexPreview";
 import type { Color } from "~/types/color";
 import type { Highlights } from "../highlight";
 import { StepBuilder, type Step } from "../step";
-import { TableStateBuilder } from "../state";
+import { State, TableStateBuilder } from "../state";
+import { build } from "vite";
 
 type TableData = {
   vertex: {
@@ -46,6 +47,16 @@ function buildTableData(distances: Map<string, number>, highlights: Highlights) 
   );
 }
 
+function buildDefaultState(distances: Map<string, number>, highlights: Highlights): State[] {
+  return [new TableStateBuilder({ columns }).data(buildTableData(distances, highlights)).build()];
+}
+
+function visitedHighlights(vertices: Vertex[], unvisited: Set<Vertex>): Highlights {
+  return new Map(
+    vertices.filter((vertex) => !unvisited.has(vertex)).map((vertex) => [vertex.id, "slate"])
+  );
+}
+
 function pickClosest(
   unvisited: IterableIterator<Vertex>,
   distances: Map<string, number>
@@ -66,12 +77,6 @@ function pickClosest(
   return next;
 }
 
-function visitedHighlights(vertices: Vertex[], unvisited: Set<Vertex>): Highlights {
-  return new Map(
-    vertices.filter((vertex) => !unvisited.has(vertex)).map((vertex) => [vertex.id, "slate"])
-  );
-}
-
 function algorithm(graph: Graph, startingVertex: string): Step[] {
   const steps: Step[] = [];
 
@@ -89,9 +94,7 @@ function algorithm(graph: Graph, startingVertex: string): Step[] {
       new StepBuilder({
         description: "Set distance to starting vertex to 0.",
       })
-        .state([
-          new TableStateBuilder({ columns }).data(buildTableData(distances, highlights)).build(),
-        ])
+        .state(buildDefaultState(distances, highlights))
         .verticesHighlights(highlights)
         .build()
     );
@@ -110,9 +113,7 @@ function algorithm(graph: Graph, startingVertex: string): Step[] {
         new StepBuilder({
           description: "Pick the closest vertex from all unvisited vertices.",
         })
-          .state([
-            new TableStateBuilder({ columns }).data(buildTableData(distances, highlights)).build(),
-          ])
+          .state(buildDefaultState(distances, highlights))
           .verticesHighlights(highlights)
           .build()
       );
@@ -149,9 +150,7 @@ function algorithm(graph: Graph, startingVertex: string): Step[] {
         new StepBuilder({
           description: "Iterate over all adjacent unvisited nodes and update their min length.",
         })
-          .state([
-            new TableStateBuilder({ columns }).data(buildTableData(distances, highlights)).build(),
-          ])
+          .state(buildDefaultState(distances, highlights))
           .verticesHighlights(highlights)
           .build()
       );
@@ -166,9 +165,7 @@ function algorithm(graph: Graph, startingVertex: string): Step[] {
         new StepBuilder({
           description: "Mark current node as visited.",
         })
-          .state([
-            new TableStateBuilder({ columns }).data(buildTableData(distances, highlights)).build(),
-          ])
+          .state(buildDefaultState(distances, highlights))
           .verticesHighlights(highlights)
           .build()
       );
@@ -182,9 +179,7 @@ function algorithm(graph: Graph, startingVertex: string): Step[] {
       new StepBuilder({
         description: "There is no more unvisited vertices. End the algorithm.",
       })
-        .state([
-          new TableStateBuilder({ columns }).data(buildTableData(distances, highlights)).build(),
-        ])
+        .state(buildDefaultState(distances, highlights))
         .verticesHighlights(highlights)
         .build()
     );
