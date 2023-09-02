@@ -11,7 +11,7 @@ export function AlgorithmCard({ algorithm, onClick }: AlgorithmCardProps) {
       className="flex flex-col gap-2 border-b border-slate-300 bg-slate-50 p-4 hover:cursor-pointer hover:bg-slate-100"
       onClick={onClick}
     >
-      <span className="font-medium text-slate-800">{algorithm.name}</span>
+      <span className="font-normal text-slate-800">{algorithm.name}</span>
       <p className="text-slate-600">{algorithm.description}</p>
       <div className="flex">
         {algorithm.tags.map((tag) => (
