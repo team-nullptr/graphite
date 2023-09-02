@@ -1,5 +1,6 @@
-import { useState } from "react";
 import { ChevronDownIcon, ChevronUpIcon, ArrowUpRightIcon } from "@heroicons/react/24/outline";
+
+import * as RadixSelect from "@radix-ui/react-select";
 
 export type SelectOptions = {
   value?: string;
@@ -8,56 +9,52 @@ export type SelectOptions = {
   values: string[];
 };
 
+export type SelectItemOptions = {
+  value: string;
+};
+
 export function Select({ values, label, value, onChange }: SelectOptions) {
-  const [opened, setOpened] = useState(false);
-
-  const handleValueChange = (value: string) => {
-    onChange(value);
-    setOpened(false);
-  };
-
   return (
-    <div className="relative w-full">
-      <div
-        className="relative w-full rounded-md border px-4 py-2"
-        onClick={() => setOpened(!opened)}
+    <RadixSelect.Root
+      onValueChange={(selectedValue) => {
+        onChange(selectedValue);
+      }}
+    >
+      <RadixSelect.Trigger
+        aria-label="Vertex picker"
+        className="relative w-full rounded-md border px-4 py-2 text-left"
       >
-        {value ? value : <span className="text-slate-500">{label}</span>}
-        {opened ? (
-          <ChevronDownIcon className="absolute bottom-0 right-2 top-0 my-auto h-4 w-4" />
-        ) : (
-          <ChevronUpIcon className="absolute bottom-0 right-2 top-0 my-auto h-4 w-4" />
-        )}
-      </div>
-      {opened && (
-        <div className="absolute mt-1 max-h-48 w-full overflow-y-auto rounded-md border bg-slate-50">
-          {values.length > 0 ? (
-            values.map((value) => (
-              <div
-                className="flex h-10 items-center px-4 py-2 hover:bg-gray-100"
-                key={value}
-                onClick={() => handleValueChange(value)}
-              >
-                {value}
-              </div>
-            ))
-          ) : (
-            <div className="p-4">
-              <p className="text-center text-sm text-slate-500">
-                It looks like your graph does not have any vertices! Check out{" "}
-                <a
-                  className="text-blue-500 underline"
-                  href="https://github.com/team-nullptr/graphite"
-                >
-                  The Graphene Guide
-                  <ArrowUpRightIcon className="inline-block h-4 w-4" />
-                </a>{" "}
-                to learn about making your own graphs.
-              </p>
-            </div>
-          )}
-        </div>
-      )}
-    </div>
+        <RadixSelect.Value placeholder="Choose starting vertex" />
+        <RadixSelect.Icon className="absolute bottom-0 right-2 top-0 my-auto h-4 w-4">
+          <ChevronDownIcon />
+        </RadixSelect.Icon>
+      </RadixSelect.Trigger>
+      <RadixSelect.Portal>
+        <RadixSelect.Content>
+          <RadixSelect.ScrollDownButton>
+            <ChevronUpIcon />
+          </RadixSelect.ScrollDownButton>
+          <RadixSelect.Viewport>
+            {values.map((val) => (
+              <SelectItem key={val} value={val} />
+            ))}
+          </RadixSelect.Viewport>
+          <RadixSelect.ScrollDownButton className="text-violet11 flex h-[25px] cursor-default items-center justify-center bg-white">
+            <ChevronDownIcon />
+          </RadixSelect.ScrollDownButton>
+        </RadixSelect.Content>
+      </RadixSelect.Portal>
+    </RadixSelect.Root>
   );
 }
+
+const SelectItem = ({ value }: SelectItemOptions) => {
+  return (
+    <RadixSelect.Item value={value}>
+      <RadixSelect.ItemText className="text-left">{value}</RadixSelect.ItemText>
+      <RadixSelect.ItemIndicator className="absolute left-0 inline-flex w-[25px] items-center justify-center">
+        <ArrowUpRightIcon />
+      </RadixSelect.ItemIndicator>
+    </RadixSelect.Item>
+  );
+};
