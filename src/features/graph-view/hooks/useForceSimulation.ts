@@ -27,11 +27,11 @@ class ForceSimulator {
 
   attractiveTargetLength = 100;
   attractiveStrength = 0.025;
-  attractiveStrengthChilled = 0;
+  attractiveStrengthChilled = 0.001;
 
   repulsiveStrength = 100;
   repulsiveChillOut = 0.05;
-  repulsiveStrengthChilled = 0;
+  repulsiveStrengthChilled = 10;
 
   constructor(settings: Partial<ForceSimulatorSettings> = {}) {
     this.settings = { ...this.settings, ...settings };
