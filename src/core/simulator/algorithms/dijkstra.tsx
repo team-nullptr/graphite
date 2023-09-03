@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { createColumnHelper } from "@tanstack/react-table";
+import { ColumnDef, createColumnHelper } from "@tanstack/react-table";
 import type { Algorithm } from "~/core/simulator/algorithm";
 import { Graph, Vertex } from "~/core/simulator/graph";
 import { VertexPreview } from "~/shared/ui/VertexPreview";
@@ -7,7 +7,6 @@ import type { Color } from "~/types/color";
 import type { Highlights } from "../highlight";
 import { StepBuilder, type Step } from "../step";
 import { State, TableStateBuilder } from "../state";
-import { build } from "vite";
 
 type TableData = {
   vertex: {
@@ -33,7 +32,7 @@ const columns = [
       return <span className="block transition-all">{info.getValue()}</span>;
     },
   }),
-];
+] as ColumnDef<unknown, any>[];
 
 function buildTableData(distances: Map<string, number>, highlights: Highlights) {
   return [...distances.entries()].map(

@@ -1,5 +1,5 @@
 import { flexRender, getCoreRowModel, useReactTable } from "@tanstack/react-table";
-import { TableState } from "~/core/simulator/algorithm";
+import { TableState } from "~/core/simulator/state";
 
 export type StepStateTableProps = {
   state: TableState;

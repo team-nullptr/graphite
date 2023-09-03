@@ -20,5 +20,6 @@
     }
   },
   "include": ["src"],
+  "exclude": ["src/core/graphene/tools/gen"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

@@ -3,7 +3,7 @@ import { Vertex } from "./Vertex";
 import { Arrangement } from "../types/arrangement";
 import { Vec2 } from "../types/vec2";
 import { useCallback, useMemo } from "react";
-import { Highlights } from "~/core/simulator/algorithm";
+import { Highlights } from "~/core/simulator/highlight";
 
 const LEFT_MOUSE_BUTTON = 0;
 const centerPosition = new Vec2(0, 0);

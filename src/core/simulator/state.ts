@@ -2,8 +2,7 @@ import { ColumnDef } from "@tanstack/react-table";
 
 export type TableState = {
   type: "table";
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  columns: ColumnDef<any, any>[];
+  columns: ColumnDef<unknown, any>[];
   data: unknown[];
 };
 

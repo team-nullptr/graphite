@@ -1,4 +1,4 @@
-import { ArrayState } from "~/core/simulator/algorithm";
+import { ArrayState } from "~/core/simulator/state";
 import { cn } from "~/lib/utils";
 
 export type ArrayStepProps = {

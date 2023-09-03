@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { createColumnHelper } from "@tanstack/react-table";
+import { ColumnDef, createColumnHelper } from "@tanstack/react-table";
 
 import { Edge, Graph } from "~/core/simulator/graph";
 import { cn } from "~/lib/utils";
@@ -59,7 +59,7 @@ const columns = [
       );
     },
   }),
-];
+] as ColumnDef<unknown, any>[];
 
 type Context = {
   graph: Graph;
