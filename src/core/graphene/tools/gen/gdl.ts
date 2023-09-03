@@ -13,7 +13,7 @@ export const parser = LRParser.deserialize({
   skippedNodes: [0, 1],
   repeatNodeCount: 3,
   tokenData:
-    "$j~RcX^!^pq!^st#Rxy#jyz#o|}#t!Q![#y!c!}$R!}#O$`#P#Q$e#T#o$R#y#z!^$f$g!^#BY#BZ!^$IS$I_!^$I|$JO!^$JT$JU!^$KV$KW!^&FU&FV!^~!cYe~X^!^pq!^#y#z!^$f$g!^#BY#BZ!^$IS$I_!^$I|$JO!^$JT$JU!^$KV$KW!^&FU&FV!^~#WSP~OY#RZ;'S#R;'S;=`#d<%lO#R~#gP;=`<%l#R~#oOU~~#tO_~~#yO[~~$OP^~!Q![#yR$YQTPZQ!c!}$R#T#o$R~$eOY~~$jO]~",
+    "$r~RdX^!apq!ast#Uxy#myz#r|}#w!Q![#|!c!}$U!}#O$c#P#Q$h#R#S$m#T#o$U#y#z!a$f$g!a#BY#BZ!a$IS$I_!a$I|$JO!a$JT$JU!a$KV$KW!a&FU&FV!a~!fYe~X^!apq!a#y#z!a$f$g!a#BY#BZ!a$IS$I_!a$I|$JO!a$JT$JU!a$KV$KW!a&FU&FV!a~#ZSP~OY#UZ;'S#U;'S;=`#g<%lO#U~#jP;=`<%l#U~#rOU~~#wO_~~#|O[~~$RP^~!Q![#|R$]QTPZQ!c!}$U#T#o$U~$hOY~~$mO]~P$rOTP",
   tokenizers: [0, 1],
   topRules: { Program: [0, 2] },
   tokenPrec: 0,

@@ -1,12 +1,12 @@
 import { Fragment, useEffect, useRef, useState } from "react";
 import { useEditorStore } from "../context/editor";
-import { State } from "~/core/simulator/algorithm";
 import { DynamicSplit } from "~/shared/layout/Split";
 import { GraphView } from "../../../features/graph-view/GraphView";
 import { useLayoutSettingsStore } from "../store/layout";
 import { ArrayStep } from "./ArrayStep";
 import { Player } from "./Player";
 import { TableStep } from "./TableStep";
+import { State } from "~/core/simulator/state";
 
 export const Visualizer = () => {
   const visualizerRef = useRef(null);
@@ -66,7 +66,7 @@ export const Visualizer = () => {
                 onStepChange={setCurrentStep}
                 numberOfSteps={mode.steps.length}
                 settings={{
-                  speed: 1.5 * 1000,
+                  speed: 1000,
                 }}
               />
               <div className="flex flex-col gap-1 p-4">

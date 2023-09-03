@@ -1,7 +1,7 @@
 import { createStore } from "zustand";
 import { Graph } from "~/core/simulator/graph";
+import { Step } from "~/core/simulator/step";
 import { Project, ProjectMetadata } from "~/types/project";
-import { Step } from "~/core/simulator/algorithm";
 
 type Mode =
   | {

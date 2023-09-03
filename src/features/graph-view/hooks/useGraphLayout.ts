@@ -19,7 +19,8 @@ type Position = [x: number, y: number];
 export function useGraphLayout(graph: Graph, svgRef: RefObject<SVGSVGElement>) {
   const areControlsEnabled = useRef<boolean>(true);
   const selectedVertexRef = useRef<SelectedVertex>();
-  const [arrangement, setArrangment] = useState<Arrangement>(preArrange(graph));
+  const [chilled, setChilled] = useState(false);
+  const [arrangement, setArrangement] = useState<Arrangement>(preArrange(graph));
 
   const vertexMouseDownHandler = useCallback(
     (id: string, event: MouseEvent) => {
@@ -33,7 +34,7 @@ export function useGraphLayout(graph: Graph, svgRef: RefObject<SVGSVGElement>) {
       const vertexPosition = arrangement[id] ?? new Vec2(0, 0);
 
       const mouseOffset = new Vec2(...mouseInSvgSpace);
-      mouseOffset.substract(vertexPosition);
+      mouseOffset.subtract(vertexPosition);
 
       selectedVertexRef.current = { id, offset: mouseOffset };
       areControlsEnabled.current = false;
@@ -42,7 +43,7 @@ export function useGraphLayout(graph: Graph, svgRef: RefObject<SVGSVGElement>) {
   );
 
   useEffect(() => {
-    setArrangment((arrangement) => {
+    setArrangement((arrangement) => {
       const updatedArrangement = preArrange(graph);
       const currentVertices = new Set([...Object.keys(graph.vertices)]);
 
@@ -72,15 +73,13 @@ export function useGraphLayout(graph: Graph, svgRef: RefObject<SVGSVGElement>) {
       event.preventDefault(); // Prevent selecting text
 
       const { id: vertexId, offset: mouseOffset } = selectedVertex;
-
       const mousePositionOnScreen: Position = [event.clientX, event.clientY];
-      // prettier-ignore
       const mouseInSvgSpace = getPointInSvgSpace(mousePositionOnScreen, svgElement);
 
       const positionWithMouseOffset = new Vec2(...mouseInSvgSpace);
-      positionWithMouseOffset.substract(mouseOffset);
+      positionWithMouseOffset.subtract(mouseOffset);
 
-      setArrangment((arrangement) => {
+      setArrangement((arrangement) => {
         return { ...arrangement, [vertexId]: positionWithMouseOffset };
       });
     };
@@ -94,7 +93,29 @@ export function useGraphLayout(graph: Graph, svgRef: RefObject<SVGSVGElement>) {
     };
   }, [svgRef]);
 
-  useForceSimulation(graph, selectedVertexRef, setArrangment);
+  useEffect(() => {
+    const handleShiftDown = (e: KeyboardEvent) => {
+      if (e.key === "Shift") {
+        setChilled(true);
+      }
+    };
+
+    const handleShiftUp = (e: KeyboardEvent) => {
+      if (e.key === "Shift") {
+        setChilled(false);
+      }
+    };
+
+    addEventListener("keydown", handleShiftDown);
+    addEventListener("keyup", handleShiftUp);
+
+    return () => {
+      removeEventListener("keydown", handleShiftDown);
+      removeEventListener("keyup", handleShiftUp);
+    };
+  }, []);
+
+  useForceSimulation(graph, selectedVertexRef, chilled, setArrangement);
 
   return {
     arrangement,

@@ -285,8 +285,8 @@ function algorithm(graph: Graph, startingVertex: string): Step[] {
 }
 
 export const tarjan: Algorithm = {
-  name: "Looking for bridges with Tarjan's algorithm",
-  description: "Finds bridges in a graph",
+  name: "Bridge finding with Tarjan's algorithm",
+  description: "Finds bridges in a graph.",
   tags: ["bridges"],
   algorithm,
 };

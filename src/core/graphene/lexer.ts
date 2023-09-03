@@ -1,11 +1,7 @@
 import { Token, TokenType } from "./token";
 
 class LexerError extends Error {
-  constructor(
-    public readonly line: number,
-    public readonly c: string,
-    message: string
-  ) {
+  constructor(public readonly line: number, public readonly c: string, message: string) {
     super(`[line ${line}] Error at '${c}': ${message}`);
   }
 }
@@ -63,6 +59,9 @@ export class Lexer {
       case "]":
         this.addToken("RIGHT_SQ_BRACKET");
         break;
+      case "_":
+        this.addToken("FLOOR");
+        break;
 
       // Whitespace
       case " ":
@@ -110,7 +109,7 @@ export class Lexer {
   }
 
   private isAlpha(c: string): boolean {
-    return (c >= "a" && c <= "z") || (c >= "A" && c <= "Z");
+    return (c >= "a" && c <= "z") || (c >= "A" && c <= "Z") || c === "_";
   }
 
   private peek(): string {
@@ -132,8 +131,6 @@ export class Lexer {
   private addToken(type: TokenType, literal?: unknown): void {
     const lexeme = this.source.substring(this.start, this.current);
 
-    this.tokens.push(
-      new Token(type, lexeme, this.line, this.start, this.current, literal)
-    );
+    this.tokens.push(new Token(type, lexeme, this.line, this.start, this.current, literal));
   }
 }

@@ -27,11 +27,11 @@ class ForceSimulator {
 
   attractiveTargetLength = 100;
   attractiveStrength = 0.025;
-  attractiveStrengthChilled = 0.0001;
+  attractiveStrengthChilled = 0;
 
   repulsiveStrength = 100;
-  repulsiveStrengthChilled = 10;
-  repulsiveChillout = 0.05;
+  repulsiveChillOut = 0.05;
+  repulsiveStrengthChilled = 0;
 
   constructor(settings: Partial<ForceSimulatorSettings> = {}) {
     this.settings = { ...this.settings, ...settings };
@@ -139,11 +139,11 @@ class ForceSimulator {
   }
 
   repulsiveForce({ chilled }: Context, source: Vec2, adj: Vec2): Vec2 {
-    const forceChillout = this.repulsiveChillout;
+    const forceChillOut = this.repulsiveChillOut;
     const forceStrength = chilled ? this.repulsiveStrengthChilled : this.repulsiveStrength;
 
     const force = Math.min(
-      forceStrength / (1 + Math.pow(Math.E, forceChillout * source.distanceTo(adj))),
+      forceStrength / (1 + Math.pow(Math.E, forceChillOut * source.distanceTo(adj))),
       this.maxForce
     );
 
@@ -168,6 +168,7 @@ const forceSimulator = new ForceSimulator();
 export function useForceSimulation(
   graph: Graph,
   selectedVertexRef: MutableRefObject<SelectedVertex | undefined>,
+  chilled: boolean,
   setArrangement: Dispatch<SetStateAction<Arrangement>>
 ) {
   const frameRef = useRef<number>();
@@ -177,7 +178,7 @@ export function useForceSimulation(
 
     setArrangement((current) => {
       const context: Context = {
-        chilled: !!selectedVertex,
+        chilled,
         ignore: new Set(selectedVertex ? [selectedVertex.id] : []),
       };
 
@@ -185,7 +186,7 @@ export function useForceSimulation(
     });
 
     frameRef.current = requestAnimationFrame(runSimulation);
-  }, [graph, setArrangement, selectedVertexRef]);
+  }, [chilled, graph, setArrangement, selectedVertexRef]);
 
   useEffect(() => {
     frameRef.current = requestAnimationFrame(runSimulation);

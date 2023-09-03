@@ -5,7 +5,7 @@ export class Vec2 {
     return new Vec2(a.x + b.x, a.y + b.y);
   }
 
-  static substract(a: Vec2, b: Vec2): Vec2 {
+  static subtract(a: Vec2, b: Vec2): Vec2 {
     return Vec2.add(a, Vec2.multiply(b, -1));
   }
 
@@ -19,7 +19,7 @@ export class Vec2 {
     return this;
   }
 
-  substract(v: Vec2): Vec2 {
+  subtract(v: Vec2): Vec2 {
     return this.add(Vec2.multiply(v, -1));
   }
 

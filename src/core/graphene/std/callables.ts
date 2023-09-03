@@ -115,3 +115,38 @@ export class CompleteFn extends Callable {
     }
   }
 }
+
+export class BinaryTreeFn extends Callable {
+  arity = { min: 1, max: 1 };
+
+  private buildTree(interpreter: Interpreter, vertices: string[], i: number) {
+    let root: Vertex | undefined = undefined;
+
+    if (i < vertices.length) {
+      root = interpreter.getVertex(vertices[i]);
+
+      const left = this.buildTree(interpreter, vertices, 2 * i + 1);
+      if (left) {
+        const id = nanoid();
+        interpreter.addEdge(id, new Edge(id, root.id, left.id, 1, false));
+        root.outs.push(id);
+        left.ins.push(id);
+      }
+
+      const right = this.buildTree(interpreter, vertices, 2 * i + 2);
+      if (right) {
+        const id = nanoid();
+        interpreter.addEdge(id, new Edge(id, root.id, right.id, 1, false));
+        root.outs.push(id);
+        right.ins.push(id);
+      }
+    }
+
+    return root;
+  }
+
+  call(interpreter: Interpreter, args: Obj[]): void {
+    const vertices = assertVertexCollection(args[0]);
+    this.buildTree(interpreter, vertices, 0);
+  }
+}

@@ -11,7 +11,7 @@ function buildVisitOrderState(visited: string[]) {
 }
 
 function buildStackState(stack: string[], highlighted: number[] = []) {
-  return new ArrayStateBuilder({ title: "Stack" })
+  return new ArrayStateBuilder({ title: "Queue" })
     .data(stack)
     .highlighted(new Set(highlighted))
     .build();
@@ -30,7 +30,7 @@ function algorithm(graph: Graph, startingVertex: string): Step[] {
 
   steps.push(
     new StepBuilder({
-      description: `Put starting vertex ${startingVertex} on the stack.`,
+      description: `Push starting vertex ${startingVertex} to the queue.`,
     })
       .state([buildStackState([...stack], [stack.length - 1]), buildVisitOrderState([...visited])])
       .verticesHighlights(new Map([[startingVertex, "sky"]]))
@@ -43,7 +43,7 @@ function algorithm(graph: Graph, startingVertex: string): Step[] {
 
     steps.push(
       new StepBuilder({
-        description: `Get first vertex ${currentId} from the array.`,
+        description: `Get first vertex ${currentId} from the queue.`,
       })
         .state([buildStackState([currentId, ...stack], [0]), buildVisitOrderState([...visited])])
         .verticesHighlights(new Map([[currentId, "sky"], ...visitedHighlights(visited)]))
@@ -92,7 +92,7 @@ function algorithm(graph: Graph, startingVertex: string): Step[] {
 
     steps.push(
       new StepBuilder({
-        description: "Put all adjacent vertices to the stack.",
+        description: "Push all adjacent vertices to the queue.",
       })
         .state([buildStackState([...stack], addedIndexes), buildVisitOrderState([...visited])])
         .verticesHighlights(
@@ -104,7 +104,7 @@ function algorithm(graph: Graph, startingVertex: string): Step[] {
 
   steps.push(
     new StepBuilder({
-      description: "There is no more vertices on the stack. End the algorithm.",
+      description: "There is no more vertices in the queue. End the algorithm.",
     })
       .state([buildStackState([...stack]), buildVisitOrderState([...visited])])
       .verticesHighlights(visitedHighlights(visited))

@@ -19,7 +19,7 @@ VertexCollection { "[" Vertex ( "," Vertex )* "]" }
 
   Comment { "#" ![\n]* }
 
-  Identifier { @asciiLetter+ }
+  Identifier { @asciiLetter+ | "_" }
   Vertex { @asciiLetter+ }
   Number { @digit+ }
 

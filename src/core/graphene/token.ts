@@ -3,6 +3,7 @@ export type TokenType =
   | "RIGHT_PAREN"
   | "LEFT_SQ_BRACKET"
   | "RIGHT_SQ_BRACKET"
+  | "FLOOR"
   | "COMMA"
   | "IDENTIFIER"
   | "NUMBER"

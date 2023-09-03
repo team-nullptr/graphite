@@ -1,4 +1,3 @@
-import { nanoid } from "nanoid";
 import { Edge, Graph, Vertex } from "../simulator/graph";
 import { Callable } from "./callable";
 import {
@@ -12,8 +11,8 @@ import {
 import { Call } from "./stmt";
 import { Statement, Visitor as StmtVisitor } from "./stmt";
 import { Token } from "./token";
-import { Obj, assertNumber, assertVertex } from "./object";
-import { ArcFn, CompleteFn, EdgeFn, VertexFn } from "./std/callables";
+import { Obj } from "./object";
+import { ArcFn, BinaryTreeFn, CompleteFn, EdgeFn, VertexFn } from "./std/callables";
 
 class ExecError extends Error {
   constructor(public readonly token: Token, message: string) {
@@ -40,7 +39,8 @@ export class Interpreter implements ExprVisitor<Obj>, StmtVisitor<void> {
       ["vertex", new VertexFn()],
       ["edge", new EdgeFn()],
       ["arc", new ArcFn()],
-      ["complete", new CompleteFn()],
+      ["graph_complete", new CompleteFn()],
+      ["tree_binary", new BinaryTreeFn()],
     ])
   );
 
@@ -61,7 +61,13 @@ export class Interpreter implements ExprVisitor<Obj>, StmtVisitor<void> {
   }
 
   getVertex(key: string): Vertex {
-    return this.vertices[key];
+    const vertex: Vertex | undefined = this.vertices[key];
+
+    if (!vertex) {
+      throw new Error(`Vertex not found: ${key}`);
+    }
+
+    return vertex;
   }
 
   constructor(private readonly stmts: Statement[]) {}
