@@ -1,4 +1,5 @@
 import { createStore } from "zustand";
+import { Algorithm } from "~/core/simulator/algorithm";
 import { Graph } from "~/core/simulator/graph";
 import { Step } from "~/core/simulator/step";
 import { Project, ProjectMetadata } from "~/types/project";
@@ -20,6 +21,8 @@ export type EditorState = {
   setCode: (code: string) => void;
   graph: Graph;
   setGraph: (graph: Graph) => void;
+  algorithm: Algorithm | undefined;
+  setAlgorithm: (algorithm?: Algorithm) => void;
 };
 
 export type CreateEditorStoreOpts = {
@@ -72,6 +75,12 @@ export function createEditorStore({ project }: CreateEditorStoreOpts) {
     graph: initialGraph,
     setGraph: (graph) => {
       set({ graph });
+    },
+
+    // Algorithm
+    algorithm: undefined,
+    setAlgorithm(algorithm) {
+      set({ algorithm });
     },
   }));
 }

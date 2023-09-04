@@ -1,19 +1,24 @@
+import { CommandLineIcon, PlayIcon } from "@heroicons/react/24/outline";
+import { useState } from "react";
+import { CodeEditor } from "~/features/code-editor/CodeEditor";
+import { DynamicSplit } from "~/shared/layout/Split";
+import { Tab, VerticalTabs } from "~/shared/layout/VerticalTab";
+import { AlgorithmPicker } from "./components/AlgorithmPicker";
 import { Visualizer } from "./components/Visualizer";
 import { EditorStoreProvider } from "./context/editor";
-import { Tab, VerticalTabs } from "~/shared/layout/VerticalTab";
-import { CommandLineIcon, PlayIcon } from "@heroicons/react/24/outline";
-import { CodeEditor } from "~/features/code-editor/CodeEditor";
-import { AlgorithmPicker } from "./components/AlgorithmPicker";
-import { useState } from "react";
-import { DynamicSplit } from "~/shared/layout/Split";
 
 const tabs: Tab[] = [
   { id: "edit", icon: <CommandLineIcon />, element: <CodeEditor /> },
   { id: "algorithm", icon: <PlayIcon />, element: <AlgorithmPicker /> },
 ];
+// The CodeEditor component is responsible for setting the graph value,
+// so setting it as a default tab will automatically set the graph value.
+// This way we avoid a weird behaviour of a graph magically appearing
+// after clicking on the code editor icon.
+const initialTab = tabs.find((it) => it.id === "edit");
 
 export function Editor() {
-  const [currentTab, setCurrentTab] = useState<Tab>();
+  const [currentTab, setCurrentTab] = useState<Tab | undefined>(initialTab);
 
   const handleTabChange = (newTab: Tab) => {
     if (currentTab === newTab) {
