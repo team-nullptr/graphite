@@ -114,9 +114,18 @@ function algorithm(graph: Graph, startingVertex: string): Step[] {
   return steps;
 }
 
-export const bfs: Algorithm = {
+export interface IterativeBFSAlgorithmParams {
+  "Start Vertex": string;
+}
+
+export const bfs: Algorithm<IterativeBFSAlgorithmParams> = {
   name: "Iterative Breath First Search",
-  description: "Breath First Search algorithm visits all nodes of a graph.",
+  description: "Visits all nodes of a graph.",
   tags: ["exploration"],
-  algorithm,
+  params: {
+    "Start Vertex": { type: "vertex", required: true },
+  },
+  stepGenerator(graph, params) {
+    return algorithm(graph, params["Start Vertex"]);
+  },
 };

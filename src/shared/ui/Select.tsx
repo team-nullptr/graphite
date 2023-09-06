@@ -55,9 +55,7 @@ const SelectItem = ({ value }: SelectItemOptions) => {
       value={value}
       className="relative flex h-9 select-none items-center rounded-sm pl-6 pr-8 text-sm leading-none data-[disabled]:pointer-events-none data-[highlighted]:bg-slate-100 data-[highlighted]:outline-none"
     >
-      <RadixSelect.ItemText className="translate-x-3 text-left">
-        Vertex {value}
-      </RadixSelect.ItemText>
+      <RadixSelect.ItemText className="translate-x-3 text-left">{value}</RadixSelect.ItemText>
       <RadixSelect.ItemIndicator className="absolute right-3 inline-flex w-4 items-center justify-center">
         <CheckIcon />
       </RadixSelect.ItemIndicator>

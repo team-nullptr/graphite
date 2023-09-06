@@ -1,7 +1,7 @@
 import { Algorithm } from "~/core/simulator/algorithm";
 
 type AlgorithmCardProps = {
-  algorithm: Algorithm;
+  algorithm: Algorithm<object>;
   onClick: () => void;
 };
 

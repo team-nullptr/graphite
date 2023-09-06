@@ -186,10 +186,19 @@ function algorithm(graph: Graph, startingVertex: string): Step[] {
 
   return steps;
 }
-export const dijkstra: Algorithm = {
+
+export interface DijkstraAlgorithmParams {
+  "Start Vertex": string;
+}
+
+export const dijkstra: Algorithm<DijkstraAlgorithmParams> = {
   name: "Dijkstra",
-  description:
-    "Dijkstra algorithm allows you to find shortest path from starting node to every other node.",
+  description: "Find the shortest path from a starting node to every other node.",
   tags: ["shortest path"],
-  algorithm,
+  params: {
+    "Start Vertex": { type: "vertex", required: true },
+  },
+  stepGenerator: (graph, params) => {
+    return algorithm(graph, params["Start Vertex"]);
+  },
 };

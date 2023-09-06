@@ -117,9 +117,18 @@ function algorithm(graph: Graph, startingVertex: string): Step[] {
   return steps;
 }
 
-export const dfs: Algorithm = {
+export interface IterativeDFSAlgorithmParams {
+  "Start Vertex": string;
+}
+
+export const dfs: Algorithm<IterativeDFSAlgorithmParams> = {
   name: "Iterative Depth First Search",
   description: "See how iterative DFS explores your graph.",
   tags: ["exploration"],
-  algorithm,
+  params: {
+    "Start Vertex": { type: "vertex", required: true },
+  },
+  stepGenerator(graph, params) {
+    return algorithm(graph, params["Start Vertex"]);
+  },
 };

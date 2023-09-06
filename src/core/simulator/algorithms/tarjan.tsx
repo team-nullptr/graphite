@@ -284,9 +284,18 @@ function algorithm(graph: Graph, startingVertex: string): Step[] {
   return context.steps;
 }
 
-export const tarjan: Algorithm = {
+export interface TarjanAlgorithmParams {
+  "Start Vertex": string;
+}
+
+export const tarjan: Algorithm<TarjanAlgorithmParams> = {
   name: "Bridge finding with Tarjan's algorithm",
   description: "Finds bridges in a graph.",
   tags: ["bridges"],
-  algorithm,
+  params: {
+    "Start Vertex": { type: "vertex", required: true },
+  },
+  stepGenerator: (graph, params) => {
+    return algorithm(graph, params["Start Vertex"]);
+  },
 };

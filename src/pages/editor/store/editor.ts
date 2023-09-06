@@ -21,8 +21,8 @@ export type EditorState = {
   setCode: (code: string) => void;
   graph: Graph;
   setGraph: (graph: Graph) => void;
-  algorithm: Algorithm | undefined;
-  setAlgorithm: (algorithm?: Algorithm) => void;
+  algorithm: Algorithm<object> | undefined;
+  setAlgorithm: (algorithm?: Algorithm<object>) => void;
 };
 
 export type CreateEditorStoreOpts = {
