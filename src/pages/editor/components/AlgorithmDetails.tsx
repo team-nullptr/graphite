@@ -17,35 +17,32 @@ export interface AlgorithmDetails {
 }
 
 export function AlgorithmDetails({ algorithm, onBack }: AlgorithmDetails) {
-  const { graph, setMode } = useEditorStore(({ graph, setMode }) => ({
-    graph,
-    setMode,
-  }));
+  const { graph, setMode, paramsValue, setParamsValue } = useEditorStore((storeState) => {
+    const { graph, setMode, algorithmParams, setAlgorithmParams } = storeState;
+    return { graph, setMode, paramsValue: algorithmParams, setParamsValue: setAlgorithmParams };
+  });
 
   const handleBackClicked = () => {
     setMode({ type: "IDLE" });
+    setParamsValue({});
     onBack();
   };
 
-  // TODO: Store params value in the editor store to provide (a better/any) user experience
-  const [paramsValue, setParamsValue] = useState<Record<string, string>>({});
-
   const handleSetParamsValue = (paramName: string, newParamValue: string) => {
-    setParamsValue((paramsValue) => {
-      return { ...paramsValue, [paramName]: newParamValue };
-    });
+    setParamsValue({ ...paramsValue, [paramName]: newParamValue });
   };
-
-  const availableVertices = Object.keys(graph.vertices);
 
   const isParamValueValid = useMemo(() => {
     return validateAlgorithmParams(algorithm.params, paramsValue);
   }, [paramsValue]);
 
   const loadSteps = () => {
+    if (!isParamValueValid) return;
     const steps = algorithm.stepGenerator(graph, paramsValue);
     setMode({ type: "SIMULATION", steps });
   };
+
+  const availableVertices = Object.keys(graph.vertices);
 
   return (
     <div className="flex h-full flex-col bg-slate-50">

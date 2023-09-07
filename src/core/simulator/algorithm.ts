@@ -8,13 +8,15 @@ export interface AlgorithmParam {
   required?: boolean;
 }
 
+export type AlgorithmParams<T> = { [key in keyof T]: AlgorithmParam };
+
 export interface Algorithm<T extends object> {
   name: string;
   description: string;
   tags: string[];
   stepGenerator: (graph: Graph, params: T) => Step[];
   /** `params` are only used to generate appropriate input  fields */
-  params: { [key in keyof T]: AlgorithmParam };
+  params: AlgorithmParams<T>;
 }
 
 export const validateAlgorithmParams = <T extends object>(
