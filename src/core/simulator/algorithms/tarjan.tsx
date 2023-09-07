@@ -156,6 +156,26 @@ function tarjans(context: Context, currentId: string, stack: string[], parentId?
         currentId,
         Math.min(context.lowest.get(currentId)!, context.discovery.get(adjacentId)!)
       );
+
+      context.steps.push(
+        new StepBuilder({
+          description: `Adjacent node ${adjacentId} was already visited. Update lowest discovery time for ${currentId}`,
+        })
+          .state([
+            buildBridgesState(context),
+            buildRecursionStackState(recursionStack),
+            new TableStateBuilder({ columns })
+              .data(
+                buildStateTableData(context, {
+                  lowestTime: (id) => id === currentId,
+                })
+              )
+              .build(),
+          ])
+          .verticesHighlights(new Map([...visitedHighlights(context), [currentId, "sky"]]))
+          .build()
+      );
+
       continue;
     }
 
@@ -190,7 +210,7 @@ function tarjans(context: Context, currentId: string, stack: string[], parentId?
         .build()
     );
 
-    if (context.lowest.get(adjacentId)! > context.lowest.get(currentId)!) {
+    if (context.lowest.get(adjacentId)! > context.discovery.get(currentId)!) {
       context.bridges.push(edge);
 
       context.steps.push(
