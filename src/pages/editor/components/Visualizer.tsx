@@ -64,7 +64,7 @@ export const Visualizer = () => {
                 className="flex-shrink-0 border-b border-slate-300"
                 currentStep={currentStepIndex}
                 onStepChange={setCurrentStep}
-                numberOfSteps={mode.steps.length}
+                numberOfSteps={mode.steps.length - 1}
                 settings={{
                   speed: 1000,
                 }}

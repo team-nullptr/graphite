@@ -43,8 +43,12 @@ export function GraphView({ verticesHighlights, edgesHighlights, graph }: GraphV
         <Toolbar
           zoom={zoom}
           onZoomReset={() => setZoom(1)}
-          onZoomIncrease={() => setZoom(Math.floor((zoom + 0.1) * 10) / 10)}
-          onZoomDecrease={() => setZoom(Math.ceil((zoom - 0.1) * 10) / 10)}
+          onZoomIncrease={() => {
+            setZoom(zoom + 0.1);
+          }}
+          onZoomDecrease={() => {
+            setZoom(zoom - 0.1);
+          }}
           onCenter={() => {
             setCenter([0, 0]);
           }}
