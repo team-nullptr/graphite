@@ -19,14 +19,14 @@ export interface AlgorithmDetails {
 }
 
 export function AlgorithmDetails({ algorithm, onBack }: AlgorithmDetails) {
-  const store = useEditorStore((storeState) => {
+  const { graph, setMode, paramsValue, setParamsValue } = useEditorStore((storeState) => {
     const { graph, setMode, algorithmParams, setAlgorithmParams } = storeState;
     return { graph, setMode, paramsValue: algorithmParams, setParamsValue: setAlgorithmParams };
   });
 
   const handleBackClicked = () => {
-    store.setMode({ type: "IDLE" });
-    store.setParamsValue({});
+    setMode({ type: "IDLE" });
+    setParamsValue({});
     onBack();
   };
 
@@ -34,18 +34,17 @@ export function AlgorithmDetails({ algorithm, onBack }: AlgorithmDetails) {
     paramName: keyof (typeof algorithm)["params"],
     newParamValue: string
   ) => {
-    store.setParamsValue({ ...store.paramsValue, [paramName]: newParamValue });
+    setParamsValue({ ...paramsValue, [paramName]: newParamValue });
   };
 
   const isParamValueValid = useMemo(() => {
-    return validateAlgorithmParams(algorithm.params, store.paramsValue as Record<string, string>);
-  }, [store.paramsValue]);
+    return validateAlgorithmParams(algorithm.params, paramsValue as Record<string, string>);
+  }, [paramsValue]);
 
   const loadSteps = () => {
     if (!isParamValueValid) return;
-    // @ts-ignore
-    const steps = algorithm.stepGenerator(store.graph, store.paramsValue);
-    store.setMode({ type: "SIMULATION", steps });
+    const steps = algorithm.stepGenerator(graph, paramsValue);
+    setMode({ type: "SIMULATION", steps });
   };
 
   return (
@@ -66,8 +65,8 @@ export function AlgorithmDetails({ algorithm, onBack }: AlgorithmDetails) {
           <div className="flex flex-col gap-2">
             <AlgorithmDetailParams<{}>
               paramDefinitions={algorithm.params}
-              value={store.paramsValue}
-              availableVertices={Object.values(store.graph.vertices)}
+              value={paramsValue}
+              availableVertices={Object.values(graph.vertices)}
               onChange={handleSetParamsValue}
             />
           </div>
