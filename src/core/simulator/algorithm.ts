@@ -1,14 +1,17 @@
 import { Graph, Vertex } from "./graph";
 import { Step } from "./step";
 
-export type AlgorithmParamType = "vertex"; // | "string" | etc.
+// prettier-ignore
+export type AlgorithmParamType<T> = 
+  T extends string ? "vertex" // | "text"
+  : "";
 
-export interface AlgorithmParam {
-  type: AlgorithmParamType;
+export interface AlgorithmParamDefinition<T> {
+  type: AlgorithmParamType<T>;
   required?: boolean;
 }
 
-export type AlgorithmParams<T> = { [key in keyof T]: AlgorithmParam };
+export type AlgorithmParamDefinitions<T> = { [K in keyof T]: AlgorithmParamDefinition<T[K]> };
 
 export interface Algorithm<T extends object> {
   name: string;
@@ -16,16 +19,16 @@ export interface Algorithm<T extends object> {
   tags: string[];
   stepGenerator: (graph: Graph, params: T) => Step[];
   /** `params` are only used to generate appropriate input  fields */
-  params: AlgorithmParams<T>;
+  params: AlgorithmParamDefinitions<T>;
 }
 
 export const validateAlgorithmParams = <T extends object>(
-  paramsDefinition: Algorithm<T>["params"],
+  paramsDefinition: AlgorithmParamDefinitions<T>,
   valueToBeValidated: Record<string, string>
 ) => {
   return Object.entries(paramsDefinition)
     .filter(([, paramType]) => {
-      return (paramType as AlgorithmParam).required;
+      return (paramType as AlgorithmParamDefinition<unknown>).required;
     })
     .every(([paramKey]) => {
       const paramValue = valueToBeValidated[paramKey];

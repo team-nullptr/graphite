@@ -1,11 +1,13 @@
 import { ArrowLeftIcon, PlayIcon } from "@heroicons/react/24/outline";
-import { Fragment, useMemo, useState } from "react";
+import { Fragment, useMemo } from "react";
 import {
   Algorithm,
-  AlgorithmParam,
+  AlgorithmParamDefinition,
+  AlgorithmParamDefinitions,
   AlgorithmParamType,
   validateAlgorithmParams,
 } from "~/core/simulator/algorithm";
+import { Vertex } from "~/core/simulator/graph";
 import { Controls, ControlsButton } from "~/shared/Controls";
 import { Select } from "~/shared/ui/Select";
 import { SpaceshipButton } from "~/shared/ui/SpaceshipButton";
@@ -17,32 +19,34 @@ export interface AlgorithmDetails {
 }
 
 export function AlgorithmDetails({ algorithm, onBack }: AlgorithmDetails) {
-  const { graph, setMode, paramsValue, setParamsValue } = useEditorStore((storeState) => {
+  const store = useEditorStore((storeState) => {
     const { graph, setMode, algorithmParams, setAlgorithmParams } = storeState;
     return { graph, setMode, paramsValue: algorithmParams, setParamsValue: setAlgorithmParams };
   });
 
   const handleBackClicked = () => {
-    setMode({ type: "IDLE" });
-    setParamsValue({});
+    store.setMode({ type: "IDLE" });
+    store.setParamsValue({});
     onBack();
   };
 
-  const handleSetParamsValue = (paramName: string, newParamValue: string) => {
-    setParamsValue({ ...paramsValue, [paramName]: newParamValue });
+  const handleSetParamsValue = (
+    paramName: keyof (typeof algorithm)["params"],
+    newParamValue: string
+  ) => {
+    store.setParamsValue({ ...store.paramsValue, [paramName]: newParamValue });
   };
 
   const isParamValueValid = useMemo(() => {
-    return validateAlgorithmParams(algorithm.params, paramsValue);
-  }, [paramsValue]);
+    return validateAlgorithmParams(algorithm.params, store.paramsValue as Record<string, string>);
+  }, [store.paramsValue]);
 
   const loadSteps = () => {
     if (!isParamValueValid) return;
-    const steps = algorithm.stepGenerator(graph, paramsValue);
-    setMode({ type: "SIMULATION", steps });
+    // @ts-ignore
+    const steps = algorithm.stepGenerator(store.graph, store.paramsValue);
+    store.setMode({ type: "SIMULATION", steps });
   };
-
-  const availableVertices = Object.keys(graph.vertices);
 
   return (
     <div className="flex h-full flex-col bg-slate-50">
@@ -60,10 +64,10 @@ export function AlgorithmDetails({ algorithm, onBack }: AlgorithmDetails) {
         </div>
         <div className="flex flex-col gap-8 p-4">
           <div className="flex flex-col gap-2">
-            <AlgorithmDetailParams
-              params={algorithm.params}
-              value={paramsValue}
-              availableVertices={availableVertices}
+            <AlgorithmDetailParams<{}>
+              paramDefinitions={algorithm.params}
+              value={store.paramsValue}
+              availableVertices={Object.values(store.graph.vertices)}
               onChange={handleSetParamsValue}
             />
           </div>
@@ -82,38 +86,42 @@ export function AlgorithmDetails({ algorithm, onBack }: AlgorithmDetails) {
   );
 }
 
-interface AlgorithmDetailParamsProps {
-  params: Record<string, AlgorithmParam>;
-  value: Record<string, string>;
-  onChange?: (paramName: string, value: string) => void;
-  availableVertices?: string[];
+interface AlgorithmDetailParamsProps<T extends object> {
+  paramDefinitions: AlgorithmParamDefinitions<T>;
+  value: Record<keyof T, string>;
+  onChange?: (paramName: keyof T, value: string) => void;
+  availableVertices?: Vertex[];
 }
 
-function AlgorithmDetailParams(props: AlgorithmDetailParamsProps) {
-  const renderSelect = (paramName: string, paramType: AlgorithmParamType) => {
+function AlgorithmDetailParams<T extends object>(props: AlgorithmDetailParamsProps<T>) {
+  const handleSelectChange = (paramName: keyof T, newValue: string) => {
+    props.onChange?.(paramName, newValue);
+  };
+  const renderSelect = (paramName: keyof T, paramType: AlgorithmParamType<any>) => {
     let dropdownValues: string[] = [];
     if (paramType === "vertex") {
-      dropdownValues = props.availableVertices ?? [];
+      dropdownValues = (props.availableVertices ?? []).map((vertex) => vertex.id);
     }
     return (
       <Select
-        label={paramName}
+        label={String(paramName)}
         value={props.value[paramName]}
-        onChange={(newValue) => props.onChange?.(paramName, newValue)}
+        onChange={(newValue) => handleSelectChange(paramName, newValue)}
         values={dropdownValues}
       />
     );
   };
 
-  const renderedParams = Object.entries(props.params).map((paramEntry) => {
-    const [paramName, paramDetails] = paramEntry;
+  const renderedParams = Object.entries(props.paramDefinitions).map((paramEntry) => {
+    const paramName = paramEntry[0] as keyof T;
+    const paramDefinition = paramEntry[1] as AlgorithmParamDefinition<any>;
     return (
-      <Fragment key={paramName}>
+      <Fragment key={String(paramName)}>
         <span className="text-slate-800">
-          {paramName}
-          {paramDetails.required && <span className="text-blue-500">*</span>}
+          {String(paramName)}
+          {paramDefinition.required && <span className="text-blue-500">*</span>}
         </span>
-        {renderSelect(paramName, paramDetails.type)}
+        {renderSelect(paramName, paramDefinition.type)}
       </Fragment>
     );
   });
