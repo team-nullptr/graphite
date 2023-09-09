@@ -31,7 +31,7 @@ export function ControlsButton({ icon, alt, ...props }: ControlsButtonProps) {
   return (
     <button
       aria-label={alt}
-      className="group flex h-[30px] w-[30px] cursor-pointer items-center justify-center rounded-md border-none bg-transparent p-0 text-slate-800 transition-colors hover:bg-slate-100 disabled:cursor-auto"
+      className="group flex h-[30px] w-[30px] cursor-pointer items-center justify-center rounded-md border-none bg-transparent p-0 text-slate-800 transition-colors hover:bg-slate-100 disabled:cursor-auto disabled:text-slate-400"
       {...props}
     >
       {icon}
