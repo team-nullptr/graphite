@@ -15,6 +15,14 @@ export class Edge {
     public weight: number | null,
     public readonly directed: boolean
   ) {}
+
+  /**
+   * Checks if an edge is defined between provided vertexIds.
+   * Order in which vertices are given does not matter.
+   */
+  between(aId: string, bId: string) {
+    return (this.from === aId && this.to === bId) || (this.from === bId && this.to === aId);
+  }
 }
 
 export type Graph = {
