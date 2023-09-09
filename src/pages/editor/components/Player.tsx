@@ -89,7 +89,7 @@ export function Player({
         onClick={lastStepHandler}
         disabled={currentStep === numberOfSteps}
         icon={<ChevronDoubleRightIcon className="h-5 w-5" />}
-        alt="next"
+        alt="last"
       />
 
       {isPlaying ? (
