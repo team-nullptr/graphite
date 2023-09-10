@@ -25,7 +25,7 @@ class ForceSimulator {
   // TODO: These variables could be extracted to some config that is passed to simulator.
   maxForce = 0.4;
 
-  attractiveTargetLength = 100;
+  attractiveTargetLength = 100; // Target connection length
   attractiveStrength = 0.025;
   attractiveStrengthChilled = 0.001;
 
@@ -41,11 +41,11 @@ class ForceSimulator {
     const { threshold, coolingFactor } = this.settings;
     const { ignore } = context;
 
-    let maxForce = 0;
-
     const vertices = Object.values(graph.vertices);
     const arrangement: Arrangement = { ...oldArrangement };
     const forces: Record<string, Vec2> = {};
+
+    let maxForce = 0;
 
     for (const vertex of vertices) {
       if (ignore.has(vertex.id)) {
@@ -54,13 +54,13 @@ class ForceSimulator {
       }
 
       const repulsiveForce = this.computeRepulsiveForce(context, vertex, vertices, arrangement);
-
       const attractiveForce = this.computeAttractiveForce(context, vertex, graph, arrangement);
-
-      forces[vertex.id] = new Vec2(0, 0).add(repulsiveForce).add(attractiveForce);
+      forces[vertex.id] = new Vec2(0, 0)
+        .add(repulsiveForce)
+        .add(attractiveForce)
+        .add(this.boundingCircleForce(arrangement[vertex.id]));
 
       const force = forces[vertex.id].len();
-
       if (force > maxForce) {
         maxForce = force;
       }
@@ -147,7 +147,7 @@ class ForceSimulator {
       this.maxForce
     );
 
-    return adj.vecTo(source).multiply(force);
+    return adj.vecTo(source).multiply(force * 10);
   }
 
   attractiveForce({ chilled }: Context, source: Vec2, adj: Vec2): Vec2 {
@@ -159,7 +159,13 @@ class ForceSimulator {
       this.maxForce
     );
 
-    return source.vecTo(adj).multiply(force);
+    return source.vecTo(adj).multiply(force * 300);
+  }
+
+  boundingCircleForce(source: Vec2): Vec2 {
+    const distance = source.distanceTo(new Vec2(0, 0));
+    const force = Math.min(1 / (1 + Math.pow(Math.E, (1 / 100) * -distance + 17)), 0.1);
+    return source.vecTo(new Vec2(0, 0)).multiply(force);
   }
 }
 

@@ -83,7 +83,7 @@ export class ArcFn extends Callable {
 }
 
 export class CompleteFn extends Callable {
-  arity = { min: 1, max: 1 };
+  arity = { min: 1, max: 2 };
 
   call(interpreter: Interpreter, args: Obj[]): void {
     const vertices = assertVertexCollection(args[0]);
@@ -130,6 +130,8 @@ export class BinaryTreeFn extends Callable {
         const id = nanoid();
         interpreter.addEdge(id, new Edge(id, root.id, left.id, 1, false));
         root.outs.push(id);
+        root.ins.push(id);
+        left.outs.push(id);
         left.ins.push(id);
       }
 
@@ -138,6 +140,8 @@ export class BinaryTreeFn extends Callable {
         const id = nanoid();
         interpreter.addEdge(id, new Edge(id, root.id, right.id, 1, false));
         root.outs.push(id);
+        root.ins.push(id);
+        right.outs.push(id);
         right.ins.push(id);
       }
     }
@@ -147,6 +151,11 @@ export class BinaryTreeFn extends Callable {
 
   call(interpreter: Interpreter, args: Obj[]): void {
     const vertices = assertVertexCollection(args[0]);
+
+    for (const vertex of vertices) {
+      interpreter.addVertex(vertex, new Vertex(vertex, 0));
+    }
+
     this.buildTree(interpreter, vertices, 0);
   }
 }

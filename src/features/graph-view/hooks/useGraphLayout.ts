@@ -9,7 +9,7 @@ import { getPointInSvgSpace } from "~/shared/helpers/svg";
 // TODO: Learn more about initial arrangement for force-directed graphs.
 function preArrange(graph: Graph) {
   return Object.values(graph.vertices).reduce((arrangement, v) => {
-    arrangement[v.id] = new Vec2(Math.random() * 200 - 100, Math.random() * 200 - 100);
+    arrangement[v.id] = new Vec2(Math.random() * 400 - 200, Math.random() * 400 - 200);
     return arrangement;
   }, {} as Arrangement);
 }

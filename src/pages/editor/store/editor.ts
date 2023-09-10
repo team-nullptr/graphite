@@ -38,11 +38,19 @@ vertex([A, B, C, D, E, F, G])
 edge(A, [B, C, D, E], 5)
 edge(D, C)
 edge(F, B)
-edge(B, C)
+edge(B, [C, D])
 
 # Add directed edges
 arc(A, [F, G])
 arc(E, C, 8)
+
+graph_complete([H, I, J, K, L, M])
+
+arc(G, H)
+
+tree_binary([N, O, P, R, S, T, U, W, X, Y, Z])
+
+edge(O, A)
 
 # Learn more at Graphene Docs
 # https://github.com/team-nullptr/graphite
