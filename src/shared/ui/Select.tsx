@@ -32,16 +32,16 @@ export function Select({ values, label, value, onChange }: SelectOptions) {
       </RadixSelect.Trigger>
       <RadixSelect.Portal>
         <RadixSelect.Content className="w-full overflow-hidden rounded border border-slate-200 bg-slate-50">
-          <RadixSelect.ScrollDownButton className="text-violet11 flex h-[25px] cursor-default items-center justify-center">
-            <ChevronUpIcon className="h-6" />
+          <RadixSelect.ScrollDownButton className="flex h-8 cursor-default items-center justify-center">
+            <ChevronUpIcon className="h-6 py-1" />
           </RadixSelect.ScrollDownButton>
           <RadixSelect.Viewport>
             {values.map((val) => (
               <SelectItem key={val} value={val} />
             ))}
           </RadixSelect.Viewport>
-          <RadixSelect.ScrollDownButton className="flex h-6 cursor-default items-center justify-center ">
-            <ChevronDownIcon className="h-6" />
+          <RadixSelect.ScrollDownButton className="flex h-8 cursor-default items-center justify-center ">
+            <ChevronDownIcon className="h-6 py-1" />
           </RadixSelect.ScrollDownButton>
         </RadixSelect.Content>
       </RadixSelect.Portal>
