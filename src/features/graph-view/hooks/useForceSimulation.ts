@@ -10,7 +10,6 @@ type ForceSimulatorSettings = {
 };
 
 type Context = {
-  chilled: boolean;
   ignore: Set<string>;
 };
 
@@ -23,15 +22,13 @@ class ForceSimulator {
   settings: ForceSimulatorSettings = defaultForceSimulatorSettings;
 
   // TODO: These variables could be extracted to some config that is passed to simulator.
-  maxForce = 0.4;
+  maxForce = 0.35;
 
   attractiveTargetLength = 100; // Target connection length
   attractiveStrength = 0.025;
-  attractiveStrengthChilled = 0.001;
 
-  repulsiveStrength = 100;
-  repulsiveChillOut = 0.05;
-  repulsiveStrengthChilled = 10;
+  repulsiveStrength = 5;
+  repulsiveChillOut = 0.02;
 
   constructor(settings: Partial<ForceSimulatorSettings> = {}) {
     this.settings = { ...this.settings, ...settings };
@@ -53,8 +50,9 @@ class ForceSimulator {
         continue;
       }
 
-      const repulsiveForce = this.computeRepulsiveForce(context, vertex, vertices, arrangement);
-      const attractiveForce = this.computeAttractiveForce(context, vertex, graph, arrangement);
+      const repulsiveForce = this.computeRepulsiveForce(vertex, vertices, arrangement);
+      const attractiveForce = this.computeAttractiveForce(vertex, graph, arrangement);
+
       forces[vertex.id] = new Vec2(0, 0)
         .add(repulsiveForce)
         .add(attractiveForce)
@@ -78,12 +76,7 @@ class ForceSimulator {
     return arrangement;
   };
 
-  computeRepulsiveForce(
-    context: Context,
-    vertex: Vertex,
-    vertices: Vertex[],
-    arrangement: Arrangement
-  ): Vec2 {
+  computeRepulsiveForce(vertex: Vertex, vertices: Vertex[], arrangement: Arrangement): Vec2 {
     const totalForce = new Vec2(0, 0);
 
     for (const currentVertex of vertices) {
@@ -91,11 +84,7 @@ class ForceSimulator {
         continue;
       }
 
-      const force = this.repulsiveForce(
-        context,
-        arrangement[vertex.id],
-        arrangement[currentVertex.id]
-      );
+      const force = this.repulsiveForce(arrangement[vertex.id], arrangement[currentVertex.id]);
 
       totalForce.add(force);
     }
@@ -103,12 +92,7 @@ class ForceSimulator {
     return totalForce;
   }
 
-  computeAttractiveForce(
-    context: Context,
-    vertex: Vertex,
-    graph: Graph,
-    arrangement: Arrangement
-  ): Vec2 {
+  computeAttractiveForce(vertex: Vertex, graph: Graph, arrangement: Arrangement): Vec2 {
     const processedEdges = new Set<string>();
     const totalForce = new Vec2(0, 0);
     const adjacentEdges = [...vertex.ins, ...vertex.outs];
@@ -125,11 +109,7 @@ class ForceSimulator {
         continue;
       }
 
-      const force = this.attractiveForce(
-        context,
-        arrangement[vertex.id],
-        arrangement[adjacentVertexId]
-      );
+      const force = this.attractiveForce(arrangement[vertex.id], arrangement[adjacentVertexId]);
 
       processedEdges.add(edgeId);
       totalForce.add(force);
@@ -138,24 +118,27 @@ class ForceSimulator {
     return totalForce;
   }
 
-  repulsiveForce({ chilled }: Context, source: Vec2, adj: Vec2): Vec2 {
-    const forceChillOut = this.repulsiveChillOut;
-    const forceStrength = chilled ? this.repulsiveStrengthChilled : this.repulsiveStrength;
+  /** Calculates repulsive force for give vertex. */
+  // TODO: adj should be renamed to something else because we calculate repulsive force for every other vertex.
+  repulsiveForce(source: Vec2, adj: Vec2): Vec2 {
+    const distance = source.distanceTo(adj);
 
     const force = Math.min(
-      forceStrength / (1 + Math.pow(Math.E, forceChillOut * source.distanceTo(adj))),
+      this.repulsiveStrength / (1 + Math.pow(Math.E, this.repulsiveChillOut * distance)),
       this.maxForce
     );
+
+    console.log(distance, force);
 
     return adj.vecTo(source).multiply(force * 10);
   }
 
-  attractiveForce({ chilled }: Context, source: Vec2, adj: Vec2): Vec2 {
-    const targetLength = this.attractiveTargetLength;
-    const strength = chilled ? this.attractiveStrengthChilled : this.attractiveStrength;
+  /** Calculates attractive force between the given vertex and it's adjacent node. */
+  attractiveForce(source: Vec2, adj: Vec2): Vec2 {
+    const distance = adj.distanceTo(source);
 
     const force = Math.min(
-      strength * Math.log(adj.distanceTo(source) / targetLength),
+      this.attractiveStrength * Math.log(distance / this.attractiveTargetLength),
       this.maxForce
     );
 
@@ -163,6 +146,7 @@ class ForceSimulator {
   }
 
   boundingCircleForce(source: Vec2): Vec2 {
+    // TODO: Simplify this
     const distance = source.distanceTo(new Vec2(0, 0));
     const force = Math.min(1 / (1 + Math.pow(Math.E, (1 / 100) * -distance + 17)), 0.1);
     return source.vecTo(new Vec2(0, 0)).multiply(force);
@@ -174,7 +158,6 @@ const forceSimulator = new ForceSimulator();
 export function useForceSimulation(
   graph: Graph,
   selectedVertexRef: MutableRefObject<SelectedVertex | undefined>,
-  chilled: boolean,
   setArrangement: Dispatch<SetStateAction<Arrangement>>
 ) {
   const frameRef = useRef<number>();
@@ -184,7 +167,6 @@ export function useForceSimulation(
 
     setArrangement((current) => {
       const context: Context = {
-        chilled,
         ignore: new Set(selectedVertex ? [selectedVertex.id] : []),
       };
 
@@ -192,7 +174,7 @@ export function useForceSimulation(
     });
 
     frameRef.current = requestAnimationFrame(runSimulation);
-  }, [chilled, graph, setArrangement, selectedVertexRef]);
+  }, [graph, setArrangement, selectedVertexRef]);
 
   useEffect(() => {
     frameRef.current = requestAnimationFrame(runSimulation);

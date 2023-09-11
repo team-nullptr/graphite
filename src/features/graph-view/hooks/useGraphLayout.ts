@@ -19,7 +19,6 @@ type Position = [x: number, y: number];
 export function useGraphLayout(graph: Graph, svgRef: RefObject<SVGSVGElement>) {
   const areControlsEnabled = useRef<boolean>(true);
   const selectedVertexRef = useRef<SelectedVertex>();
-  const [chilled, setChilled] = useState(false);
   const [arrangement, setArrangement] = useState<Arrangement>(preArrange(graph));
 
   const vertexMouseDownHandler = useCallback(
@@ -93,29 +92,7 @@ export function useGraphLayout(graph: Graph, svgRef: RefObject<SVGSVGElement>) {
     };
   }, [svgRef]);
 
-  useEffect(() => {
-    const handleShiftDown = (e: KeyboardEvent) => {
-      if (e.key === "Shift") {
-        setChilled(true);
-      }
-    };
-
-    const handleShiftUp = (e: KeyboardEvent) => {
-      if (e.key === "Shift") {
-        setChilled(false);
-      }
-    };
-
-    addEventListener("keydown", handleShiftDown);
-    addEventListener("keyup", handleShiftUp);
-
-    return () => {
-      removeEventListener("keydown", handleShiftDown);
-      removeEventListener("keyup", handleShiftUp);
-    };
-  }, []);
-
-  useForceSimulation(graph, selectedVertexRef, chilled, setArrangement);
+  useForceSimulation(graph, selectedVertexRef, setArrangement);
 
   return {
     arrangement,

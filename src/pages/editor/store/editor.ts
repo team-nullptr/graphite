@@ -44,7 +44,7 @@ edge(B, [C, D])
 arc(A, [F, G])
 arc(E, C, 8)
 
-graph_complete([H, I, J, K, L, M])
+graph_complete([H, I, K, L, M])
 
 arc(G, H)
 
