@@ -31,17 +31,19 @@ export function Select({ values, label, value, onChange }: SelectOptions) {
         </RadixSelect.Icon>
       </RadixSelect.Trigger>
       <RadixSelect.Portal>
+
         <RadixSelect.Content className="w-full overflow-hidden rounded border border-slate-300 bg-slate-50 shadow-lg">
           <RadixSelect.ScrollUpButton className="flex w-full justify-center border-b border-slate-300 p-2">
             <ChevronUpIcon className="w-4" />
           </RadixSelect.ScrollUpButton>
-
+            
+            
+      
           <RadixSelect.Viewport>
             {values.map((val) => (
               <SelectItem key={val} value={val} />
             ))}
           </RadixSelect.Viewport>
-
           <RadixSelect.ScrollDownButton className="flex w-full justify-center border-t border-slate-300 p-2">
             <ChevronDownIcon className="w-4" />
           </RadixSelect.ScrollDownButton>
