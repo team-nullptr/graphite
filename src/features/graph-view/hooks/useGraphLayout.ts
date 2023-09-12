@@ -9,7 +9,7 @@ import { getPointInSvgSpace } from "~/shared/helpers/svg";
 // TODO: Learn more about initial arrangement for force-directed graphs.
 function preArrange(graph: Graph) {
   return Object.values(graph.vertices).reduce((arrangement, v) => {
-    arrangement[v.id] = new Vec2(Math.random() * 200 - 100, Math.random() * 200 - 100);
+    arrangement[v.id] = new Vec2(Math.random() * 400 - 200, Math.random() * 400 - 200);
     return arrangement;
   }, {} as Arrangement);
 }
@@ -19,7 +19,6 @@ type Position = [x: number, y: number];
 export function useGraphLayout(graph: Graph, svgRef: RefObject<SVGSVGElement>) {
   const areControlsEnabled = useRef<boolean>(true);
   const selectedVertexRef = useRef<SelectedVertex>();
-  const [chilled, setChilled] = useState(false);
   const [arrangement, setArrangement] = useState<Arrangement>(preArrange(graph));
 
   const vertexMouseDownHandler = useCallback(
@@ -93,29 +92,7 @@ export function useGraphLayout(graph: Graph, svgRef: RefObject<SVGSVGElement>) {
     };
   }, [svgRef]);
 
-  useEffect(() => {
-    const handleShiftDown = (e: KeyboardEvent) => {
-      if (e.key === "Shift") {
-        setChilled(true);
-      }
-    };
-
-    const handleShiftUp = (e: KeyboardEvent) => {
-      if (e.key === "Shift") {
-        setChilled(false);
-      }
-    };
-
-    addEventListener("keydown", handleShiftDown);
-    addEventListener("keyup", handleShiftUp);
-
-    return () => {
-      removeEventListener("keydown", handleShiftDown);
-      removeEventListener("keyup", handleShiftUp);
-    };
-  }, []);
-
-  useForceSimulation(graph, selectedVertexRef, chilled, setArrangement);
+  useForceSimulation(graph, selectedVertexRef, setArrangement);
 
   return {
     arrangement,
