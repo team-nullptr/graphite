@@ -1,55 +1,58 @@
-import { Algorithm } from "~/core/simulator/algorithm";
-import { ArrowLeftIcon } from "@heroicons/react/24/outline";
+import { ArrowLeftIcon, PlayIcon } from "@heroicons/react/24/outline";
+import { Fragment, useMemo } from "react";
+import {
+  Algorithm,
+  AlgorithmParamDefinition,
+  AlgorithmParamDefinitions,
+  AlgorithmParamType,
+  validateAlgorithmParams,
+} from "~/core/simulator/algorithm";
+import { Vertex } from "~/core/simulator/graph";
 import { Controls, ControlsButton } from "~/shared/Controls";
-import { PlayIcon } from "@heroicons/react/24/outline";
-import { useEditorStore } from "../context/editor";
 import { Select } from "~/shared/ui/Select";
 import { SpaceshipButton } from "~/shared/ui/SpaceshipButton";
-import { useEffect, useState } from "react";
+import { useEditorStore } from "../context/editor";
 
 export interface AlgorithmDetails {
-  algorithm: Algorithm;
+  algorithm: Algorithm<{}>;
   onBack: () => void;
 }
 
 export function AlgorithmDetails({ algorithm, onBack }: AlgorithmDetails) {
-  const [startingVertex, setStartingVertex] = useState<string>();
+  const { graph, setMode, paramsValue, setParamsValue } = useEditorStore((storeState) => {
+    const { graph, setMode, algorithmParams, setAlgorithmParams } = storeState;
+    return { graph, setMode, paramsValue: algorithmParams, setParamsValue: setAlgorithmParams };
+  });
 
-  const { graph, setMode } = useEditorStore(({ graph, setMode }) => ({
-    graph,
-    setMode,
-  }));
-
-  useEffect(() => {
-    if (startingVertex && graph.vertices[startingVertex] === undefined) {
-      setStartingVertex(undefined);
-    }
-  }, [graph, startingVertex]);
-
-  const loadInstructions = () => {
-    if (!startingVertex) {
-      return;
-    }
-
-    setMode({
-      type: "SIMULATION",
-      steps: algorithm.algorithm(graph, startingVertex),
-    });
-  };
-
-  const handleOnBack = () => {
+  const handleBackClicked = () => {
     setMode({ type: "IDLE" });
+    setParamsValue({});
     onBack();
   };
 
-  const vertices = Object.keys(graph.vertices);
+  const handleSetParamsValue = (
+    paramName: keyof (typeof algorithm)["params"],
+    newParamValue: string
+  ) => {
+    setParamsValue({ ...paramsValue, [paramName]: newParamValue });
+  };
+
+  const isParamValueValid = useMemo(() => {
+    return validateAlgorithmParams(algorithm.params, paramsValue as Record<string, string>);
+  }, [paramsValue]);
+
+  const loadSteps = () => {
+    if (!isParamValueValid) return;
+    const steps = algorithm.stepGenerator(graph, paramsValue);
+    setMode({ type: "SIMULATION", steps });
+  };
 
   return (
     <div className="flex h-full flex-col bg-slate-50">
       <Controls alignment="start" className="border-b border-slate-300">
         <ControlsButton
           icon={<ArrowLeftIcon className="h-5 w-5" />}
-          onClick={handleOnBack}
+          onClick={handleBackClicked}
           alt="back"
         />
       </Controls>
@@ -60,27 +63,67 @@ export function AlgorithmDetails({ algorithm, onBack }: AlgorithmDetails) {
         </div>
         <div className="flex flex-col gap-8 p-4">
           <div className="flex flex-col gap-2">
-            <span className="text-slate-800">
-              Starting Vertex <span className="text-blue-500">*</span>
-            </span>
-            <Select
-              label="Choose starting vertex"
-              value={startingVertex}
-              onChange={setStartingVertex}
-              values={vertices}
+            <AlgorithmDetailParams<{}>
+              paramDefinitions={algorithm.params}
+              value={paramsValue}
+              availableVertices={Object.values(graph.vertices)}
+              onChange={handleSetParamsValue}
             />
           </div>
         </div>
       </div>
       <div className="flex-g flex justify-end bg-slate-50 p-4">
         <SpaceshipButton
-          disabled={startingVertex === undefined}
-          disabledHint="Select the starting vertex!"
-          onClick={loadInstructions}
-          label="Run"
           icon={<PlayIcon className="h-5 w-5" />}
+          label="Run"
+          disabled={!isParamValueValid}
+          disabledHint="Fill all required fields"
+          onClick={loadSteps}
         />
       </div>
     </div>
   );
+}
+
+interface AlgorithmDetailParamsProps<T extends object> {
+  paramDefinitions: AlgorithmParamDefinitions<T>;
+  value: Record<keyof T, string>;
+  onChange?: (paramName: keyof T, value: string) => void;
+  availableVertices?: Vertex[];
+}
+
+function AlgorithmDetailParams<T extends object>(props: AlgorithmDetailParamsProps<T>) {
+  const handleSelectChange = (paramName: keyof T, newValue: string) => {
+    props.onChange?.(paramName, newValue);
+  };
+  const renderSelect = (paramName: keyof T, paramType: AlgorithmParamType<any>) => {
+    let dropdownValues: string[] = [];
+    if (paramType === "vertex") {
+      dropdownValues = (props.availableVertices ?? []).map((vertex) => vertex.id);
+    }
+    return (
+      <Select
+        label={String(paramName)}
+        value={props.value[paramName]}
+        onChange={(newValue) => handleSelectChange(paramName, newValue)}
+        values={dropdownValues}
+      />
+    );
+  };
+
+  const renderedParams = Object.entries(props.paramDefinitions).map((paramEntry) => {
+    const paramName = paramEntry[0] as keyof T;
+    const paramDefinition = paramEntry[1] as AlgorithmParamDefinition<any>;
+    return (
+      <Fragment key={String(paramName)}>
+        <span className="text-slate-800">
+          {String(paramName)}
+          {paramDefinition.required && <span className="text-blue-500">*</span>}
+        </span>
+        {renderSelect(paramName, paramDefinition.type)}
+      </Fragment>
+    );
+  });
+
+  return <>{renderedParams}</>;
 }

@@ -1,37 +1,37 @@
-import type { Color } from "~/types/color";
-import { Graph } from "./graph";
-import { ColumnDef } from "@tanstack/react-table";
+import { Graph, Vertex } from "./graph";
+import { Step } from "./step";
 
-export type Highlight = [string, Color];
-export type Highlights = Map<string, Color>;
+// prettier-ignore
+export type AlgorithmParamType<T> = 
+  T extends string ? "vertex" // | "text"
+  : "";
 
-export type TableState = {
-  type: "table";
-  data: unknown[];
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  columns: ColumnDef<any, any>[];
-};
+export interface AlgorithmParamDefinition<T> {
+  type: AlgorithmParamType<T>;
+  required?: boolean;
+}
 
-export type ArrayState = {
-  type: "array";
-  title: string;
-  data: string[];
-  highlighted: Set<number>;
-};
+export type AlgorithmParamDefinitions<T> = { [K in keyof T]: AlgorithmParamDefinition<T[K]> };
 
-export type State = TableState | ArrayState | undefined;
-
-export type Step = {
-  description: string;
-  state: State[];
-  highlights: Highlights;
-};
-
-export type AlgorithmFn = (graph: Graph) => Step[];
-
-export type Algorithm = {
+export interface Algorithm<T extends object> {
   name: string;
   description: string;
   tags: string[];
-  algorithm: (graph: Graph, startingVertex: string) => Step[];
+  stepGenerator: (graph: Graph, params: T) => Step[];
+  /** `params` are only used to generate appropriate input  fields */
+  params: AlgorithmParamDefinitions<T>;
+}
+
+export const validateAlgorithmParams = <T extends object>(
+  paramsDefinition: AlgorithmParamDefinitions<T>,
+  valueToBeValidated: Record<string, string>
+) => {
+  return Object.entries(paramsDefinition)
+    .filter(([, paramType]) => {
+      return (paramType as AlgorithmParamDefinition<unknown>).required;
+    })
+    .every(([paramKey]) => {
+      const paramValue = valueToBeValidated[paramKey];
+      return paramValue && paramValue.trim() !== "";
+    });
 };

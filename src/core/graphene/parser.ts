@@ -1,11 +1,5 @@
 import { Token, TokenType } from "./token";
-import {
-  Expr,
-  Variable,
-  NumberLiteral,
-  VertexLiteral,
-  VertexCollection,
-} from "./expr";
+import { Expr, Variable, NumberLiteral, VertexLiteral, VertexCollection } from "./expr";
 import { Call } from "./stmt";
 import { Statement } from "./stmt";
 
@@ -42,9 +36,7 @@ export class Parser {
   }
 
   private callStmt(): Call {
-    const calle: Expr = new Variable(
-      this.consume("IDENTIFIER", "Expected an identifier.")
-    );
+    const calle: Expr = new Variable(this.consume("IDENTIFIER", "Expected an identifier."));
 
     this.consume("LEFT_PAREN", "Expected a function call.");
 
@@ -54,10 +46,7 @@ export class Parser {
       args = this.finishArgumentList();
     }
 
-    const paren: Token = this.consume(
-      "RIGHT_PAREN",
-      "Expected ')' after function arguments."
-    );
+    const paren: Token = this.consume("RIGHT_PAREN", "Expected ')' after function arguments.");
 
     return new Call(calle, paren, args);
   }
@@ -68,10 +57,7 @@ export class Parser {
     do {
       // TODO: Do we really need this chek?
       if (args.length >= 255) {
-        throw new ParseError(
-          this.peek(),
-          "Cannot have more than 255 arguments."
-        );
+        throw new ParseError(this.peek(), "Cannot have more than 255 arguments.");
       }
 
       this.ignoreNewLines();
@@ -88,10 +74,7 @@ export class Parser {
     }
 
     if (this.match("NUMBER")) {
-      return new NumberLiteral(
-        this.previous(),
-        this.previous().literal as number
-      );
+      return new NumberLiteral(this.previous(), this.previous().literal as number);
     }
 
     if (this.match("IDENTIFIER")) {
@@ -118,10 +101,7 @@ export class Parser {
 
     this.ignoreNewLines();
 
-    const paren = this.consume(
-      "RIGHT_SQ_BRACKET",
-      "Expected ']' at the end of vertex collection."
-    );
+    const paren = this.consume("RIGHT_SQ_BRACKET", "Expected ']' at the end of vertex collection.");
 
     return new VertexCollection(paren, vertices);
   }

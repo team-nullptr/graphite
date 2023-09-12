@@ -1,21 +1,20 @@
-import { useState } from "react";
-import { algorithms } from "~/algorithms";
-import { Algorithm } from "~/core/simulator/algorithm";
+import { algorithms } from "~/core/simulator/algorithms";
+import { useEditorStore } from "../context/editor";
 import { AlgorithmDetails } from "./AlgorithmDetails";
 import { AlgorithmGrid } from "./AlgorithmGrid";
 
 export function AlgorithmPicker() {
-  const [browsedAlgorithm, setBrowsedAlgorithm] = useState<Algorithm>();
+  const [algorithm, setAlgorithm] = useEditorStore((store) => [
+    store.algorithm,
+    store.setAlgorithm,
+  ]);
 
   return (
     <div className="h-full w-full bg-slate-50">
-      {browsedAlgorithm ? (
-        <AlgorithmDetails
-          algorithm={browsedAlgorithm}
-          onBack={() => setBrowsedAlgorithm(undefined)}
-        />
+      {algorithm ? (
+        <AlgorithmDetails algorithm={algorithm} onBack={() => setAlgorithm(undefined)} />
       ) : (
-        <AlgorithmGrid algorithms={algorithms} onAlgorithmSelect={setBrowsedAlgorithm} />
+        <AlgorithmGrid algorithms={algorithms} onAlgorithmSelect={setAlgorithm} />
       )}
     </div>
   );

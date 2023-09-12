@@ -8,29 +8,12 @@ import { DiagnosticsSummary } from "./components/Diagnostics";
 import "./editor-styles.css";
 import { editorOnChange, useEditor } from "./hooks/useEditor";
 
-const initialEditorValue = `# Declare vertices
-vertex([A, B, C, D, E, F, G])
-
-# Add edges
-edge(A, [B, C, D, E], 5)
-edge(D, C)
-edge(F, B)
-edge(B, C)
-
-# Add directed edges
-arc(A, [F, G])
-arc(E, C, 8)
-
-# Learn more at Graphene Docs
-# https://github.com/team-nullptr/graphite
-`;
-
 export function CodeEditor() {
   const setGraph = useEditorStore(({ setGraph }) => setGraph);
-  const [value, setValue] = useState(initialEditorValue);
+  const [code, setCode] = useEditorStore((store) => [store.code, store.setCode]);
   const [errors, setErrors] = useState<Error[]>([]);
 
-  const { view, ref } = useEditor<HTMLDivElement>([editorOnChange((value) => setValue(value))]);
+  const { view, ref } = useEditor<HTMLDivElement>([editorOnChange((value) => setCode(value))]);
 
   // TODO: It might be a good idea to extract code-mirrors specific logic.
   useEffect(() => {
@@ -40,7 +23,7 @@ export function CodeEditor() {
 
     const currentValue = view.state.doc.toString();
 
-    if (value === currentValue) {
+    if (code === currentValue) {
       return;
     }
 
@@ -48,15 +31,15 @@ export function CodeEditor() {
       changes: {
         from: 0,
         to: currentValue.length,
-        insert: value,
+        insert: code,
       },
     });
-  }, [view, value]);
+  }, [view, code]);
 
   useEffect(() => {
     // Do we want to parse graph here?
     try {
-      const tokens = new Lexer(value).lex();
+      const tokens = new Lexer(code).lex();
       const stmts = new Parser(tokens).parse();
       const graph = new Interpreter(stmts).forge();
 
@@ -66,7 +49,7 @@ export function CodeEditor() {
       if (err instanceof Error) setErrors([err]);
       else console.error("Unexpected error");
     }
-  }, [setGraph, value]);
+  }, [setGraph, code]);
 
   return (
     <Split

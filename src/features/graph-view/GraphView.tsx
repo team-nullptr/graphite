@@ -1,4 +1,3 @@
-import { Highlights } from "~/core/simulator/algorithm";
 import { Graph } from "~/core/simulator/graph";
 import { ControlledSvg } from "~/shared/layout/controlled-svg/ControlledSvg";
 import { Edges } from "./components/Edges";
@@ -7,13 +6,15 @@ import { distributeEdges, groupEdges, sortEdges } from "./helpers/distributeEdge
 import { useGraphLayout } from "./hooks/useGraphLayout";
 import { useRef, useMemo } from "react";
 import { Toolbar } from "./components/Toolbar";
+import { Highlights } from "~/core/simulator/highlight";
 
 export type GraphViewProps = {
-  highlights?: Highlights;
+  verticesHighlights?: Highlights;
+  edgesHighlights?: Highlights;
   graph: Graph;
 };
 
-export function GraphView({ highlights, graph }: GraphViewProps) {
+export function GraphView({ verticesHighlights, edgesHighlights, graph }: GraphViewProps) {
   const svgRef = useRef<SVGSVGElement>(null);
 
   // prettier-ignore
@@ -42,11 +43,14 @@ export function GraphView({ highlights, graph }: GraphViewProps) {
         <Toolbar
           zoom={zoom}
           onZoomReset={() => setZoom(1)}
-          onZoomIncrease={() => setZoom(Math.floor((zoom + 0.1) * 10) / 10)}
-          onZoomDecrease={() => setZoom(Math.ceil((zoom - 0.1) * 10) / 10)}
+          onZoomIncrease={() => {
+            setZoom(zoom + 0.1);
+          }}
+          onZoomDecrease={() => {
+            setZoom(zoom - 0.1);
+          }}
           onCenter={() => {
             setCenter([0, 0]);
-            console.log("japierdole");
           }}
         />
       )}
@@ -54,11 +58,12 @@ export function GraphView({ highlights, graph }: GraphViewProps) {
       {/* prettier-ignore */}
       <Edges
         positionedEdges={positionedEdges}
+        highlights={edgesHighlights}
         arrangement={arrangement}
       />
       <Vertices
         vertices={Object.values(graph.vertices)}
-        highlights={highlights}
+        highlights={verticesHighlights}
         arrangement={arrangement}
         onVertexMouseDown={vertexMouseDownHandler}
       />

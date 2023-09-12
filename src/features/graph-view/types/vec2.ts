@@ -1,3 +1,5 @@
+import { TrashIcon } from "@heroicons/react/24/outline";
+
 export class Vec2 {
   constructor(public x: number, public y: number) {}
 
@@ -5,7 +7,7 @@ export class Vec2 {
     return new Vec2(a.x + b.x, a.y + b.y);
   }
 
-  static substract(a: Vec2, b: Vec2): Vec2 {
+  static subtract(a: Vec2, b: Vec2): Vec2 {
     return Vec2.add(a, Vec2.multiply(b, -1));
   }
 
@@ -19,7 +21,7 @@ export class Vec2 {
     return this;
   }
 
-  substract(v: Vec2): Vec2 {
+  subtract(v: Vec2): Vec2 {
     return this.add(Vec2.multiply(v, -1));
   }
 
@@ -29,8 +31,14 @@ export class Vec2 {
     return this;
   }
 
+  divide(n: number): Vec2 {
+    return this.multiply(1 / n);
+  }
+
   vecTo(target: Vec2): Vec2 {
-    return new Vec2(target.x - this.x, target.y - this.y);
+    const translation = new Vec2(target.x - this.x, target.y - this.y);
+    const len = translation.len();
+    return translation.divide(len);
   }
 
   distanceTo(v: Vec2): number {

@@ -1,12 +1,12 @@
 import { Fragment, useEffect, useRef, useState } from "react";
 import { useEditorStore } from "../context/editor";
-import { State } from "~/core/simulator/algorithm";
 import { DynamicSplit } from "~/shared/layout/Split";
 import { GraphView } from "../../../features/graph-view/GraphView";
 import { useLayoutSettingsStore } from "../store/layout";
 import { ArrayStep } from "./ArrayStep";
 import { Player } from "./Player";
 import { TableStep } from "./TableStep";
+import { State } from "~/core/simulator/state";
 
 export const Visualizer = () => {
   const visualizerRef = useRef(null);
@@ -24,8 +24,11 @@ export const Visualizer = () => {
     setCurrentStep(0);
   }, [mode]);
 
-  const highlights =
-    mode.type === "SIMULATION" ? mode.steps[currentStepIndex]?.highlights : undefined;
+  const verticesHighlights =
+    mode.type === "SIMULATION" ? mode.steps[currentStepIndex]?.verticesHighlights : undefined;
+
+  const edgesHighlights =
+    mode.type === "SIMULATION" ? mode.steps[currentStepIndex]?.edgesHighlights : undefined;
 
   const renderStepState = (state: State) => {
     if (!state) return null;
@@ -46,7 +49,13 @@ export const Visualizer = () => {
       <DynamicSplit
         orientation={orientation}
         active={mode.type === "SIMULATION"}
-        staticPane={<GraphView graph={graph} highlights={highlights} />}
+        staticPane={
+          <GraphView
+            graph={graph}
+            verticesHighlights={verticesHighlights}
+            edgesHighlights={edgesHighlights}
+          />
+        }
         initialShare={100 * (2 / 3)}
         dynamicPane={
           mode.type === "SIMULATION" && (
@@ -55,9 +64,9 @@ export const Visualizer = () => {
                 className="flex-shrink-0 border-b border-slate-300"
                 currentStep={currentStepIndex}
                 onStepChange={setCurrentStep}
-                numberOfSteps={mode.steps.length}
+                numberOfSteps={mode.steps.length - 1}
                 settings={{
-                  speed: 1.5 * 1000,
+                  speed: 1000,
                 }}
               />
               <div className="flex flex-col gap-1 p-4">

@@ -21,3 +21,11 @@ export function assertNumber(arg: Obj): number {
 
   return arg.value;
 }
+
+export function assertVertexCollection(arg: Obj): string[] {
+  if (arg.type !== "VERTEX_COLLECTION") {
+    throw new Error("Expected a vertex collection.");
+  }
+
+  return arg.value;
+}

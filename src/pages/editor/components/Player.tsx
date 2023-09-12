@@ -1,9 +1,10 @@
 import {
-  ArrowLeftIcon,
   ArrowRightIcon,
-  ArrowPathRoundedSquareIcon,
   StopIcon,
   PlayIcon,
+  ChevronDoubleLeftIcon,
+  ChevronDoubleRightIcon,
+  ArrowLeftIcon,
 } from "@heroicons/react/24/outline";
 import { useState, useCallback, useEffect } from "react";
 import { Controls, ControlsButton } from "~/shared/Controls";
@@ -29,9 +30,14 @@ export function Player({
 }: PlayerProps) {
   const [isPlaying, setIsPlaying] = useState(false);
 
-  const restartHandler = () => {
+  const firstStepHandler = () => {
     setIsPlaying(false);
     onStepChange(0);
+  };
+
+  const lastStepHandler = () => {
+    setIsPlaying(false);
+    onStepChange(numberOfSteps);
   };
 
   const previousStepHandler = () => {
@@ -40,7 +46,7 @@ export function Player({
   };
 
   const nextStepHandler = useCallback(() => {
-    const value = Math.min(currentStep + 1, numberOfSteps - 1);
+    const value = Math.min(currentStep + 1, numberOfSteps);
     onStepChange(value);
   }, [currentStep, numberOfSteps, onStepChange]);
 
@@ -59,6 +65,13 @@ export function Player({
   return (
     <Controls className={className}>
       <ControlsButton
+        onClick={firstStepHandler}
+        disabled={currentStep === 0}
+        icon={<ChevronDoubleLeftIcon className="h-5 w-5" />}
+        alt="first"
+      />
+
+      <ControlsButton
         onClick={previousStepHandler}
         disabled={currentStep === 0}
         icon={<ArrowLeftIcon className="h-5 w-5" />}
@@ -67,15 +80,16 @@ export function Player({
 
       <ControlsButton
         onClick={nextStepHandler}
-        disabled={currentStep === numberOfSteps - 1}
+        disabled={currentStep === numberOfSteps}
         icon={<ArrowRightIcon className="h-5 w-5" />}
         alt="next"
       />
 
       <ControlsButton
-        onClick={restartHandler}
-        icon={<ArrowPathRoundedSquareIcon className="h-5 w-5" />}
-        alt="restart"
+        onClick={lastStepHandler}
+        disabled={currentStep === numberOfSteps}
+        icon={<ChevronDoubleRightIcon className="h-5 w-5" />}
+        alt="last"
       />
 
       {isPlaying ? (

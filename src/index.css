@@ -37,10 +37,96 @@
   font-style: normal;
 }
 
+/* Roboto */
+
+@font-face {
+  font-family: "Roboto";
+  src: url("./assets/fonts/roboto/Roboto-Thin.ttf");
+  font-weight: 100;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Roboto";
+  src: url("./assets/fonts/roboto/Roboto-ThinItalic.ttf");
+  font-weight: 100;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: "Roboto";
+  src: url("./assets/fonts/roboto/Roboto-Light.ttf");
+  font-weight: 300;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Roboto";
+  src: url("./assets/fonts/roboto/Roboto-LightItalic.ttf");
+  font-weight: 300;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: "Roboto";
+  src: url("./assets/fonts/roboto/Roboto-Regular.ttf");
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Roboto";
+  src: url("./assets/fonts/roboto/Roboto-Italic.ttf");
+  font-weight: 400;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: "Roboto";
+  src: url("./assets/fonts/roboto/Roboto-Medium.ttf");
+  font-weight: 500;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Roboto";
+  src: url("./assets/fonts/roboto/Roboto-MediumItalic.ttf");
+  font-weight: 500;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: "Roboto";
+  src: url("./assets/fonts/roboto/Roboto-Bold.ttf");
+  font-weight: 700;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Roboto";
+  src: url("./assets/fonts/roboto/Roboto-BoldItalic.ttf");
+  font-weight: 700;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: "Roboto";
+  src: url("./assets/fonts/roboto/Roboto-Black.ttf");
+  font-weight: 900;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Roboto";
+  src: url("./assets/fonts/roboto/Roboto-BlackItalic.ttf");
+  font-weight: 900;
+  font-style: italic;
+}
+
 html,
 body,
 #root {
-  @apply h-full font-[Manrope];
+  @apply h-full font-[Roboto];
 }
 
 @layer utilities {
@@ -52,5 +138,19 @@ body,
   .no-scrollbar {
     -ms-overflow-style: none; /* IE and Edge */
     scrollbar-width: none; /* Firefox */
+  }
+}
+
+@layer base {
+  ::-webkit-scrollbar {
+    @apply h-2 w-2;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply rounded-md bg-slate-300;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-slate-400;
   }
 }

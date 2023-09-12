@@ -2,6 +2,7 @@ import type { Color } from "~/types/color";
 import { Vec2 } from "../types/vec2";
 import { Arrow } from "./Arrow";
 import colors from "tailwindcss/colors";
+import { cn } from "~/lib/utils";
 
 const vertexRadius = 19;
 
@@ -10,10 +11,11 @@ export type EdgeProps = {
   y: number;
   dx: number;
   dy: number;
+  color?: Color;
   directed?: boolean;
   position?: number;
   circular?: boolean;
-  color?: Color;
+  thicken?: boolean;
 };
 
 export function Edge(props: EdgeProps) {
@@ -21,7 +23,16 @@ export function Edge(props: EdgeProps) {
   return <StraightEdge {...props} />;
 }
 
-function StraightEdge({ x, y, dx, dy, directed, position = 0, color = "slate" }: EdgeProps) {
+function StraightEdge({
+  x,
+  y,
+  dx,
+  dy,
+  directed,
+  color = "slate",
+  thicken = false,
+  position = 0,
+}: EdgeProps) {
   const width = dx - x;
   const height = dy - y;
   const length = Math.sqrt(Math.pow(width, 2) + Math.pow(height, 2));
@@ -44,7 +55,11 @@ function StraightEdge({ x, y, dx, dy, directed, position = 0, color = "slate" }:
 
   return (
     <g transform={transform}>
-      <path className="fill-none stroke-1 transition-[stroke]" d={path} stroke={stroke} />
+      <path
+        className={cn("fill-none stroke-1 transition-[stroke]", thicken && "stroke-[3px]")}
+        d={path}
+        stroke={stroke}
+      />
       {directed && <Arrow position={end} angle={-angle} color={color} />}
     </g>
   );

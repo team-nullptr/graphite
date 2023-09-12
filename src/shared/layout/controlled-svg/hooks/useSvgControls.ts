@@ -38,6 +38,7 @@ export const useSvgControls = (
   const [zoom, setZoom] = useState(1);
   const [center, setCenter] = useState<Position>([0, 0]);
 
+  /** Sets current zoom. Default zoom = 100 */
   const normalizeZoom = useCallback(
     (zoom: number) => Math.max(Math.min(zoom, zoomBounds.max), zoomBounds.min),
     [zoomBounds]
