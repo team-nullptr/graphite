@@ -128,8 +128,6 @@ class ForceSimulator {
       this.maxForce
     );
 
-    console.log(distance, force);
-
     return adj.vecTo(source).multiply(force * 10);
   }
 
