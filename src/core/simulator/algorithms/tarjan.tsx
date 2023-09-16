@@ -38,7 +38,7 @@ const columns = [
     },
   }),
   columnHelper.accessor("lowestTime", {
-    header: "Lowest Discovery Time",
+    header: "Lowest Discovery Time Reachable",
     cell: (info) => {
       const { value, updated } = info.getValue();
       return (
@@ -312,6 +312,15 @@ export const tarjan: Algorithm<TarjanAlgorithmParams> = {
   name: "Bridge finding with Tarjan's algorithm",
   description: "Finds bridges in a graph.",
   tags: ["bridges"],
+  guide: `
+  In order to find bridges with Tarjan's algorithm we need to store **Discovery Time** and **Lowest Reachable Discovery Time** for each vertex in our graph. 
+  
+  Because this algorithm uses DFS **Discovery Time** can be understood as recursion depth at which vertex was discovered. 
+
+  **Lowest Reachable Discovery Time** is the lowest discovery time that can be reached from given vertex excluding it's parent.
+
+  We know that an edge is a bridge when adjacent's node **Lowest Discovery Time** is bigger than currently processed vertex's **Discovery Time**. In other words it means that adjacent vertex can't be reached without this connection so it is a bridge.
+  `,
   params: {
     "Start Vertex": { type: "vertex", required: true },
   },

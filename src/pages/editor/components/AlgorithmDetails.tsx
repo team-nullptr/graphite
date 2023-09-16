@@ -1,5 +1,5 @@
 import { ArrowLeftIcon, PlayIcon } from "@heroicons/react/24/outline";
-import { Fragment, useMemo } from "react";
+import React, { Fragment, useMemo } from "react";
 import {
   Algorithm,
   AlgorithmParamDefinition,
@@ -12,6 +12,7 @@ import { Controls, ControlsButton } from "~/shared/Controls";
 import { Select } from "~/shared/ui/Select";
 import { SpaceshipButton } from "~/shared/ui/SpaceshipButton";
 import { useEditorStore } from "../context/editor";
+import ReactMarkdown from "react-markdown";
 
 export interface AlgorithmDetails {
   algorithm: Algorithm<{}>;
@@ -70,16 +71,21 @@ export function AlgorithmDetails({ algorithm, onBack }: AlgorithmDetails) {
               onChange={handleSetParamsValue}
             />
           </div>
+          <div className="flex justify-end bg-slate-50">
+            <SpaceshipButton
+              icon={<PlayIcon className="h-5 w-5" />}
+              label="Run"
+              disabled={!isParamValueValid}
+              disabledHint="Fill all required fields"
+              onClick={loadSteps}
+            />
+          </div>
         </div>
-      </div>
-      <div className="flex-g flex justify-end bg-slate-50 p-4">
-        <SpaceshipButton
-          icon={<PlayIcon className="h-5 w-5" />}
-          label="Run"
-          disabled={!isParamValueValid}
-          disabledHint="Fill all required fields"
-          onClick={loadSteps}
-        />
+        <div>
+          <div className="prose p-4">
+            <ReactMarkdown>{algorithm.guide}</ReactMarkdown>
+          </div>
+        </div>
       </div>
     </div>
   );
