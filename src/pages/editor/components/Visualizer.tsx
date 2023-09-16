@@ -8,6 +8,8 @@ import { Player } from "./Player";
 import { TableStep } from "./TableStep";
 import { State } from "~/core/simulator/state";
 
+const MAX_CELLS = 8;
+
 export const Visualizer = () => {
   const visualizerRef = useRef(null);
   const orientation = useLayoutSettingsStore(({ orientation }) => orientation);
@@ -33,14 +35,16 @@ export const Visualizer = () => {
   const renderStepState = (state: State) => {
     if (!state) return null;
 
-    console.log(state);
+    const stepsAmount = state.data.length;
+
+    const visibleCells = stepsAmount <= MAX_CELLS ? MAX_CELLS : stepsAmount;
 
     switch (state.type) {
       case "table":
         return <TableStep state={state} />;
       case "array":
         console.log("rendering array");
-        return <ArrayStep state={state} visibleCells={91} />;
+        return <ArrayStep state={state} visibleCells={visibleCells} />;
       default:
         return null;
     }

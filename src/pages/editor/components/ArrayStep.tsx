@@ -11,13 +11,12 @@ export function ArrayStep({ state, visibleCells = 8 }: ArrayStepProps) {
     <div className="space-y-4 p-4">
       <span className="font-md text-slate-800">{state.title}</span>
       <div className="flex gap-1">
-        {/* TODO: Do not use index as a key. */}
         {Array.from({ length: visibleCells }).map((_, i) => {
           const element = state.data[i];
 
           return (
             <div
-              key={i}
+              key={`step-${i}`}
               className={cn(
                 "flex aspect-square w-12 items-center justify-center border border-slate-300",
                 element ? "bg-slate-100" : "bg-slate-50",
