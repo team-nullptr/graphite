@@ -9,11 +9,16 @@ import "./editor-styles.css";
 import { editorOnChange, useEditor } from "./hooks/useEditor";
 
 export function CodeEditor() {
-  const setGraph = useEditorStore(({ setGraph }) => setGraph);
+  const { mode, setGraph } = useEditorStore(({ mode, setGraph }) => ({ mode, setGraph }));
   const [code, setCode] = useEditorStore((store) => [store.code, store.setCode]);
   const [errors, setErrors] = useState<Error[]>([]);
 
-  const { view, ref } = useEditor<HTMLDivElement>([editorOnChange((value) => setCode(value))]);
+  const isEditorReadonly = mode.type === "SIMULATION";
+
+  const { view, ref } = useEditor<HTMLDivElement>(
+    [editorOnChange((value) => setCode(value))],
+    isEditorReadonly
+  );
 
   // TODO: It might be a good idea to extract code-mirrors specific logic.
   useEffect(() => {
@@ -51,11 +56,13 @@ export function CodeEditor() {
     }
   }, [setGraph, code]);
 
+  const editorClassName = isEditorReadonly ? "h-full opacity-75 grayscale" : "h-full";
+
   return (
     <Split
       initialShare={75}
       orientation="horizontal"
-      first={<div className="h-full" ref={ref} />}
+      first={<div className={editorClassName} ref={ref} />}
       second={<DiagnosticsSummary errors={errors} />}
     />
   );
