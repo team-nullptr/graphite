@@ -14,7 +14,7 @@ import { SpaceshipButton } from "~/shared/ui/SpaceshipButton";
 import { useEditorStore } from "../context/editor";
 
 export interface AlgorithmDetails {
-  algorithm: Algorithm<{}>;
+  algorithm: Algorithm<NonNullable<unknown>>;
   onBack: () => void;
 }
 
@@ -63,7 +63,7 @@ export function AlgorithmDetails({ algorithm, onBack }: AlgorithmDetails) {
         </div>
         <div className="flex flex-col gap-8 p-4">
           <div className="flex flex-col gap-2">
-            <AlgorithmDetailParams<{}>
+            <AlgorithmDetailParams<NonNullable<unknown>>
               paramDefinitions={algorithm.params}
               value={paramsValue}
               availableVertices={Object.values(graph.vertices)}
