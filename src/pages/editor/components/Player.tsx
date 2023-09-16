@@ -28,15 +28,15 @@ export function Player({
   settings,
   className,
 }: PlayerProps) {
-  const [isPlaying, setIsPlaying] = useState(false);
+  const [isAutoPlaying, setIsAutoPlaying] = useState(false);
 
   const firstStepHandler = () => {
-    setIsPlaying(false);
+    setIsAutoPlaying(false);
     onStepChange(0);
   };
 
   const lastStepHandler = () => {
-    setIsPlaying(false);
+    setIsAutoPlaying(false);
     onStepChange(numberOfSteps);
   };
 
@@ -45,13 +45,23 @@ export function Player({
     onStepChange(value);
   };
 
+  const previousStepClickHandler = () => {
+    setIsAutoPlaying(false);
+    previousStepHandler();
+  };
+
   const nextStepHandler = useCallback(() => {
     const value = Math.min(currentStep + 1, numberOfSteps);
     onStepChange(value);
   }, [currentStep, numberOfSteps, onStepChange]);
 
+  const nextStepClickHandler = () => {
+    setIsAutoPlaying(false);
+    nextStepHandler();
+  };
+
   useEffect(() => {
-    if (!isPlaying) {
+    if (!isAutoPlaying) {
       return;
     }
 
@@ -60,7 +70,7 @@ export function Player({
     }, settings.speed);
 
     return () => clearInterval(intervalId);
-  }, [settings, isPlaying, nextStepHandler]);
+  }, [settings, isAutoPlaying, nextStepHandler]);
 
   return (
     <Controls className={className}>
@@ -68,41 +78,41 @@ export function Player({
         onClick={firstStepHandler}
         disabled={currentStep === 0}
         icon={<ChevronDoubleLeftIcon className="h-5 w-5" />}
-        alt="first"
+        alt="first step"
       />
 
       <ControlsButton
-        onClick={previousStepHandler}
+        onClick={previousStepClickHandler}
         disabled={currentStep === 0}
         icon={<ArrowLeftIcon className="h-5 w-5" />}
-        alt="previous"
+        alt="previous step"
       />
 
       <ControlsButton
-        onClick={nextStepHandler}
+        onClick={nextStepClickHandler}
         disabled={currentStep === numberOfSteps}
         icon={<ArrowRightIcon className="h-5 w-5" />}
-        alt="next"
+        alt="next step"
       />
 
       <ControlsButton
         onClick={lastStepHandler}
         disabled={currentStep === numberOfSteps}
         icon={<ChevronDoubleRightIcon className="h-5 w-5" />}
-        alt="last"
+        alt="last step"
       />
 
-      {isPlaying ? (
+      {isAutoPlaying ? (
         <ControlsButton
-          onClick={() => setIsPlaying(false)}
+          onClick={() => setIsAutoPlaying(false)}
           icon={<StopIcon className="h-5 w-5" />}
-          alt="stop"
+          alt="stop autoplay"
         />
       ) : (
         <ControlsButton
-          onClick={() => setIsPlaying(true)}
+          onClick={() => setIsAutoPlaying(true)}
           icon={<PlayIcon className="h-5 w-5" />}
-          alt="play"
+          alt="autoplay"
         />
       )}
     </Controls>
