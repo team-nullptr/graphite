@@ -33,12 +33,14 @@ export const Visualizer = () => {
   const renderStepState = (state: State) => {
     if (!state) return null;
 
+    console.log(state);
+
     switch (state.type) {
       case "table":
         return <TableStep state={state} />;
       case "array":
         console.log("rendering array");
-        return <ArrayStep state={state} />;
+        return <ArrayStep state={state} visibleCells={91} />;
       default:
         return null;
     }

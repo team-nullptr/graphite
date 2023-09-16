@@ -14,11 +14,11 @@ export function TableStep({ state }: StepStateTableProps) {
 
   return (
     <table className="w-full table-auto border-collapse">
-      <thead className="sticky top-0 bg-slate-50">
+      <thead className="sticky -top-[1px]   bg-slate-50">
         {table.getHeaderGroups().map((headerGroup) => (
-          <tr key={headerGroup.id} className="divide-x divide-slate-300 border-t border-slate-300">
+          <tr key={headerGroup.id} className="divide-x divide-slate-300 border-t border-slate-300 ">
             {headerGroup.headers.map((header) => (
-              // It's impossible to have a working border on sticky element inside a table with border-collapse. I hate my life.
+              // It's impossible to have a working border on sticky element inside a table with border-collapse. I hate my life. :(
               <th
                 key={header.id}
                 className="px-4 py-2 text-left font-medium after:absolute after:-bottom-[1px] after:left-0 after:w-full after:border-b after:border-slate-300"
