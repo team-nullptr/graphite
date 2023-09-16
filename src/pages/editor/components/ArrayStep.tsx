@@ -11,11 +11,35 @@ export type ArrayStepProps = {
 export function ArrayStep({ state, visibleCells = 8 }: ArrayStepProps) {
   const scrollRef = useHorizontalScroll();
 
+  const scrollLeft = () => {
+    const el = scrollRef.current;
+
+    if (!el) return;
+
+    el.scrollTo({
+      left: el.scrollLeft - 90,
+      behavior: "smooth",
+    });
+  };
+
+  const scrollRight = () => {
+    const el = scrollRef.current;
+    if (!el) return;
+
+    el.scrollTo({
+      left: el.scrollLeft + 90,
+      behavior: "smooth",
+    });
+  };
+
   return (
     <div className="space-y-4 p-4">
       <span className="font-md text-slate-800">{state.title}</span>
       <div className="flex items-center gap-2">
-        <ChevronLeftIcon className="w-8 min-w-[28px] cursor-pointer text-slate-600 opacity-80 hover:opacity-100" />
+        <ChevronLeftIcon
+          onClick={scrollLeft}
+          className="w-8 min-w-[28px] cursor-pointer text-slate-600 opacity-80 hover:opacity-100"
+        />
         <div
           ref={scrollRef}
           className="scroll flex snap-x snap-mandatory gap-1 overflow-x-scroll scroll-smooth whitespace-nowrap scrollbar-hide"
@@ -38,7 +62,10 @@ export function ArrayStep({ state, visibleCells = 8 }: ArrayStepProps) {
             );
           })}
         </div>
-        <ChevronRightIcon className="w-8 min-w-[28px] cursor-pointer text-slate-600 opacity-80 hover:opacity-100" />
+        <ChevronRightIcon
+          onClick={scrollRight}
+          className="w-8 min-w-[28px] cursor-pointer text-slate-600 opacity-80 hover:opacity-100"
+        />
       </div>
     </div>
   );
