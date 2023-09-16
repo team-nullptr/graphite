@@ -8,7 +8,7 @@ import { Player } from "./Player";
 import { TableStep } from "./TableStep";
 import { State } from "~/core/simulator/state";
 
-const MAX_CELLS = 80;
+const MAX_CELLS = 8;
 
 export const Visualizer = () => {
   const visualizerRef = useRef(null);

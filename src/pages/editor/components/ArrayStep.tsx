@@ -9,6 +9,8 @@ export type ArrayStepProps = {
 };
 
 export function ArrayStep({ state, visibleCells = 8 }: ArrayStepProps) {
+  //TODO: Remove controlls whenever they are useless
+
   const scrollRef = useHorizontalScroll();
 
   const scrollLeft = () => {
@@ -17,7 +19,7 @@ export function ArrayStep({ state, visibleCells = 8 }: ArrayStepProps) {
     if (!el) return;
 
     el.scrollTo({
-      left: el.scrollLeft - 90,
+      left: el.scrollLeft - 180,
       behavior: "smooth",
     });
   };
@@ -27,22 +29,26 @@ export function ArrayStep({ state, visibleCells = 8 }: ArrayStepProps) {
     if (!el) return;
 
     el.scrollTo({
-      left: el.scrollLeft + 90,
+      left: el.scrollLeft + 180,
       behavior: "smooth",
     });
   };
+
+  const isRecomendedAmount = visibleCells <= 8;
 
   return (
     <div className="space-y-4 p-4">
       <span className="font-md text-slate-800">{state.title}</span>
       <div className="flex items-center gap-2">
-        <ChevronLeftIcon
-          onClick={scrollLeft}
-          className="w-8 min-w-[28px] cursor-pointer text-slate-600 opacity-80 hover:opacity-100"
-        />
+        {!isRecomendedAmount && (
+          <ChevronLeftIcon
+            onClick={scrollLeft}
+            className="w-6 min-w-[25px] cursor-pointer text-slate-600 opacity-80 hover:opacity-100"
+          />
+        )}
         <div
           ref={scrollRef}
-          className="scroll flex snap-x snap-mandatory gap-1 overflow-x-scroll scroll-smooth whitespace-nowrap scrollbar-hide"
+          className="scroll flex snap-x snap-proximity gap-1 overflow-x-scroll scroll-smooth whitespace-nowrap scrollbar-hide"
         >
           {Array.from({ length: visibleCells }).map((_, i) => {
             const element = state.data[i];
@@ -62,10 +68,12 @@ export function ArrayStep({ state, visibleCells = 8 }: ArrayStepProps) {
             );
           })}
         </div>
-        <ChevronRightIcon
-          onClick={scrollRight}
-          className="w-8 min-w-[28px] cursor-pointer text-slate-600 opacity-80 hover:opacity-100"
-        />
+        {!isRecomendedAmount && (
+          <ChevronRightIcon
+            onClick={scrollRight}
+            className="w-6 min-w-[25px] cursor-pointer text-slate-600 opacity-80 hover:opacity-100"
+          />
+        )}
       </div>
     </div>
   );
