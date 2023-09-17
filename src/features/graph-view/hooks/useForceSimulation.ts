@@ -14,7 +14,7 @@ type Context = {
 };
 
 const defaultForceSimulatorSettings: ForceSimulatorSettings = {
-  threshold: 0.01,
+  threshold: 0.15,
   coolingFactor: 0.99,
 };
 
