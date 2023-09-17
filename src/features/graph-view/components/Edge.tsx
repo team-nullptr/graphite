@@ -82,30 +82,24 @@ const getPathCenter = (path: SVGPathElement) => {
 };
 
 const CircularEdge = ({ x, y, directed, position = 0, color = "slate", weight }: EdgeProps) => {
-  const radius = 6 * position + 15;
-
-  const [cx, cy] = [radius + vertexRadius / 1.61, 0];
-
-  // Intersection of two rounds - the vertex and the edge
-  const arrowX = vertexRadius - radius ** 2 / (2 * vertexRadius);
-  const arrowY = Math.sqrt(vertexRadius ** 2 - arrowX ** 2);
-  const arrowPosition: Vec2 = new Vec2(arrowX, arrowY);
-
-  // TODO: Replace 1.2 with actual calculations, to determine the right angle
-  // This is due to how arrows are drawn (rotated)
-  const arrowAngle = Math.atan2(cy - arrowY, cx - arrowX) * 1.2 - Math.PI / 2;
-
+  const radius = 6 * position + 16;
+  const cx = radius + vertexRadius / 1.61;
   const transform = `translate(${x} ${y}) rotate(65)`;
   const stroke = colors[color][400];
 
   const edgeLabelPosition = new Vec2(cx + radius, 0);
+
+  const arrowPosition = vertexAndCircularEdgeIntersection(vertexRadius, cx, radius);
+  // TODO: Replace 1.2 with actual calculations, to determine the right angle
+  // This is due to how arrows are drawn (rotated)
+  const arrowAngle = Math.atan2(0 - arrowPosition.y, cx - arrowPosition.x) - Math.PI / 2;
 
   return (
     <g transform={transform}>
       <circle
         className="fill-none stroke-1 transition-[stroke]"
         cx={cx}
-        cy={cy}
+        cy={0}
         r={radius}
         stroke={stroke}
       />
@@ -113,6 +107,13 @@ const CircularEdge = ({ x, y, directed, position = 0, color = "slate", weight }:
       {directed && <Arrow position={arrowPosition} angle={arrowAngle} color={color} />}
     </g>
   );
+};
+
+const vertexAndCircularEdgeIntersection = (r1: number, a2: number, r2: number): Vec2 => {
+  // -2ax + a^2 = j^2 - k^2
+  const x = a2 / 2 + (r1 ** 2 - r2 ** 2) / (2 * a2);
+  const y = Math.sqrt(r1 ** 2 - x ** 2);
+  return new Vec2(x, y);
 };
 
 const getLinePath = (
@@ -138,35 +139,20 @@ interface EdgeTextProps {
 
 const EdgeLabel = (props: EdgeTextProps) => {
   const labelTextRef = useRef<SVGTextElement>(null);
-
   const { x, y } = props.position;
-  // TODO: Consider using this without a background: y + 5 * (props.angle > 0 ? -1 : 1);
-
-  const labelTextBBox = labelTextRef.current?.getBBox();
-  const labelTextWidth = labelTextBBox?.width ?? 0;
-  const labelTextHeight = labelTextBBox?.height ?? 0;
 
   return (
-    <g transform={`rotate(${props.angle})`} transform-origin={`${x} ${y}`}>
-      <line
-        x1={x - labelTextWidth / 2}
-        y1={y}
-        x2={x + labelTextWidth / 2}
-        y2={y}
-        stroke="#e4e7eb"
-        strokeWidth={labelTextHeight}
-        strokeLinecap="round"
-      />
-      <text
-        ref={labelTextRef}
-        x={x}
-        y={y}
-        dominantBaseline="central"
-        textAnchor="middle"
-        fontSize={12}
-      >
-        {props.text}
-      </text>
-    </g>
+    <text
+      ref={labelTextRef}
+      x={x}
+      y={y}
+      dominantBaseline="central"
+      textAnchor="middle"
+      fontSize={12}
+      transform={`rotate(${props.angle})`}
+      transform-origin={`${x} ${y}`}
+    >
+      {props.text}
+    </text>
   );
 };
