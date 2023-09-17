@@ -10,7 +10,7 @@ function buildVisitOrderState(visited: string[]) {
   return new ArrayStateBuilder({ title: "Visit Order" }).data(visited).build();
 }
 
-function buildStackState(stack: string[], highlighted: number[] = []) {
+function buildQueueState(stack: string[], highlighted: number[] = []) {
   return new ArrayStateBuilder({ title: "Queue" })
     .data(stack)
     .highlighted(new Set(highlighted))
@@ -30,9 +30,9 @@ function algorithm(graph: Graph, startingVertex: string): Step[] {
 
   steps.push(
     new StepBuilder({
-      description: `Push starting vertex ${startingVertex} to the queue.`,
+      description: `Push start vertex ${startingVertex} to the queue.`,
     })
-      .state([buildStackState([...stack], [stack.length - 1]), buildVisitOrderState([...visited])])
+      .state([buildQueueState([...stack], [stack.length - 1]), buildVisitOrderState([...visited])])
       .verticesHighlights(new Map([[startingVertex, "sky"]]))
       .build()
   );
@@ -45,7 +45,7 @@ function algorithm(graph: Graph, startingVertex: string): Step[] {
       new StepBuilder({
         description: `Get first vertex ${currentId} from the queue.`,
       })
-        .state([buildStackState([currentId, ...stack], [0]), buildVisitOrderState([...visited])])
+        .state([buildQueueState([currentId, ...stack], [0]), buildVisitOrderState([...visited])])
         .verticesHighlights(new Map([[currentId, "sky"], ...visitedHighlights(visited)]))
         .build()
     );
@@ -55,7 +55,7 @@ function algorithm(graph: Graph, startingVertex: string): Step[] {
         new StepBuilder({
           description: `Vertex ${currentId} was already visited. Continue to the next step.`,
         })
-          .state([buildStackState([...stack]), buildVisitOrderState([...visited])])
+          .state([buildQueueState([...stack]), buildVisitOrderState([...visited])])
           .verticesHighlights(new Map([[currentId, "slate"], ...visitedHighlights(visited)]))
           .build()
       );
@@ -69,7 +69,7 @@ function algorithm(graph: Graph, startingVertex: string): Step[] {
       new StepBuilder({
         description: `Mark vertex ${currentId} as visited.`,
       })
-        .state([buildStackState([...stack]), buildVisitOrderState([...visited])])
+        .state([buildQueueState([...stack]), buildVisitOrderState([...visited])])
         .verticesHighlights(new Map([[current.id, "slate"], ...visitedHighlights(visited)]))
         .build()
     );
@@ -94,7 +94,7 @@ function algorithm(graph: Graph, startingVertex: string): Step[] {
       new StepBuilder({
         description: "Push all adjacent vertices to the queue.",
       })
-        .state([buildStackState([...stack], addedIndexes), buildVisitOrderState([...visited])])
+        .state([buildQueueState([...stack], addedIndexes), buildVisitOrderState([...visited])])
         .verticesHighlights(
           new Map([[current.id, "orange"], ...outsHighlights, ...visitedHighlights(visited)])
         )
@@ -106,7 +106,7 @@ function algorithm(graph: Graph, startingVertex: string): Step[] {
     new StepBuilder({
       description: "There is no more vertices in the queue. End the algorithm.",
     })
-      .state([buildStackState([...stack]), buildVisitOrderState([...visited])])
+      .state([buildQueueState([...stack]), buildVisitOrderState([...visited])])
       .verticesHighlights(visitedHighlights(visited))
       .build()
   );
@@ -120,8 +120,18 @@ export interface IterativeBFSAlgorithmParams {
 
 export const bfs: Algorithm<IterativeBFSAlgorithmParams> = {
   name: "Iterative Breath First Search",
-  description: "Visits all nodes of a graph.",
+  description: "See how BFS explores vertices in your graph.",
   tags: ["exploration"],
+  guide: `
+  BFS algorithm is a traversal algorithm that starts at the **Start Vertex** and explores all vertices at the present depth prior to moving on to the vertices at the next depth level.
+  Iterative version uses a queue to maintain the correct visit order. 
+
+  Before we start the "algorithm loop" we *add our starting vertex to the queue*. Then until our stack is empty:
+
+  1. We get the first vertex from our queue.
+  2. If the vertex is not visited we mark it as visited, otherwise we continue to step 1.
+  3. We push all adjacent unvisited vertices to the queue.
+`,
   params: {
     "Start Vertex": { type: "vertex", required: true },
   },

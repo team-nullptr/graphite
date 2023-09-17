@@ -237,9 +237,20 @@ export interface DijkstraAlgorithmParams {
 }
 
 export const dijkstra: Algorithm<DijkstraAlgorithmParams> = {
-  name: "Dijkstra",
-  description: "Find the shortest path from a starting node to every other node.",
+  name: "Shortest path with Dijkstra",
+  description: "Finds the shortest path from a starting node to every other node.",
   tags: ["shortest path"],
+  guide: `
+  Dijkstra algorithm finds the shortest path between vertices in a graph. We use a map to keep track of shortest distance from **Start Vertex** to other vertices. By default distance to all vertices is equal to *infinity*. We also keep track of unvisited vertices with a set.
+
+  Before the "algorithm loop" we set **Start Vertex's** distance to 0. Then until unvisited set is not empty:
+
+  1. We pick the vertex with the smallest distance
+  2. Iterate through it's adjacent vertices
+      - If adjacent vertex was already visited we continue to the next adjacent vertex. 
+      - Otherwise we update the minimum distance to the adjacent vertex if it's current minimum distance is bigger than currently processed vertex's minimum distance + connection edge weight.
+  3. After we have processed all adjacent vertices we remove the currently processed vertex from unvisited vertices.
+  `,
   params: {
     "Start Vertex": { type: "vertex", required: true },
     "Destination Vertex": { type: "vertex", required: false },

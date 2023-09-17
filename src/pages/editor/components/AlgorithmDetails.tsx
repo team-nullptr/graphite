@@ -12,6 +12,7 @@ import { Controls, ControlsButton } from "~/shared/Controls";
 import { Select } from "~/shared/ui/Select";
 import { SpaceshipButton } from "~/shared/ui/SpaceshipButton";
 import { useEditorStore } from "../context/editor";
+import ReactMarkdown from "react-markdown";
 
 export interface AlgorithmDetails {
   algorithm: Algorithm<NonNullable<unknown>>;
@@ -80,24 +81,29 @@ export function AlgorithmDetails({ algorithm, onBack }: AlgorithmDetails) {
               onChange={handleSetParamsValue}
             />
           </div>
+          <div className="flex justify-end bg-slate-50">
+            {mode.type === "IDLE" ? (
+              <SpaceshipButton
+                icon={<PlayIcon className="h-5 w-5" />}
+                label="Run"
+                disabled={!isParamValueValid}
+                disabledHint="Fill all required fields"
+                onClick={loadSteps}
+              />
+            ) : (
+              <SpaceshipButton
+                icon={<StopIcon className="h-5 w-5" />}
+                label="Stop"
+                onClick={stopSimulation}
+              />
+            )}
+          </div>
         </div>
-      </div>
-      <div className="flex-g flex justify-end bg-slate-50 p-4">
-        {mode.type === "IDLE" ? (
-          <SpaceshipButton
-            icon={<PlayIcon className="h-5 w-5" />}
-            label="Run"
-            disabled={!isParamValueValid}
-            disabledHint="Fill all required fields"
-            onClick={loadSteps}
-          />
-        ) : (
-          <SpaceshipButton
-            icon={<StopIcon className="h-5 w-5" />}
-            label="Stop"
-            onClick={stopSimulation}
-          />
-        )}
+        <div>
+          <div className="prose p-4">
+            <ReactMarkdown>{algorithm.guide}</ReactMarkdown>
+          </div>
+        </div>
       </div>
     </div>
   );
