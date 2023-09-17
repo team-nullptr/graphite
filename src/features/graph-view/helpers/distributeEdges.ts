@@ -37,8 +37,8 @@ export type PositionedEdge = [edge: Edge, position: number];
  */
 export function distributeEdges(group: Edge[], vertex: string): PositionedEdge[] {
   return group.map((edge, index) => {
-    // const circular = edge.a.id === edge.b.id;
-    const position = false ? index : index - (group.length - 1) / 2;
+    const circular = edge.from === edge.to;
+    const position = circular ? index : index - (group.length - 1) / 2;
     // Edges starting on the opposite vertex need their position to be reversed
     // otherwise they will bend in the wrong direction
     const reverse = edge.from !== vertex;
