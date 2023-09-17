@@ -1,7 +1,8 @@
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
+import { useEffect, useState } from "react";
 import { ArrayState } from "~/core/simulator/state";
 import { cn } from "~/lib/utils";
-import { useHorizontalScroll } from "~/pages/editor/hooks/useHorizontalScroll";
+import { useHorizontalScroll } from "~/shared/hooks/useHorizontalScroll";
 
 export type ArrayStepProps = {
   state: ArrayState;
@@ -9,9 +10,9 @@ export type ArrayStepProps = {
 };
 
 export function ArrayStep({ state, visibleCells = 8 }: ArrayStepProps) {
-  //TODO: Remove controlls whenever they are useless
-
   const scrollRef = useHorizontalScroll();
+  const [scrollPercentage, setScrollPercentage] = useState(0);
+  const [showRightArrow, setShowRightArrow] = useState(false);
 
   const scrollLeft = () => {
     const el = scrollRef.current;
@@ -34,17 +35,45 @@ export function ArrayStep({ state, visibleCells = 8 }: ArrayStepProps) {
     });
   };
 
-  console.log(scrollRef.current?.scrollWidth, "width");
-  console.log(scrollRef.current?.scrollLeft, "position");
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+
+    const updateScrollPercentage = () => {
+      const maxScrollLeft = el.scrollWidth - el.clientWidth;
+      const currentScrollLeft = el.scrollLeft;
+      const percentage = (currentScrollLeft / maxScrollLeft) * 100;
+      setScrollPercentage(percentage);
+    };
+
+    const updateRightArrowVisibility = () => {
+      setShowRightArrow(el.scrollWidth > el.clientWidth);
+    };
+
+    el.addEventListener("scroll", updateScrollPercentage);
+    el.addEventListener("scroll", updateRightArrowVisibility);
+
+    updateScrollPercentage();
+    updateRightArrowVisibility();
+
+    setShowRightArrow(false);
+
+    return () => {
+      el.removeEventListener("scroll", updateScrollPercentage);
+      el.removeEventListener("scroll", updateRightArrowVisibility);
+    };
+  }, [scrollRef]);
 
   return (
     <div className="space-y-4 p-4">
       <span className="font-md text-slate-800">{state.title}</span>
       <div className="flex items-center gap-2">
-        <ChevronLeftIcon
-          onClick={scrollLeft}
-          className="w-6 min-w-[25px] cursor-pointer text-slate-600 opacity-80 hover:opacity-100"
-        />
+        {scrollPercentage > 0 && (
+          <ChevronLeftIcon
+            onClick={scrollLeft}
+            className="w-6 min-w-[25px] cursor-pointer text-slate-600 opacity-80 hover:opacity-100"
+          />
+        )}
 
         <div
           ref={scrollRef}
@@ -69,10 +98,12 @@ export function ArrayStep({ state, visibleCells = 8 }: ArrayStepProps) {
           })}
         </div>
 
-        <ChevronRightIcon
-          onClick={scrollRight}
-          className="w-6 min-w-[25px] cursor-pointer text-slate-600 opacity-80 hover:opacity-100"
-        />
+        {showRightArrow && scrollPercentage < 100 && (
+          <ChevronRightIcon
+            onClick={scrollRight}
+            className="w-6 min-w-[25px] cursor-pointer text-slate-600 opacity-80 hover:opacity-100"
+          />
+        )}
       </div>
     </div>
   );
