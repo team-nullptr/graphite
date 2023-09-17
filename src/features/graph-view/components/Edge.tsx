@@ -90,9 +90,9 @@ const CircularEdge = ({ x, y, directed, position = 0, color = "slate", weight }:
   const edgeLabelPosition = new Vec2(cx + radius, 0);
 
   const arrowPosition = vertexAndCircularEdgeIntersection(vertexRadius, cx, radius);
-  // TODO: Replace 1.2 with actual calculations, to determine the right angle
+  // TODO: Replace 1.3 with actual calculations, to determine the right angle
   // This is due to how arrows are drawn (rotated)
-  const arrowAngle = Math.atan2(0 - arrowPosition.y, cx - arrowPosition.x) - Math.PI / 2;
+  const arrowAngle = Math.atan2(0 - arrowPosition.y, cx - arrowPosition.x) * 1.3 - Math.PI / 2;
 
   return (
     <g transform={transform}>
@@ -142,17 +142,23 @@ const EdgeLabel = (props: EdgeTextProps) => {
   const { x, y } = props.position;
 
   return (
-    <text
-      ref={labelTextRef}
-      x={x}
-      y={y}
-      dominantBaseline="central"
-      textAnchor="middle"
-      fontSize={12}
-      transform={`rotate(${props.angle})`}
-      transform-origin={`${x} ${y}`}
-    >
-      {props.text}
-    </text>
+    <g transform={`rotate(${props.angle})`} transform-origin={`${x} ${y}`}>
+      {/* prettier-ignore */}
+      <circle
+        cx={x}
+        cy={y}
+        r={12}
+        fill="url(#edgeLabelGradient)" />
+      <text
+        ref={labelTextRef}
+        x={x}
+        y={y}
+        dominantBaseline="central"
+        textAnchor="middle"
+        fontSize={12}
+      >
+        {props.text}
+      </text>
+    </g>
   );
 };
