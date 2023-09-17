@@ -57,8 +57,8 @@ export function GraphView({ verticesHighlights, edgesHighlights, graph }: GraphV
     >
       <defs>
         <radialGradient id="edgeLabelGradient">
-          <stop offset="0%" stop-color="#f9fafb" />
-          <stop offset="100%" stop-color="transparent" />
+          <stop offset="0%" stopColor="#f9fafb" stopOpacity={1} />
+          <stop offset="100%" stopColor="#f9fafb" stopOpacity={0} />
         </radialGradient>
       </defs>
       <Edges
