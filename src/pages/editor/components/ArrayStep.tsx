@@ -1,7 +1,7 @@
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
 import { ArrayState } from "~/core/simulator/state";
 import { cn } from "~/lib/utils";
-import { useHorizontalScroll } from "~/shared/hooks/useHorizontalScroll";
+import { useHorizontalScroll } from "~/pages/editor/hooks/useHorizontalScroll";
 
 export type ArrayStepProps = {
   state: ArrayState;
@@ -34,18 +34,18 @@ export function ArrayStep({ state, visibleCells = 8 }: ArrayStepProps) {
     });
   };
 
-  const isRecomendedAmount = visibleCells <= 8;
+  console.log(scrollRef.current?.scrollWidth, "width");
+  console.log(scrollRef.current?.scrollLeft, "position");
 
   return (
     <div className="space-y-4 p-4">
       <span className="font-md text-slate-800">{state.title}</span>
       <div className="flex items-center gap-2">
-        {!isRecomendedAmount && (
-          <ChevronLeftIcon
-            onClick={scrollLeft}
-            className="w-6 min-w-[25px] cursor-pointer text-slate-600 opacity-80 hover:opacity-100"
-          />
-        )}
+        <ChevronLeftIcon
+          onClick={scrollLeft}
+          className="w-6 min-w-[25px] cursor-pointer text-slate-600 opacity-80 hover:opacity-100"
+        />
+
         <div
           ref={scrollRef}
           className="scroll flex snap-x snap-proximity gap-1 overflow-x-scroll scroll-smooth whitespace-nowrap scrollbar-hide"
@@ -68,12 +68,11 @@ export function ArrayStep({ state, visibleCells = 8 }: ArrayStepProps) {
             );
           })}
         </div>
-        {!isRecomendedAmount && (
-          <ChevronRightIcon
-            onClick={scrollRight}
-            className="w-6 min-w-[25px] cursor-pointer text-slate-600 opacity-80 hover:opacity-100"
-          />
-        )}
+
+        <ChevronRightIcon
+          onClick={scrollRight}
+          className="w-6 min-w-[25px] cursor-pointer text-slate-600 opacity-80 hover:opacity-100"
+        />
       </div>
     </div>
   );
