@@ -34,6 +34,8 @@ export function useSplit<E extends HTMLElement>({
 
   useEffect(() => {
     const handleResize = (e: MouseEvent) => {
+      e.preventDefault();
+
       if (!splitRef.current || !isResizing) {
         return;
       }

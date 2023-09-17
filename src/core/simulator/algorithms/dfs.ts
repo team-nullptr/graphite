@@ -125,6 +125,16 @@ export const dfs: Algorithm<IterativeDFSAlgorithmParams> = {
   name: "Iterative Depth First Search",
   description: "See how iterative DFS explores your graph.",
   tags: ["exploration"],
+  guide: `
+  DFS algorithm is a traversal algorithm that starts at the **Start Vertex** and explores vertices as deep as possible before backtracking.
+  Iterative version uses a stack to maintain the correct visit order. 
+
+  Before we start the "algorithm loop" we *add our starting vertex to the stack*. Then until our stack is empty:
+
+  1. We get the top vertex from the stack.
+  2. If the vertex is not visited we mark it as visited, otherwise we continue to step 1.
+  3. We push all adjacent unvisited vertices to the stack.
+`,
   params: {
     "Start Vertex": { type: "vertex", required: true },
   },

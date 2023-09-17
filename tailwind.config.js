@@ -1,7 +1,8 @@
-/* eslint-disable no-undef */
+import typography from "@tailwindcss/typography";
+
 /** @type {import('tailwindcss').Config} */
 export default {
   content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
   darkMode: "class",
-  plugins: [require("tailwind-scrollbar-hide")],
+  plugins: [typography, require("tailwind-scrollbar-hide")],
 };
