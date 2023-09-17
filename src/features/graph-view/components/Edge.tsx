@@ -142,7 +142,7 @@ const EdgeLabel = (props: EdgeTextProps) => {
   const { x, y } = props.position;
 
   return (
-    <g transform={`rotate(${props.angle})`} transform-origin={`${x} ${y}`}>
+    <>
       {/* prettier-ignore */}
       <circle
         cx={x}
@@ -156,9 +156,11 @@ const EdgeLabel = (props: EdgeTextProps) => {
         dominantBaseline="central"
         textAnchor="middle"
         fontSize={14}
+        transform={`rotate(${props.angle})`}
+        transform-origin={`${x} ${y}`}
       >
         {props.text}
       </text>
-    </g>
+    </>
   );
 };
