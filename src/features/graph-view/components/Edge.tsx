@@ -147,7 +147,7 @@ const EdgeLabel = (props: EdgeTextProps) => {
       <circle
         cx={x}
         cy={y}
-        r={12}
+        r={16}
         fill="url(#edgeLabelGradient)" />
       <text
         ref={labelTextRef}
@@ -155,7 +155,7 @@ const EdgeLabel = (props: EdgeTextProps) => {
         y={y}
         dominantBaseline="central"
         textAnchor="middle"
-        fontSize={12}
+        fontSize={14}
       >
         {props.text}
       </text>
