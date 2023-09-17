@@ -81,10 +81,10 @@ const getPathCenter = (path: SVGPathElement) => {
   return new Vec2(centerPoint.x, centerPoint.y);
 };
 
-const CircularEdge = ({ x, y, directed, position = 0, color = "slate" }: EdgeProps) => {
+const CircularEdge = ({ x, y, directed, position = 0, color = "slate", weight }: EdgeProps) => {
   const radius = 6 * position + 15;
 
-  const [cx, cy] = [vertexRadius, 0];
+  const [cx, cy] = [radius + vertexRadius / 1.61, 0];
 
   // Intersection of two rounds - the vertex and the edge
   const arrowX = vertexRadius - radius ** 2 / (2 * vertexRadius);
@@ -95,8 +95,10 @@ const CircularEdge = ({ x, y, directed, position = 0, color = "slate" }: EdgePro
   // This is due to how arrows are drawn (rotated)
   const arrowAngle = Math.atan2(cy - arrowY, cx - arrowX) * 1.2 - Math.PI / 2;
 
-  const transform = `translate(${x} ${y}) rotate(45)`;
-  const stroke = colors[color][500];
+  const transform = `translate(${x} ${y}) rotate(65)`;
+  const stroke = colors[color][400];
+
+  const edgeLabelPosition = new Vec2(cx + radius, 0);
 
   return (
     <g transform={transform}>
@@ -107,6 +109,7 @@ const CircularEdge = ({ x, y, directed, position = 0, color = "slate" }: EdgePro
         r={radius}
         stroke={stroke}
       />
+      {weight && <EdgeLabel text={weight.toString()} position={edgeLabelPosition} angle={-90} />}
       {directed && <Arrow position={arrowPosition} angle={arrowAngle} color={color} />}
     </g>
   );
