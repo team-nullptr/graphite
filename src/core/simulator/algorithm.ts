@@ -1,4 +1,4 @@
-import { Graph, Vertex } from "./graph";
+import { Graph } from "./graph";
 import { Step } from "./step";
 
 // prettier-ignore
