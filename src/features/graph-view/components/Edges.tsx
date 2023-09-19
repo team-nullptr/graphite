@@ -34,6 +34,7 @@ export function Edges({ positionedEdges, arrangement, highlights }: EdgesProps) 
           circular={isCircular}
           color={color}
           thicken={!!color}
+          weight={edge.weight ?? undefined}
         />
       );
     });

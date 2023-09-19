@@ -1,4 +1,4 @@
-import { Graph, Vertex } from "./graph";
+import { Graph } from "./graph";
 import { Step } from "./step";
 
 // prettier-ignore
@@ -17,6 +17,8 @@ export interface Algorithm<T extends object> {
   name: string;
   description: string;
   tags: string[];
+  /** Markdown explaining how the algorithm works so that user knows what to expect during simulation */
+  guide: string;
   stepGenerator: (graph: Graph, params: T) => Step[];
   /** `params` are only used to generate appropriate input  fields */
   params: AlgorithmParamDefinitions<T>;

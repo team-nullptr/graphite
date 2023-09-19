@@ -55,7 +55,12 @@ export function GraphView({ verticesHighlights, edgesHighlights, graph }: GraphV
         />
       )}
     >
-      {/* prettier-ignore */}
+      <defs>
+        <radialGradient id="edgeLabelGradient">
+          <stop offset="0%" stopColor="#f9fafb" stopOpacity={1} />
+          <stop offset="100%" stopColor="#f9fafb" stopOpacity={0} />
+        </radialGradient>
+      </defs>
       <Edges
         positionedEdges={positionedEdges}
         highlights={edgesHighlights}

@@ -14,7 +14,7 @@ type Context = {
 };
 
 const defaultForceSimulatorSettings: ForceSimulatorSettings = {
-  threshold: 0.01,
+  threshold: 0.15,
   coolingFactor: 0.99,
 };
 
@@ -22,7 +22,7 @@ class ForceSimulator {
   settings: ForceSimulatorSettings = defaultForceSimulatorSettings;
 
   // TODO: These variables could be extracted to some config that is passed to simulator.
-  maxForce = 0.35;
+  maxForce = 0.5;
 
   attractiveTargetLength = 100; // Target connection length
   attractiveStrength = 0.025;
@@ -53,15 +53,14 @@ class ForceSimulator {
       const repulsiveForce = this.computeRepulsiveForce(vertex, vertices, arrangement);
       const attractiveForce = this.computeAttractiveForce(vertex, graph, arrangement);
 
-      forces[vertex.id] = new Vec2(0, 0)
-        .add(repulsiveForce)
-        .add(attractiveForce)
-        .add(this.boundingCircleForce(arrangement[vertex.id]));
+      forces[vertex.id] = new Vec2(0, 0).add(repulsiveForce).add(attractiveForce);
 
       const force = forces[vertex.id].len();
       if (force > maxForce) {
         maxForce = force;
       }
+
+      forces[vertex.id].add(this.boundingCircleForce(arrangement[vertex.id]));
     }
 
     if (maxForce < threshold) {
@@ -146,7 +145,7 @@ class ForceSimulator {
   boundingCircleForce(source: Vec2): Vec2 {
     // TODO: Simplify this
     const distance = source.distanceTo(new Vec2(0, 0));
-    const force = Math.min(1 / (1 + Math.pow(Math.E, (1 / 100) * -distance + 17)), 0.1);
+    const force = Math.min(10 / (1 + Math.pow(Math.E, (1 / 5) * -distance + 8)), 1);
     return source.vecTo(new Vec2(0, 0)).multiply(force);
   }
 }

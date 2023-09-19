@@ -1,6 +1,6 @@
 import { defaultKeymap, history } from "@codemirror/commands";
 import { HighlightStyle, syntaxHighlighting } from "@codemirror/language";
-import { Compartment, EditorState, Extension } from "@codemirror/state";
+import { Compartment, EditorSelection, EditorState, Extension } from "@codemirror/state";
 import { EditorView, ViewUpdate, keymap, lineNumbers } from "@codemirror/view";
 import { tags } from "@lezer/highlight";
 import { useEffect, useRef, useState } from "react";
@@ -13,6 +13,10 @@ export function editorOnChange(cb: (value: string) => void) {
     const value = it.state.doc.toString();
     cb(value);
   });
+}
+
+export function editorReadonlyExtension(readonly: boolean): Extension {
+  return [EditorView.editable.of(!readonly), EditorState.readOnly.of(readonly)];
 }
 
 const codeThemeLight = HighlightStyle.define([
@@ -47,7 +51,7 @@ const editorThemeLight = EditorView.theme({
   },
 });
 
-export function useEditor<T extends HTMLElement>(extensions: Extension[]) {
+export function useEditor<T extends HTMLElement>(extensions: Extension[], readonly: boolean) {
   const ref = useRef<T>(null);
   const [view, setView] = useState<EditorView>();
 
@@ -67,6 +71,7 @@ export function useEditor<T extends HTMLElement>(extensions: Extension[]) {
             editorThemeLight,
             syntaxHighlighting(codeThemeLight, { fallback: true }),
           ]),
+          editorReadonlyExtension(readonly),
           ...extensions,
         ],
       }),

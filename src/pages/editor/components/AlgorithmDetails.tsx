@@ -1,4 +1,4 @@
-import { ArrowLeftIcon, PlayIcon } from "@heroicons/react/24/outline";
+import { ArrowLeftIcon, PlayIcon, StopIcon } from "@heroicons/react/24/outline";
 import { Fragment, useMemo } from "react";
 import {
   Algorithm,
@@ -12,16 +12,23 @@ import { Controls, ControlsButton } from "~/shared/Controls";
 import { Select } from "~/shared/ui/Select";
 import { SpaceshipButton } from "~/shared/ui/SpaceshipButton";
 import { useEditorStore } from "../context/editor";
+import ReactMarkdown from "react-markdown";
 
 export interface AlgorithmDetails {
-  algorithm: Algorithm<{}>;
+  algorithm: Algorithm<NonNullable<unknown>>;
   onBack: () => void;
 }
 
 export function AlgorithmDetails({ algorithm, onBack }: AlgorithmDetails) {
-  const { graph, setMode, paramsValue, setParamsValue } = useEditorStore((storeState) => {
-    const { graph, setMode, algorithmParams, setAlgorithmParams } = storeState;
-    return { graph, setMode, paramsValue: algorithmParams, setParamsValue: setAlgorithmParams };
+  const { graph, mode, setMode, paramsValue, setParamsValue } = useEditorStore((storeState) => {
+    const { graph, mode, setMode, algorithmParams, setAlgorithmParams } = storeState;
+    return {
+      graph,
+      mode,
+      setMode,
+      paramsValue: algorithmParams,
+      setParamsValue: setAlgorithmParams,
+    };
   });
 
   const handleBackClicked = () => {
@@ -47,6 +54,10 @@ export function AlgorithmDetails({ algorithm, onBack }: AlgorithmDetails) {
     setMode({ type: "SIMULATION", steps });
   };
 
+  const stopSimulation = () => {
+    setMode({ type: "IDLE" });
+  };
+
   return (
     <div className="flex h-full flex-col bg-slate-50">
       <Controls alignment="start" className="border-b border-slate-300">
@@ -63,23 +74,36 @@ export function AlgorithmDetails({ algorithm, onBack }: AlgorithmDetails) {
         </div>
         <div className="flex flex-col gap-8 p-4">
           <div className="flex flex-col gap-2">
-            <AlgorithmDetailParams<{}>
+            <AlgorithmDetailParams<NonNullable<unknown>>
               paramDefinitions={algorithm.params}
               value={paramsValue}
               availableVertices={Object.values(graph.vertices)}
               onChange={handleSetParamsValue}
             />
           </div>
+          <div className="flex justify-end bg-slate-50">
+            {mode.type === "IDLE" ? (
+              <SpaceshipButton
+                icon={<PlayIcon className="h-5 w-5" />}
+                label="Run"
+                disabled={!isParamValueValid}
+                disabledHint="Fill all required fields"
+                onClick={loadSteps}
+              />
+            ) : (
+              <SpaceshipButton
+                icon={<StopIcon className="h-5 w-5" />}
+                label="Stop"
+                onClick={stopSimulation}
+              />
+            )}
+          </div>
         </div>
-      </div>
-      <div className="flex-g flex justify-end bg-slate-50 p-4">
-        <SpaceshipButton
-          icon={<PlayIcon className="h-5 w-5" />}
-          label="Run"
-          disabled={!isParamValueValid}
-          disabledHint="Fill all required fields"
-          onClick={loadSteps}
-        />
+        <div>
+          <div className="prose p-4">
+            <ReactMarkdown>{algorithm.guide}</ReactMarkdown>
+          </div>
+        </div>
       </div>
     </div>
   );
