@@ -30,7 +30,7 @@ export function SpaceshipButton({
   };
 
   return (
-    <>
+    <div className="relative">
       {disabled && mouseOver && <Tooltip elementRef={buttonRef} label={disabledHint ?? ""} />}
       <div
         ref={buttonRef}
@@ -69,6 +69,6 @@ export function SpaceshipButton({
           {icon} {label}
         </button>
       </div>
-    </>
+    </div>
   );
 }

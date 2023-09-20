@@ -10,14 +10,14 @@ export function Tooltip({ elementRef, label }: TooltipProps) {
     return null;
   }
 
-  const { top, left, height } = elementRef.current.getBoundingClientRect();
+  const { height } = elementRef.current.getBoundingClientRect();
 
   return (
     <div
-      className="absolute z-[100] -translate-y-0.5 whitespace-nowrap rounded-[4px] bg-slate-800 px-3 py-2 text-slate-200"
+      className="absolute z-[100]  whitespace-nowrap rounded-[4px] bg-slate-800 px-3 py-2 text-slate-200"
       style={{
-        top: top - height - 38,
-        left: left - 75.71875 - 37.86,
+        right: -2,
+        bottom: height + 3,
       }}
     >
       <span className="absolute -bottom-1 left-1/2 -z-10 h-2 w-2 -translate-x-1/2 rounded-full bg-slate-800" />
