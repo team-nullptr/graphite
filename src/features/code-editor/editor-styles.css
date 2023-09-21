@@ -11,9 +11,25 @@
 }
 
 .cm-editor .cm-tooltip {
-  @apply max-w-full;
+  @apply max-w-full rounded-md border border-slate-300 bg-slate-50;
 }
 
 .cm-editor .cm-diagnostic-error {
   @apply font-medium text-[#f6511d];
+}
+
+.cm-tooltip-autocomplete {
+  @apply bg-slate-500;
+}
+
+.cm-editor .cm-tooltip-autocomplete > ul > li {
+  @apply p-1 text-slate-600;
+}
+
+.cm-editor .cm-tooltip-autocomplete ul li[aria-selected] {
+  @apply bg-slate-100 p-1 text-slate-800;
+}
+
+.cm-editor .cm-completionIcon-keyword:after {
+  content: url("../../assets/keyword.svg");
 }

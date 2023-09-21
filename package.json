@@ -15,6 +15,7 @@
     "code-mirror-gen": "lezer-generator ./src/core/graphene/tools/graphene.grammar --names -o ./src/core/graphene/tools/gen/gdl.ts && prettier ./src/core/graphene/tools/gen/**/* --write"
   },
   "dependencies": {
+    "@codemirror/autocomplete": "^6.9.1",
     "@codemirror/commands": "^6.2.3",
     "@codemirror/language": "^6.6.0",
     "@codemirror/lint": "^6.2.1",

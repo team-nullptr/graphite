@@ -32,28 +32,21 @@ export type CreateEditorStoreOpts = {
 };
 
 const initialCode = `# Declare vertices
-vertex([A, B, C, D, E, F, G])
+vertex([A, B, C, D, E, F])
+
+# Create a new binary tree
+tree_binary([N, O, P, R, S, T, U, W, X, Y, Z])
 
 # Add edges
 edge(A, [B, C, D, E], 5)
 edge(D, C)
 edge(F, B)
 edge(B, [C, D])
-
-# Add directed edges
-arc(A, [F, G])
-arc(E, C, 8)
-
-graph_complete([H, I, K, L, M])
-
-arc(G, H)
-
-tree_binary([N, O, P, R, S, T, U, W, X, Y, Z])
-
 edge(O, A)
 
-# Learn more at Graphene Docs
-# https://github.com/team-nullptr/graphite
+# Add directed edges
+arc(A, [F])
+arc(E, C, 8)
 `;
 
 const initialGraph: Graph = {
