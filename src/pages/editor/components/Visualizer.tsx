@@ -8,7 +8,8 @@ import { Player } from "./Player";
 import { TableStep } from "./TableStep";
 import { State } from "~/core/simulator/state";
 
-const MAX_CELLS = 8;
+/** Represents minimum number of showed cells in ArrayStep */
+const MIN_ARRAY_CELLS = 8;
 
 export const Visualizer = () => {
   const visualizerRef = useRef(null);
@@ -35,16 +36,14 @@ export const Visualizer = () => {
   const renderStepState = (state: State) => {
     if (!state) return null;
 
-    const stepsAmount = state.data.length;
-
-    const visibleCells = stepsAmount <= MAX_CELLS ? MAX_CELLS : stepsAmount;
-
     switch (state.type) {
       case "table":
         return <TableStep state={state} />;
-      case "array":
-        console.log("rendering array");
+      case "array": {
+        const visibleCells =
+          state.data.length <= MIN_ARRAY_CELLS ? MIN_ARRAY_CELLS : state.data.length;
         return <ArrayStep state={state} visibleCells={visibleCells} />;
+      }
       default:
         return null;
     }
