@@ -64,7 +64,7 @@ export function AlgorithmDetails({ algorithm, onBack }: AlgorithmDetails) {
         <ControlsButton
           icon={<ArrowLeftIcon className="h-5 w-5" />}
           onClick={handleBackClicked}
-          alt="back"
+          label="back"
         />
       </Controls>
       <div className="relative flex flex-1 flex-col divide-y divide-slate-300">

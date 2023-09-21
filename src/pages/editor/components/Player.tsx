@@ -78,41 +78,41 @@ export function Player({
         onClick={firstStepHandler}
         disabled={currentStep === 0}
         icon={<ChevronDoubleLeftIcon className="h-5 w-5" />}
-        alt="first step"
+        label="first step"
       />
 
       <ControlsButton
         onClick={previousStepClickHandler}
         disabled={currentStep === 0}
         icon={<ArrowLeftIcon className="h-5 w-5" />}
-        alt="previous step"
+        label="previous step"
       />
 
       <ControlsButton
         onClick={nextStepClickHandler}
         disabled={currentStep === numberOfSteps}
         icon={<ArrowRightIcon className="h-5 w-5" />}
-        alt="next step"
+        label="next step"
       />
 
       <ControlsButton
         onClick={lastStepHandler}
         disabled={currentStep === numberOfSteps}
         icon={<ChevronDoubleRightIcon className="h-5 w-5" />}
-        alt="last step"
+        label="last step"
       />
 
       {isAutoPlaying ? (
         <ControlsButton
           onClick={() => setIsAutoPlaying(false)}
           icon={<StopIcon className="h-5 w-5" />}
-          alt="stop autoplay"
+          label="stop autoplay"
         />
       ) : (
         <ControlsButton
           onClick={() => setIsAutoPlaying(true)}
           icon={<PlayIcon className="h-5 w-5" />}
-          alt="autoplay"
+          label="autoplay"
         />
       )}
     </Controls>

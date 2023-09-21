@@ -1,10 +1,11 @@
 import { defaultKeymap, history } from "@codemirror/commands";
 import { HighlightStyle, syntaxHighlighting } from "@codemirror/language";
-import { Compartment, EditorSelection, EditorState, Extension } from "@codemirror/state";
+import { Compartment, EditorState, Extension } from "@codemirror/state";
 import { EditorView, ViewUpdate, keymap, lineNumbers } from "@codemirror/view";
 import { tags } from "@lezer/highlight";
 import { useEffect, useRef, useState } from "react";
 import { graphene } from "~/core/graphene/tools/codeMirror";
+import colors from "tailwindcss/colors";
 
 // Creates onChange extension for editor.
 export function editorOnChange(cb: (value: string) => void) {
@@ -22,19 +23,23 @@ export function editorReadonlyExtension(readonly: boolean): Extension {
 const codeThemeLight = HighlightStyle.define([
   {
     tag: [tags.variableName, tags.keyword],
-    color: "#60a5fa",
+    color: colors.slate[700],
+  },
+  {
+    tag: [tags.variableName],
+    color: colors.sky[500],
   },
   {
     tag: tags.number,
-    color: "#f59e0b",
+    color: colors.blue[500],
   },
   {
     tag: [tags.paren, tags.punctuation],
-    color: "#475569",
+    color: colors.slate[700],
   },
   {
     tag: [tags.comment],
-    color: "#c0c9d3",
+    color: colors.slate[400],
     fontStyle: "italic",
     fontWeight: 300,
   },

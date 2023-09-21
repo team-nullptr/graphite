@@ -2,7 +2,7 @@ import { ReactNode, useEffect } from "react";
 import { cn } from "~/lib/utils";
 import { Orientation, useSplit } from "./useSplit";
 
-const orientationToDimention = {
+const orientationToDimension = {
   vertical: "width",
   horizontal: "height",
 } as const;
@@ -58,7 +58,7 @@ export function Split({ orientation, first, second, initialShare }: SplitProps) 
     >
       <div
         className="overflow-hidden"
-        style={{ [orientationToDimention[orientation]]: `${share}%` }}
+        style={{ [orientationToDimension[orientation]]: `${share}%` }}
       >
         {first}
       </div>
@@ -70,7 +70,7 @@ export function Split({ orientation, first, second, initialShare }: SplitProps) 
       />
       <div
         className="overflow-auto"
-        style={{ [orientationToDimention[orientation]]: `${100 - share}%` }}
+        style={{ [orientationToDimension[orientation]]: `${100 - share}%` }}
       >
         {second}
       </div>
@@ -84,14 +84,14 @@ export type DynamicSplitProps = {
   initialShare?: number;
   /** Static pane is the primary view that will be present regardless of split state. */
   staticPane: ReactNode;
-  /** Dynami pane will be present if split view is active and won't be present when it is not. */
+  /** Dynamic pane will be present if split view is active and won't be present when it is not. */
   dynamicPane: ReactNode;
 };
 
 export function DynamicSplit({
   orientation,
   active,
-  initialShare = 50,
+  initialShare = 75,
   staticPane,
   dynamicPane,
 }: DynamicSplitProps) {
@@ -117,7 +117,7 @@ export function DynamicSplit({
       <div
         className="overflow-hidden bg-slate-50"
         style={{
-          [orientationToDimention[orientation]]: `${share}%`,
+          [orientationToDimension[orientation]]: `${share}%`,
         }}
       >
         {staticPane}
@@ -133,7 +133,7 @@ export function DynamicSplit({
           <div
             className="overflow-auto bg-slate-50"
             style={{
-              [orientationToDimention[orientation]]: `${100 - share}%`,
+              [orientationToDimension[orientation]]: `${100 - share}%`,
             }}
           >
             {dynamicPane}
