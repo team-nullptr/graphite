@@ -100,7 +100,7 @@ export function AlgorithmDetails({ algorithm, onBack }: AlgorithmDetails) {
           </div>
         </div>
         <div>
-          <div className="prose p-4">
+          <div className="prose prose-slate p-4">
             <ReactMarkdown>{algorithm.guide}</ReactMarkdown>
           </div>
         </div>
