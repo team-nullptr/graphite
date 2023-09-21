@@ -21,12 +21,9 @@ const defaultForceSimulatorSettings: ForceSimulatorSettings = {
 class ForceSimulator {
   settings: ForceSimulatorSettings = defaultForceSimulatorSettings;
 
-  // TODO: These variables could be extracted to some config that is passed to simulator.
   maxForce = 0.5;
-
-  attractiveTargetLength = 100; // Target connection length
+  attractiveTargetLength = 100;
   attractiveStrength = 0.025;
-
   repulsiveStrength = 5;
   repulsiveChillOut = 0.02;
 

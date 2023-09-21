@@ -11,6 +11,7 @@ const tabs: Tab[] = [
   { id: "edit", icon: <CommandLineIcon />, element: <CodeEditor /> },
   { id: "algorithm", icon: <PlayIcon />, element: <AlgorithmPicker /> },
 ];
+
 // The CodeEditor component is responsible for setting the graph value,
 // so setting it as a default tab will automatically set the graph value.
 // This way we avoid a weird behavior of a graph magically appearing

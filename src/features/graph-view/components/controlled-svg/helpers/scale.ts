@@ -10,11 +10,7 @@ export const scaleCenterToMatchTarget = (
   return [newCenterX, newCenterY];
 };
 
-const scaleAxisCenterToMatchTarget = (
-  center: number,
-  target: number,
-  scale: number
-): number => {
+const scaleAxisCenterToMatchTarget = (center: number, target: number, scale: number): number => {
   const delta = target - center;
   return target - delta / scale;
 };

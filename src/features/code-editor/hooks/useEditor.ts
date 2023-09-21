@@ -1,10 +1,12 @@
 import { defaultKeymap, history } from "@codemirror/commands";
-import { HighlightStyle, syntaxHighlighting } from "@codemirror/language";
-import { Compartment, EditorSelection, EditorState, Extension } from "@codemirror/state";
+import { HighlightStyle, syntaxHighlighting, syntaxTree } from "@codemirror/language";
+import { Compartment, EditorState, Extension } from "@codemirror/state";
 import { EditorView, ViewUpdate, keymap, lineNumbers } from "@codemirror/view";
 import { tags } from "@lezer/highlight";
 import { useEffect, useRef, useState } from "react";
 import { graphene } from "~/core/graphene/tools/codeMirror";
+import colors from "tailwindcss/colors";
+import { CompletionContext, autocompletion, startCompletion } from "@codemirror/autocomplete";
 
 // Creates onChange extension for editor.
 export function editorOnChange(cb: (value: string) => void) {
@@ -22,19 +24,23 @@ export function editorReadonlyExtension(readonly: boolean): Extension {
 const codeThemeLight = HighlightStyle.define([
   {
     tag: [tags.variableName, tags.keyword],
-    color: "#60a5fa",
+    color: colors.slate[700],
+  },
+  {
+    tag: [tags.variableName],
+    color: colors.sky[500],
   },
   {
     tag: tags.number,
-    color: "#f59e0b",
+    color: colors.blue[500],
   },
   {
     tag: [tags.paren, tags.punctuation],
-    color: "#475569",
+    color: colors.slate[700],
   },
   {
     tag: [tags.comment],
-    color: "#c0c9d3",
+    color: colors.slate[400],
     fontStyle: "italic",
     fontWeight: 300,
   },
@@ -63,10 +69,34 @@ export function useEditor<T extends HTMLElement>(extensions: Extension[], readon
     const view = new EditorView({
       state: EditorState.create({
         extensions: [
+          keymap.of([{ key: "Ctrl-`", run: startCompletion }]),
           graphene,
           history(),
           keymap.of(defaultKeymap),
           lineNumbers(),
+          autocompletion({
+            override: [
+              function (context: CompletionContext) {
+                const word = context.matchBefore(/\w*/);
+                if (word?.from == word?.to && !context.explicit) return null;
+
+                const nodeBefore = syntaxTree(context.state).resolveInner(context.pos, -1);
+                const textBefore = context.state.sliceDoc(nodeBefore.from, context.pos);
+                const tagBefore = /\w*$/.exec(textBefore);
+
+                return {
+                  from: tagBefore ? nodeBefore.from + tagBefore.index : context.pos,
+                  options: [
+                    { label: "vertex", type: "keyword" },
+                    { label: "edge", type: "keyword" },
+                    { label: "arc", type: "keyword" },
+                    { label: "graph_complete", type: "keyword" },
+                    { label: "tree_binary", type: "keyword" },
+                  ],
+                };
+              },
+            ],
+          }),
           editorThemeCompartment.current.of([
             editorThemeLight,
             syntaxHighlighting(codeThemeLight, { fallback: true }),

@@ -1,5 +1,5 @@
 import { Graph } from "~/core/simulator/graph";
-import { ControlledSvg } from "~/shared/layout/controlled-svg/ControlledSvg";
+import { ControlledSvg } from "~/features/graph-view/components/controlled-svg/ControlledSvg";
 import { Edges } from "./components/Edges";
 import { Vertices } from "./components/Vertices";
 import { distributeEdges, groupEdges, sortEdges } from "./helpers/distributeEdges";
