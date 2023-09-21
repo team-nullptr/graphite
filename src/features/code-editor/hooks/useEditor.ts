@@ -24,7 +24,7 @@ export function editorReadonlyExtension(readonly: boolean): Extension {
 const codeThemeLight = HighlightStyle.define([
   {
     tag: [tags.variableName, tags.keyword],
-    color: colors.slate[700],
+    color: colors.slate[900],
   },
   {
     tag: [tags.variableName],
@@ -32,16 +32,15 @@ const codeThemeLight = HighlightStyle.define([
   },
   {
     tag: tags.number,
-    color: colors.blue[500],
+    color: colors.sky[700],
   },
   {
     tag: [tags.paren, tags.punctuation],
-    color: colors.slate[700],
+    color: colors.slate[600],
   },
   {
     tag: [tags.comment],
     color: colors.slate[400],
-    fontStyle: "italic",
     fontWeight: 300,
   },
 ]);
