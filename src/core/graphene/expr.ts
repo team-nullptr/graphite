@@ -17,10 +17,7 @@ export interface Visitor<R> {
 }
 
 export class VertexCollection implements Expr {
-  constructor(
-    public readonly bracketToken: Token,
-    public readonly vertices: VertexLiteral[]
-  ) {}
+  constructor(public readonly bracketToken: Token, public readonly vertices: VertexLiteral[]) {}
 
   accept<R>(visitor: Visitor<R>): R {
     return visitor.visitVertexCollection(this);
