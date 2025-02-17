@@ -1,4 +1,4 @@
-import { Token, TokenType, lookupIdentifier } from "./token";
+import { Token, TOKEN_TYPE, TokenType, lookupIdentifier } from "./token";
 
 export class Lexer {
   private char = "\0";
@@ -19,35 +19,35 @@ export class Lexer {
         if (this.peekChar() === "-") {
           const literal = this.char + this.peekChar();
           this.readChar();
-          token = this.newToken("EDGE", literal);
+          token = this.newToken(TOKEN_TYPE.Edge, literal);
         } else if (this.peekChar() === ">") {
           const literal = this.char + this.peekChar();
           this.readChar();
-          token = this.newToken("DIRECTED_EDGE", literal);
+          token = this.newToken(TOKEN_TYPE.DirectedEdge, literal);
         } else {
-          token = this.newToken("ILLEGAL", this.char + this.peekChar());
+          token = this.newToken(TOKEN_TYPE.Illegal, this.char + this.peekChar());
         }
         break;
       case "=":
-        token = this.newToken("EQ", this.char);
+        token = this.newToken(TOKEN_TYPE.Eq, this.char);
         break;
       case "{":
-        token = this.newToken("LBRACE", this.char);
+        token = this.newToken(TOKEN_TYPE.LBrace, this.char);
         break;
       case "}":
-        token = this.newToken("RBRACE", this.char);
+        token = this.newToken(TOKEN_TYPE.RBrace, this.char);
         break;
       case "[":
-        token = this.newToken("LBRACKET", this.char);
+        token = this.newToken(TOKEN_TYPE.LBracket, this.char);
         break;
       case "]":
-        token = this.newToken("RBRACKET", this.char);
+        token = this.newToken(TOKEN_TYPE.RBracket, this.char);
         break;
       case ";":
-        token = this.newToken("SEMICOLON", this.char);
+        token = this.newToken(TOKEN_TYPE.Semicolon, this.char);
         break;
       case "\0":
-        token = this.newToken("EOF", "");
+        token = this.newToken(TOKEN_TYPE.EOF, "");
         break;
       default:
         if (this.isLetter(this.char)) {
@@ -56,10 +56,10 @@ export class Lexer {
         }
 
         if (this.isNumber(this.char)) {
-          return new Token("NUMBER", this.readNumber());
+          return new Token(TOKEN_TYPE.Number, this.readNumber());
         }
 
-        token = this.newToken("ILLEGAL", this.char);
+        token = this.newToken(TOKEN_TYPE.Illegal, this.char);
     }
 
     this.readChar();
