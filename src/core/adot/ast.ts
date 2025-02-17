@@ -33,8 +33,8 @@ export type EdgeType = "--" | "->";
 export class EdgeStatement extends Statement {
   constructor(
     public token: Token,
-    public from: Identifier,
-    public to: Identifier,
+    public left: Expression,
+    public right: Expression,
     public edgeType: EdgeType
   ) {
     super();

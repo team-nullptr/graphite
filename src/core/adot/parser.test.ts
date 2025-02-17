@@ -42,6 +42,34 @@ describe("parse", () => {
       })(),
     ],
     [
+      `
+
+      graph {
+      a -> b -> a;
+      }`,
+      (() => {
+        const a = new Token("ID", "a");
+        const b = new Token("ID", "b");
+
+        return new ast.Definition([
+          new ast.GraphStatement(new Token("GRAPH", "graph"), [
+            new ast.EdgeStatement(
+              a,
+              new ast.Identifier(a, a.literal),
+              new ast.Identifier(b, b.literal),
+              "->"
+            ),
+            new ast.EdgeStatement(
+              b,
+              new ast.Identifier(b, b.literal),
+              new ast.Identifier(a, a.literal),
+              "->"
+            ),
+          ]),
+        ]);
+      })(),
+    ],
+    [
       `graph
 
       { a [cost

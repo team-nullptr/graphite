@@ -23,10 +23,12 @@ export class Parser {
 
     while (!this.currTokenIs("EOF")) {
       const graph = this.parseGraph();
-      if (graph) definition.graphs.push(graph);
+      if (graph) {
+        definition.graphs.push(graph);
+      }
       this.nextToken();
     }
-
+    console.log(this.errors);
     return definition;
   }
 
@@ -46,28 +48,65 @@ export class Parser {
     this.nextToken();
 
     while (!this.currTokenIs("RBRACE") && !this.currTokenIs("EOF")) {
-      statements.push(this.parseStatement()!); // TODO: Fix '!'
+      const statement = this.parseStatements();
+      if (Array.isArray(statement)) {
+        statements.push(...statement); // TODO: Fix '!'
+      } else if (statement) {
+        statements.push(statement); // TODO: Fix '!'
+      }
       this.nextToken();
     }
 
     return new ast.GraphStatement(token, statements);
   }
 
-  private parseStatement(): ast.Statement | undefined {
+  private parseStatements(): Array<ast.Statement> | ast.Statement | undefined {
     switch (this.currToken.type) {
       // TODO: Add support for subgraphs
       case "ID": {
-        if (this.peekTokenIs("EDGE") || this.peekTokenIs("DIRECTED_EDGE"))
-          console.error("not implemented");
-        else return this.parseNodeStatement();
+        if (this.peekTokenIs("EDGE") || this.peekTokenIs("DIRECTED_EDGE")) {
+          return this.parseEdgeStatements();
+        } else {
+          return this.parseNodeStatement();
+        }
         break;
       }
     }
   }
 
+  private parseEdgeStatements(): Array<ast.EdgeStatement> | undefined {
+    const statements: Array<ast.EdgeStatement> = [];
+
+    while (this.peekTokenIs("EDGE") || this.peekTokenIs("DIRECTED_EDGE")) {
+      const token = this.currToken;
+
+      const left = this.parseIdentifier();
+      if (!left) {
+        return;
+      }
+      this.nextToken();
+
+      const edgeOp = this.currToken.literal as ast.EdgeType;
+      this.nextToken();
+
+      const right = this.parseIdentifier();
+      if (!right) {
+        return;
+      }
+
+      statements.push(new ast.EdgeStatement(token, left, right, edgeOp));
+    }
+    return statements;
+  }
+
   private parseNodeStatement(): ast.NodeStatement | undefined {
     const token = this.currToken;
+
     const id = this.parseIdentifier();
+    if (!id) {
+      return;
+    }
+
     let attributesList: Array<ast.AttributeStatement> = [];
 
     if (this.peekTokenIs("LBRACKET")) {
@@ -94,7 +133,10 @@ export class Parser {
     while (this.peekTokenIs("SEMICOLON")) {
       this.nextToken();
       this.nextToken();
-      attributes.push(this.parseAttribute()!);
+      const attribute = this.parseAttribute();
+      if (attribute) {
+        attributes.push(attribute);
+      }
     }
 
     if (!this.expectPeek("RBRACKET")) return [];
@@ -104,12 +146,19 @@ export class Parser {
 
   private parseAttribute(): ast.AttributeStatement | undefined {
     const token = this.currToken;
-    const key = this.parseIdentifier();
 
-    if (!this.expectPeek("EQ")) return undefined;
+    const key = this.parseIdentifier();
+    if (!key) {
+      return;
+    }
+
+    if (!this.expectPeek("EQ")) return;
     this.nextToken();
 
-    const value = this.parseExpression()!;
+    const value = this.parseExpression();
+    if (!value) {
+      return;
+    }
 
     return new ast.AttributeStatement(token, key, value);
   }
@@ -123,11 +172,21 @@ export class Parser {
     }
   }
 
-  private parseNumberLiteral(): ast.NumberLiteral {
+  private parseNumberLiteral(): ast.NumberLiteral | undefined {
+    if (!this.currTokenIs("NUMBER")) {
+      this.errors.push("Expected a number, got", this.currToken.type);
+      return;
+    }
+
     return new ast.NumberLiteral(this.currToken, parseFloat(this.currToken.literal));
   }
 
-  private parseIdentifier(): ast.Identifier {
+  private parseIdentifier(): ast.Identifier | undefined {
+    if (!this.currTokenIs("ID")) {
+      this.errors.push("Expected an ID, got", this.currToken.type);
+      return;
+    }
+
     return new ast.Identifier(this.currToken, this.currToken.literal);
   }
 
