@@ -1,11 +1,8 @@
 import { assert, describe, test } from "vitest";
 import * as ast from "./ast";
 import { Lexer } from "./lexer";
-import { Parser } from "./parser";
+import { errorFmtAt, errorFmtExpected, Parser } from "./parser";
 import { Token, TOKEN_TYPE } from "./token";
-import util from "util";
-
-// TODO: Write utils for hand writing asts
 
 describe("Correctly parses valid definitions", () => {
   test.each<[string, ast.Node]>([
@@ -47,7 +44,13 @@ describe("Correctly parses valid definitions", () => {
       `
 
       graph {
-      a -> b -> a;
+      a ->
+      b -> a;
+
+      a
+      -- b
+      a -- b
+
       }`,
       (() => {
         const a = new Token(TOKEN_TYPE.Id, "a");
@@ -66,6 +69,18 @@ describe("Correctly parses valid definitions", () => {
               new ast.Identifier(b, b.literal),
               new ast.Identifier(a, a.literal),
               "->"
+            ),
+            new ast.EdgeStatement(
+              a,
+              new ast.Identifier(a, a.literal),
+              new ast.Identifier(b, b.literal),
+              "--"
+            ),
+            new ast.EdgeStatement(
+              a,
+              new ast.Identifier(a, a.literal),
+              new ast.Identifier(b, b.literal),
+              "--"
             ),
           ]),
         ]);
@@ -137,10 +152,46 @@ describe("Correctly parses valid definitions", () => {
   ])("Case %#", (source, want) => {
     const lexer = new Lexer(source);
     const parser = new Parser(lexer);
-    const got = parser.parse();
+    const ast = parser.parse();
+
+    // console.log(source);
+    // console.log(parser.errors);
+    // console.log(util.inspect(ast, { depth: null, compact: false, colors: true }));
+
+    assert.isEmpty(parser.errors);
+    assert.deepEqual(ast, want);
+  });
+});
+
+describe("Reports syntax errors correctly", () => {
+  test.each<[string, Array<string>]>([
+    [`graph {`, [errorFmtExpected(new Token(TOKEN_TYPE.EOF, "<eof>"), [TOKEN_TYPE.RBrace])]],
+    [
+      `
+
+      graph {
+        a ->
+
+      }`,
+      [errorFmtExpected(new Token(TOKEN_TYPE.RBrace, "}"), [TOKEN_TYPE.Id])],
+    ],
+    [
+      `graph {
+      a ->
+      b --
+      c [cost=10];
+      }`,
+      [errorFmtExpected(new Token(TOKEN_TYPE.LBracket, "["), [TOKEN_TYPE.Id])],
+    ],
+  ])("Case %#", (source, expectedErrors) => {
+    const lexer = new Lexer(source);
+    const parser = new Parser(lexer);
+    parser.parse();
+
     console.log(source);
-    console.log(util.inspect(got, { depth: null, compact: false, colors: true }));
-    console.log(parser.errors);
-    assert.deepEqual(got, want);
+    console.log(parser.errors.join("\n"));
+
+    assert.deepEqual(parser.errors, expectedErrors);
+    assert.isNotEmpty(parser.errors);
   });
 });

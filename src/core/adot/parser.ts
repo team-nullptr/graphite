@@ -2,6 +2,17 @@ import { Lexer } from "./lexer";
 import { TOKEN_TYPE, Token, TokenType } from "./token";
 import * as ast from "./ast";
 
+export function errorFmtAt(at: Token, message: string): string {
+  return `At '${at.literal}' [${at.type}]:\n\t${message}\n`;
+}
+
+export function errorFmtExpected(at: Token, expected: Array<TokenType>): string {
+  return errorFmtAt(
+    at,
+    Array.length > 0 ? `Expected one of [${expected.join("], [")}].` : `Expected [${expected}].`
+  );
+}
+
 /**
  * ParserError is a sentinel class used for managing parser
  * synchronization after detecting syntax error.
@@ -26,102 +37,107 @@ export class Parser {
     while (!this.currTokenIs(TOKEN_TYPE.EOF)) {
       try {
         const graph = this.parseGraph();
-        if (graph) {
-          definition.graphs.push(graph);
-        }
-
-        this.nextToken();
+        definition.graphs.push(graph);
       } catch (error) {
-        // TODO: Top level sync (we want to search for another graph definition)
+        this.synchronizeToGraphDefinition();
       }
+
+      this.nextToken();
     }
 
     return definition;
   }
 
-  private sync() {
-    console.error("Not implemented");
-  }
+  private parseGraph(): ast.GraphStatement {
+    const at = this.currToken;
 
-  private parseGraph(): ast.GraphStatement | undefined {
-    switch (this.currToken.type) {
-      case TOKEN_TYPE.Graph:
-      case TOKEN_TYPE.Digraph:
-        try {
-          return this.parseStatementsList();
-        } catch (error) {
-          // Synchronize if we fail to parse a graph statement
-          // to "validate" as much code as possible.
-          this.sync();
-          return undefined;
-        }
-      default:
-        throw this.error(this.currToken, "Expected a graph statement.");
+    if (!this.currTokenIs(TOKEN_TYPE.Graph, TOKEN_TYPE.Digraph)) {
+      throw this.error(errorFmtAt(this.currToken, "Expected graph declaration."));
     }
-  }
 
-  private parseStatementsList(): ast.GraphStatement {
-    const token = this.currToken;
-    const statements: Array<ast.Statement> = [];
-
-    this.expectPeek(TOKEN_TYPE.LBrace);
+    this.expectPeek(TOKEN_TYPE.LBrace); // eat the '{'
     this.nextToken();
 
-    while (!this.currTokenIs([TOKEN_TYPE.RBrace, TOKEN_TYPE.EOF])) {
-      const statement = this.parseStatement();
+    const statementsList = this.parseStatementsList();
 
-      if (Array.isArray(statement)) {
-        statements.push(...statement);
-      } else if (statement) {
-        statements.push(statement);
-      }
+    this.expectPeek(TOKEN_TYPE.RBrace); // finish at '}'
 
-      this.nextToken();
+    return new ast.GraphStatement(at, statementsList);
+  }
+
+  private parseStatementsList(): Array<ast.Statement> {
+    if (this.peekTokenIs(TOKEN_TYPE.RBrace)) {
+      return [];
     }
 
-    return new ast.GraphStatement(token, statements);
+    const statements: Array<ast.Statement> = [];
+
+    // NOTE:
+    // We know to watch for RBrace as it's the only token which can
+    // end statements list (other than EOF).
+
+    while (!this.peekTokenIs(TOKEN_TYPE.EOF)) {
+      try {
+        const statement = this.parseStatement();
+
+        // Chained edge statements can produce an array of statements
+        // TODO: Maybe there is a cleaner way to
+        if (Array.isArray(statement)) {
+          statements.push(...statement);
+        } else {
+          statements.push(statement);
+        }
+      } catch (error) {
+        this.synchronizeToStatement();
+      }
+
+      if (this.peekTokenIs(TOKEN_TYPE.RBrace)) {
+        break;
+      }
+
+      this.expectPeek(TOKEN_TYPE.Id);
+    }
+
+    return statements;
   }
 
   private parseStatement(): Array<ast.Statement> | ast.Statement {
-    switch (this.currToken.type) {
-      case TOKEN_TYPE.Id: {
-        if (this.peekTokenIs([TOKEN_TYPE.Edge, TOKEN_TYPE.DirectedEdge])) {
-          return this.parseEdgeStatement();
-        }
-
-        return this.parseNodeStatement();
-      }
-      default:
-        throw this.error(this.currToken, "Expected a statement.");
+    if (this.peekTokenIs(TOKEN_TYPE.Edge, TOKEN_TYPE.DirectedEdge)) {
+      return this.parseEdgeStatement();
     }
+
+    return this.parseNodeStatement();
   }
 
   private parseEdgeStatement(): Array<ast.EdgeStatement> {
     const statements: Array<ast.EdgeStatement> = [];
 
-    while (this.peekTokenIs([TOKEN_TYPE.Edge, TOKEN_TYPE.DirectedEdge])) {
-      const token = this.currToken;
+    while (this.peekTokenIs(TOKEN_TYPE.Edge, TOKEN_TYPE.DirectedEdge)) {
+      const at = this.currToken;
 
       const left = this.parseIdentifier();
       this.nextToken();
       const edgeOp = this.currToken.literal as ast.EdgeType;
-      this.nextToken();
+      this.expectPeek(TOKEN_TYPE.Id);
       const right = this.parseIdentifier();
 
-      statements.push(new ast.EdgeStatement(token, left, right, edgeOp));
+      // NOTE:
+      // We don't consume the right token deliberately
+      // so that we can chain edge statements together.
+
+      statements.push(new ast.EdgeStatement(at, left, right, edgeOp));
     }
 
-    this.nextToken();
+    this.nextTokenIfPeek(TOKEN_TYPE.Semicolon);
 
     return statements;
   }
 
   private parseNodeStatement(): ast.NodeStatement {
-    let attributesList: Array<ast.AttributeStatement> = [];
-
-    const token = this.currToken;
+    const at = this.currToken;
     const id = this.parseIdentifier();
 
+    let attributesList: Array<ast.AttributeStatement> = [];
     if (this.peekTokenIs(TOKEN_TYPE.LBracket)) {
       this.nextToken();
       this.nextToken();
@@ -130,24 +146,21 @@ export class Parser {
 
     this.nextTokenIfPeek(TOKEN_TYPE.Semicolon);
 
-    return new ast.NodeStatement(token, id, attributesList);
+    return new ast.NodeStatement(at, id, attributesList);
   }
 
   private parseAttributesList(): Array<ast.AttributeStatement> {
-    const attributes: Array<ast.AttributeStatement> = [];
-
     if (this.currTokenIs(TOKEN_TYPE.RBracket)) {
-      return attributes;
+      return [];
     }
 
-    attributes.push(this.parseAttribute());
+    const attributes: Array<ast.AttributeStatement> = [this.parseAttribute()];
 
     while (this.peekTokenIs(TOKEN_TYPE.Semicolon)) {
       this.nextToken();
       this.nextToken();
 
       const attribute = this.parseAttribute();
-
       if (attribute) {
         attributes.push(attribute);
       }
@@ -159,14 +172,14 @@ export class Parser {
   }
 
   private parseAttribute(): ast.AttributeStatement {
-    const token = this.currToken;
+    const at = this.currToken;
 
     const key = this.parseIdentifier();
     this.expectPeek(TOKEN_TYPE.Eq);
     this.nextToken();
     const value = this.parseExpression();
 
-    return new ast.AttributeStatement(token, key, value);
+    return new ast.AttributeStatement(at, key, value);
   }
 
   private parseExpression(): ast.Expression {
@@ -176,7 +189,7 @@ export class Parser {
       case TOKEN_TYPE.Number:
         return this.parseNumberLiteral();
       default:
-        throw this.error(this.currToken, "Expected an expression");
+        throw this.error(errorFmtAt(this.currToken, "Expected an expression."));
     }
   }
 
@@ -186,6 +199,29 @@ export class Parser {
 
   private parseIdentifier(): ast.Identifier {
     return new ast.Identifier(this.currToken, this.currToken.literal);
+  }
+
+  /** Synchronizes parser after encountering syntax error inside statements list. */
+  private synchronizeToStatement() {
+    while (!this.peekTokenIs(TOKEN_TYPE.EOF, TOKEN_TYPE.RBrace)) {
+      this.nextToken();
+
+      if (this.currTokenIs(TOKEN_TYPE.Semicolon)) {
+        return;
+      }
+
+      switch (this.peekToken.type) {
+        case TOKEN_TYPE.RBrace:
+          return;
+      }
+    }
+  }
+
+  /** Synchronizes parser to the next top-level graph definition. */
+  private synchronizeToGraphDefinition() {
+    while (!this.peekTokenIs(TOKEN_TYPE.Graph, TOKEN_TYPE.Digraph, TOKEN_TYPE.EOF)) {
+      this.nextToken();
+    }
   }
 
   private nextToken(): void {
@@ -199,34 +235,28 @@ export class Parser {
     }
   }
 
-  private expectPeek(expectedTypes: TokenType | Array<TokenType>): void {
-    if (!this.peekTokenIs(expectedTypes)) {
-      throw this.error(
-        this.peekToken,
-        `Expected: ${Array.isArray(expectedTypes) ? expectedTypes.join(" or ") : expectedTypes}`
-      );
+  private expectPeek(...expectedTypes: Array<TokenType>): void {
+    if (!this.peekTokenIs(...expectedTypes)) {
+      throw this.error(errorFmtExpected(this.peekToken, expectedTypes));
     }
 
     this.nextToken();
   }
 
-  private currTokenIs(expectedTypes: TokenType | Array<TokenType>): boolean {
+  private currTokenIs(...expectedTypes: Array<TokenType>): boolean {
     return this.tokenIs(this.currToken, expectedTypes);
   }
 
-  private peekTokenIs(expectedTypes: TokenType | Array<TokenType>): boolean {
+  private peekTokenIs(...expectedTypes: Array<TokenType>): boolean {
     return this.tokenIs(this.peekToken, expectedTypes);
   }
 
-  private tokenIs(token: Token, expectedTypes: TokenType | Array<TokenType>): boolean {
-    if (!Array.isArray(expectedTypes)) {
-      expectedTypes = [expectedTypes];
-    }
+  private tokenIs(token: Token, expectedTypes: Array<TokenType>): boolean {
     return expectedTypes.some((type) => token.type === type);
   }
 
-  private error(token: Token, message: string): ParserError {
-    this.errors.push(`at '${token.literal}' (${token.type}):\n\t${message}`);
+  private error(message: string): ParserError {
+    this.errors.push(message);
     return new ParserError();
   }
 }

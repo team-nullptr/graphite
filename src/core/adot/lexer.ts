@@ -47,7 +47,7 @@ export class Lexer {
         token = this.newToken(TOKEN_TYPE.Semicolon, this.char);
         break;
       case "\0":
-        token = this.newToken(TOKEN_TYPE.EOF, "");
+        token = this.newToken(TOKEN_TYPE.EOF, "<eof>");
         break;
       default:
         if (this.isLetter(this.char)) {

@@ -48,7 +48,7 @@ describe("next token", () => {
 
     // }
     ["RBRACE", "}"],
-    ["EOF", ""],
+    ["EOF", "<eof>"],
   ];
 
   for (const [expectedTokenType, expectedLiteral] of tests) {
