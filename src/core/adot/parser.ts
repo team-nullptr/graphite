@@ -219,7 +219,7 @@ export class Parser {
 
   /** Synchronizes parser to the next top-level graph definition. */
   private synchronizeToGraphDefinition() {
-    while (!this.peekTokenIs(TOKEN_TYPE.Graph, TOKEN_TYPE.Digraph, TOKEN_TYPE.EOF)) {
+    while (!this.currTokenIs(TOKEN_TYPE.RBrace, TOKEN_TYPE.EOF)) {
       this.nextToken();
     }
   }

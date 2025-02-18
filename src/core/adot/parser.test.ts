@@ -180,16 +180,24 @@ describe("Reports syntax errors correctly", () => {
       a ->
       b --
       c [cost=10];
-      }`,
-      [errorFmtExpected(new Token(TOKEN_TYPE.LBracket, "["), [TOKEN_TYPE.Id])],
+      }
+
+      foo {}
+      bar {}
+      digraph { a; b; }`,
+      [
+        errorFmtExpected(new Token(TOKEN_TYPE.LBracket, "["), [TOKEN_TYPE.Id]),
+        errorFmtAt(new Token(TOKEN_TYPE.Id, "foo"), "Expected graph declaration."),
+        errorFmtAt(new Token(TOKEN_TYPE.Id, "bar"), "Expected graph declaration."),
+      ],
     ],
   ])("Case %#", (source, expectedErrors) => {
     const lexer = new Lexer(source);
     const parser = new Parser(lexer);
     parser.parse();
 
-    console.log(source);
-    console.log(parser.errors.join("\n"));
+    // console.log(source);
+    // console.log(parser.errors.join("\n"));
 
     assert.deepEqual(parser.errors, expectedErrors);
     assert.isNotEmpty(parser.errors);

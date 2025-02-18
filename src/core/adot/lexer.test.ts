@@ -1,6 +1,6 @@
 import { test, assert, describe } from "vitest";
 import { Lexer } from "./lexer";
-import { TokenType } from "./token";
+import { TokenType, TOKEN_TYPE } from "./token";
 
 describe("next token", () => {
   const source = `graph {
@@ -8,47 +8,54 @@ describe("next token", () => {
     a -- b;
     c [cost=10.23]
     c -- d [cost=10]
-}`;
+}
+
+test {}
+`;
 
   const lexer = new Lexer(source);
 
   const tests: Array<[TokenType, string]> = [
     // graph {
-    ["GRAPH", "graph"],
-    ["LBRACE", "{"],
+    [TOKEN_TYPE.Graph, "graph"],
+    [TOKEN_TYPE.LBrace, "{"],
 
     // a -> b
-    ["ID", "a"],
-    ["DIRECTED_EDGE", "->"],
-    ["ID", "b"],
+    [TOKEN_TYPE.Id, "a"],
+    [TOKEN_TYPE.DirectedEdge, "->"],
+    [TOKEN_TYPE.Id, "b"],
 
     // a -- b
-    ["ID", "a"],
-    ["EDGE", "--"],
-    ["ID", "b"],
+    [TOKEN_TYPE.Id, "a"],
+    [TOKEN_TYPE.Edge, "--"],
+    [TOKEN_TYPE.Id, "b"],
     ["SEMICOLON", ";"],
 
     // c [cost=10.23]
-    ["ID", "c"],
-    ["LBRACKET", "["],
-    ["ID", "cost"],
-    ["EQ", "="],
-    ["NUMBER", "10.23"],
-    ["RBRACKET", "]"],
+    [TOKEN_TYPE.Id, "c"],
+    [TOKEN_TYPE.LBracket, "["],
+    [TOKEN_TYPE.Id, "cost"],
+    [TOKEN_TYPE.Eq, "="],
+    [TOKEN_TYPE.Number, "10.23"],
+    [TOKEN_TYPE.RBracket, "]"],
 
     // c -- d [cost=10]
-    ["ID", "c"],
-    ["EDGE", "--"],
-    ["ID", "d"],
-    ["LBRACKET", "["],
-    ["ID", "cost"],
-    ["EQ", "="],
-    ["NUMBER", "10"],
-    ["RBRACKET", "]"],
+    [TOKEN_TYPE.Id, "c"],
+    [TOKEN_TYPE.Edge, "--"],
+    [TOKEN_TYPE.Id, "d"],
+    [TOKEN_TYPE.LBracket, "["],
+    [TOKEN_TYPE.Id, "cost"],
+    [TOKEN_TYPE.Eq, "="],
+    [TOKEN_TYPE.Number, "10"],
+    [TOKEN_TYPE.RBracket, "]"],
 
     // }
-    ["RBRACE", "}"],
-    ["EOF", "<eof>"],
+    [TOKEN_TYPE.RBrace, "}"],
+
+    [TOKEN_TYPE.Id, "test"],
+    [TOKEN_TYPE.LBrace, "{"],
+    [TOKEN_TYPE.RBrace, "}"],
+    [TOKEN_TYPE.EOF, "<eof>"],
   ];
 
   for (const [expectedTokenType, expectedLiteral] of tests) {
