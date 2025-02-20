@@ -88,7 +88,7 @@ export class Lexer {
   private readIdentifier(): string {
     const position = this.pos;
 
-    while (this.isLetter(this.char)) {
+    while (this.isAlphaNumeric(this.char)) {
       this.readChar();
     }
 
@@ -118,6 +118,10 @@ export class Lexer {
 
   private isLetter(char: string): boolean {
     return ("a" <= char && char <= "z") || ("A" <= char && char <= "Z") || char === "_";
+  }
+
+  private isAlphaNumeric(char: string): boolean {
+    return this.isNumber(char) || this.isLetter(char);
   }
 
   private peekChar() {

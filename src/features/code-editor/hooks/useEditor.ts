@@ -1,16 +1,12 @@
 import { defaultKeymap, indentWithTab, history } from "@codemirror/commands";
-import { HighlightStyle, syntaxHighlighting, syntaxTree } from "@codemirror/language";
+import { HighlightStyle, syntaxHighlighting } from "@codemirror/language";
 import { Compartment, EditorState, Extension } from "@codemirror/state";
 import { EditorView, ViewUpdate, keymap, lineNumbers } from "@codemirror/view";
 import { tags } from "@lezer/highlight";
 import { useEffect, useRef, useState } from "react";
 import colors from "tailwindcss/colors";
-import {
-  CompletionContext,
-  autocompletion,
-  startCompletion,
-  closeBrackets,
-} from "@codemirror/autocomplete";
+import { startCompletion, closeBrackets } from "@codemirror/autocomplete";
+import { adot } from "~/core/adot/tools/codeMirror";
 
 // Creates onChange extension for editor.
 export function editorOnChange(cb: (value: string) => void) {
@@ -27,25 +23,20 @@ export function editorReadonlyExtension(readonly: boolean): Extension {
 
 const codeThemeLight = HighlightStyle.define([
   {
-    tag: [tags.variableName, tags.keyword],
-    color: colors.slate[900],
-  },
-  {
-    tag: [tags.variableName],
-    color: colors.sky[500],
-  },
-  {
-    tag: tags.number,
-    color: colors.sky[700],
-  },
-  {
-    tag: [tags.paren, tags.punctuation],
-    color: colors.slate[600],
+    tag: [tags.content],
+    color: colors.slate[400],
   },
   {
     tag: [tags.comment],
     color: colors.slate[400],
-    fontWeight: 300,
+  },
+  {
+    tag: [tags.bracket],
+    color: colors.slate[900],
+  },
+  {
+    tag: [tags.number],
+    color: colors.sky[600],
   },
 ]);
 
@@ -72,35 +63,16 @@ export function useEditor<T extends HTMLElement>(extensions: Extension[], readon
     const view = new EditorView({
       state: EditorState.create({
         extensions: [
+          adot,
           keymap.of([{ key: "Ctrl-`", run: startCompletion }]),
-          history(),
           keymap.of([...defaultKeymap, indentWithTab]),
-          lineNumbers(),
-          closeBrackets(),
-          autocompletion({
-            override: [
-              function (context: CompletionContext) {
-                const word = context.matchBefore(/\w*/);
-                if (word?.from == word?.to && !context.explicit) return null;
-
-                const nodeBefore = syntaxTree(context.state).resolveInner(context.pos, -1);
-                const textBefore = context.state.sliceDoc(nodeBefore.from, context.pos);
-                const tagBefore = /\w*$/.exec(textBefore);
-
-                return {
-                  from: tagBefore ? nodeBefore.from + tagBefore.index : context.pos,
-                  options: [
-                    { label: "graph", type: "keyword" },
-                    { label: "digraph", type: "keyword" },
-                  ],
-                };
-              },
-            ],
-          }),
           editorThemeCompartment.current.of([
             editorThemeLight,
             syntaxHighlighting(codeThemeLight, { fallback: true }),
           ]),
+          history(),
+          lineNumbers(),
+          closeBrackets(),
           editorReadonlyExtension(readonly),
           ...extensions,
         ],

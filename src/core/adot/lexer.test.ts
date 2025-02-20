@@ -7,10 +7,10 @@ const TEST_DEBUG = process.env.TEST_DEBUG === "1";
 describe("Lexer next token", () => {
   const source = `graph {
     # aaaa
-    a -> b
+    a -> b0
     a -- b;
     c [cost=10.23]
-    c -- d [cost=10]
+    c -- d0 [cost=10]
 }
 
 test {}
@@ -28,7 +28,7 @@ subgraph
     // a -> b
     [TOKEN_TYPE.Id, "a"],
     [TOKEN_TYPE.DirectedEdge, "->"],
-    [TOKEN_TYPE.Id, "b"],
+    [TOKEN_TYPE.Id, "b0"],
 
     // a -- b
     [TOKEN_TYPE.Id, "a"],
@@ -47,7 +47,7 @@ subgraph
     // c -- d [cost=10]
     [TOKEN_TYPE.Id, "c"],
     [TOKEN_TYPE.Edge, "--"],
-    [TOKEN_TYPE.Id, "d"],
+    [TOKEN_TYPE.Id, "d0"],
     [TOKEN_TYPE.LBracket, "["],
     [TOKEN_TYPE.Id, "cost"],
     [TOKEN_TYPE.Eq, "="],

@@ -31,7 +31,28 @@ export type CreateEditorStoreOpts = {
   project: Project;
 };
 
-const initialCode = ``;
+const initialCode = `graph {
+  # This creates a node named "start"
+  start;
+
+  # This creates a node with cost of 100.
+  a [cost = 100];
+  b [cost = 200];
+
+  # Commas are optional
+  c [cost = 300]
+
+  # This creates a path between a, b and c
+  # in which every edge has cost of 25.
+  a -- b -- c [cost = 25]
+
+  # Use -> to represent a directed edge.
+  d -> e -> f [cost = 50]
+
+  # You don't have to specify the cost
+  b -- e
+}
+`;
 
 const initialGraph: Graph = {
   edges: {},

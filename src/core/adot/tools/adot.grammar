@@ -1,0 +1,14 @@
+@top Graph { }
+
+@skip { space | Comment | Number | "[" | "]" | "{" | "}" }
+
+@tokens {
+    "{"
+    "}"
+    "["
+    "]"
+
+    Comment { "#" ![\n]* }
+    Number { @digit+ }
+    space { @whitespace+ }
+}

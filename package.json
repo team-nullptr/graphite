@@ -12,7 +12,7 @@
     "test": "vitest",
     "typecheck": "tsc --noEmit",
     "coverage": "vitest --coverage",
-    "code-mirror-gen": "lezer-generator ./src/core/graphene/tools/graphene.grammar --names -o ./src/core/graphene/tools/gen/gdl.ts && prettier ./src/core/graphene/tools/gen/**/* --write"
+    "code-mirror-gen": "lezer-generator ./src/core/adot/tools/adot.grammar --names -o ./src/core/adot/tools/gen/gdl.ts && prettier ./src/core/adot/tools/gen/**/* --write"
   },
   "dependencies": {
     "@codemirror/autocomplete": "^6.9.1",
