@@ -33,9 +33,10 @@ export class NodeStatement extends Statement {
 export class EdgeStatement extends Statement {
   constructor(
     public token: Token,
-    public left: Expression,
-    public right: Expression,
-    public edgeType: EdgeType
+    public left: Identifier,
+    public right: Identifier,
+    public edgeType: EdgeType,
+    public attributeList: Array<AttributeStatement>
   ) {
     super();
   }

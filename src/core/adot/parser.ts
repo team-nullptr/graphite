@@ -55,19 +55,20 @@ export class Parser {
       throw this.error(errorFmtAt(this.currToken, "Expected graph declaration."));
     }
 
+    let statementsList: Array<ast.Statement> = [];
     this.expectPeek(TOKEN_TYPE.LBrace);
-    this.nextToken(); // Load the first token to be parsed by parseStatementsList()
-    const statementsList = this.parseStatementsList();
+
+    if (!this.peekTokenIs(TOKEN_TYPE.RBrace)) {
+      this.nextToken();
+      statementsList = this.parseStatementsList();
+    }
+
     this.expectPeek(TOKEN_TYPE.RBrace);
 
     return new ast.GraphStatement(at, statementsList);
   }
 
   private parseStatementsList(): Array<ast.Statement> {
-    if (this.currTokenIs(TOKEN_TYPE.RBrace)) {
-      return [];
-    }
-
     const statements: Array<ast.Statement> = [];
 
     // NOTE: We know to watch for RBrace as it's the only token which can
@@ -116,6 +117,8 @@ export class Parser {
     while (this.peekTokenIs(TOKEN_TYPE.Edge, TOKEN_TYPE.DirectedEdge)) {
       const at = this.currToken;
 
+      // TODO: Add support for subgraphs in edge statments
+
       const left = this.parseIdentifier();
       this.nextToken();
       const edgeOp = this.currToken.literal as ast.EdgeType;
@@ -125,7 +128,21 @@ export class Parser {
       // NOTE: We don't consume the right token deliberately
       // so that we can chain edge statements together.
 
-      statements.push(new ast.EdgeStatement(at, left, right, edgeOp));
+      statements.push(new ast.EdgeStatement(at, left, right, edgeOp, []));
+    }
+
+    let attributesList: Array<ast.AttributeStatement> = [];
+    if (this.peekTokenIs(TOKEN_TYPE.LBracket)) {
+      this.nextToken();
+      this.nextToken();
+      attributesList = this.parseAttributesList();
+    }
+
+    for (const statement of statements) {
+      // We are not deep copying the attributes list here,
+      // so keep in mind that changes to it will be propagated
+      // to all of the nodes in the edge statement chain.
+      statement.attributeList = attributesList;
     }
 
     this.nextTokenIfPeek(TOKEN_TYPE.Semicolon);

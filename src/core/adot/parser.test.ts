@@ -9,6 +9,16 @@ const TEST_DEBUG = process.env.TEST_DEBUG == "1";
 describe("Correctly parses valid definitions", () => {
   test.each<[string, ast.Node]>([
     [
+      `# a
+
+      graph {}`,
+      (() => {
+        return new ast.Definition([
+          new ast.GraphStatement(new Token(TOKEN_TYPE.Graph, "graph"), []),
+        ]);
+      })(),
+    ],
+    [
       `graph {
       a
 
@@ -47,16 +57,17 @@ describe("Correctly parses valid definitions", () => {
 
       graph {
       a ->
-      b -> a;
+      b -> a [cost=10];
 
       a
       -- b
-      a -- b
+      a -- b [cost=2]
 
       }`,
       (() => {
         const a = new Token(TOKEN_TYPE.Id, "a");
         const b = new Token(TOKEN_TYPE.Id, "b");
+        const cost = new Token(TOKEN_TYPE.Id, "cost");
 
         return new ast.Definition([
           new ast.GraphStatement(new Token(TOKEN_TYPE.Graph, "graph"), [
@@ -64,25 +75,47 @@ describe("Correctly parses valid definitions", () => {
               a,
               new ast.Identifier(a, a.literal),
               new ast.Identifier(b, b.literal),
-              "->"
+              "->",
+              [
+                new ast.AttributeStatement(
+                  cost,
+                  new ast.Identifier(cost, cost.literal),
+                  new ast.NumberLiteral(new Token(TOKEN_TYPE.Number, "10"), 10)
+                ),
+              ]
             ),
             new ast.EdgeStatement(
               b,
               new ast.Identifier(b, b.literal),
               new ast.Identifier(a, a.literal),
-              "->"
+              "->",
+              [
+                new ast.AttributeStatement(
+                  cost,
+                  new ast.Identifier(cost, cost.literal),
+                  new ast.NumberLiteral(new Token(TOKEN_TYPE.Number, "10"), 10)
+                ),
+              ]
             ),
             new ast.EdgeStatement(
               a,
               new ast.Identifier(a, a.literal),
               new ast.Identifier(b, b.literal),
-              "--"
+              "--",
+              []
             ),
             new ast.EdgeStatement(
               a,
               new ast.Identifier(a, a.literal),
               new ast.Identifier(b, b.literal),
-              "--"
+              "--",
+              [
+                new ast.AttributeStatement(
+                  cost,
+                  new ast.Identifier(cost, cost.literal),
+                  new ast.NumberLiteral(new Token(TOKEN_TYPE.Number, "2"), 2)
+                ),
+              ]
             ),
           ]),
         ]);
@@ -215,7 +248,7 @@ describe("Correctly parses valid definitions", () => {
         ]);
       })(),
     ],
-  ])("Correct parse case %#", (source, want) => {
+  ])("Correctly parse case %#", (source, want) => {
     const lexer = new Lexer(source);
     const parser = new Parser(lexer);
     const ast = parser.parse();
@@ -257,7 +290,6 @@ describe("Reports syntax errors correctly", () => {
       bar {}
       digraph { a; b; }`,
       [
-        errorFmtExpected(new Token(TOKEN_TYPE.LBracket, "["), [TOKEN_TYPE.Id, TOKEN_TYPE.Subgraph]),
         errorFmtAt(new Token(TOKEN_TYPE.Id, "foo"), "Expected graph declaration."),
         errorFmtAt(new Token(TOKEN_TYPE.Id, "bar"), "Expected graph declaration."),
       ],
@@ -269,6 +301,7 @@ describe("Reports syntax errors correctly", () => {
 
     if (TEST_DEBUG) {
       console.log(source);
+      console.log(expectedErrors);
       console.log(parser.errors.join("\n"));
     }
 

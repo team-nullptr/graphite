@@ -22,7 +22,7 @@ class ForceSimulator {
   settings: ForceSimulatorSettings = defaultForceSimulatorSettings;
 
   maxForce = 0.5;
-  attractiveTargetLength = 100;
+  attractiveTargetLength = 200;
   attractiveStrength = 0.025;
   repulsiveStrength = 5;
   repulsiveChillOut = 0.02;

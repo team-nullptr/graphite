@@ -13,6 +13,7 @@ export class Lexer {
     let token: Token;
 
     this.skipWhitespace();
+    this.skipComment();
 
     switch (this.char) {
       case "-":
@@ -94,6 +95,17 @@ export class Lexer {
     return this.source.slice(position, this.pos);
   }
 
+  private skipComment() {
+    while (this.char === "#") {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      while (this.char !== "\n" && this.char !== "\0") {
+        this.readChar();
+      }
+      this.skipWhitespace();
+    }
+  }
+
   private skipWhitespace() {
     while ([" ", "\t", "\n"].includes(this.char)) {
       this.readChar();
@@ -105,7 +117,7 @@ export class Lexer {
   }
 
   private isLetter(char: string): boolean {
-    return ("a" <= char && char <= "z") || ("A" <= char && char <= "Z");
+    return ("a" <= char && char <= "z") || ("A" <= char && char <= "Z") || char === "_";
   }
 
   private peekChar() {
@@ -129,5 +141,9 @@ export class Lexer {
 
   private newToken(tokenType: TokenType, char: string): Token {
     return new Token(tokenType, char);
+  }
+
+  private isAtEnd(): boolean {
+    return this.readPos >= this.source.length;
   }
 }

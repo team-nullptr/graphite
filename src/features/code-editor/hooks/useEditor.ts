@@ -4,7 +4,6 @@ import { Compartment, EditorState, Extension } from "@codemirror/state";
 import { EditorView, ViewUpdate, keymap, lineNumbers } from "@codemirror/view";
 import { tags } from "@lezer/highlight";
 import { useEffect, useRef, useState } from "react";
-import { graphene } from "~/core/graphene/tools/codeMirror";
 import colors from "tailwindcss/colors";
 import {
   CompletionContext,
@@ -74,7 +73,6 @@ export function useEditor<T extends HTMLElement>(extensions: Extension[], readon
       state: EditorState.create({
         extensions: [
           keymap.of([{ key: "Ctrl-`", run: startCompletion }]),
-          graphene,
           history(),
           keymap.of([...defaultKeymap, indentWithTab]),
           lineNumbers(),

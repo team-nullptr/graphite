@@ -51,7 +51,9 @@ export function CodeEditor() {
     setErrors(parser.errors);
 
     const graph = new Evaluator(definition).eval();
-    setGraph(graph);
+    if (graph.length !== 0) {
+      setGraph(graph[0]);
+    }
   }, [setGraph, code]);
 
   const editorClassName = isEditorReadonly ? "h-full opacity-75 grayscale" : "h-full";
