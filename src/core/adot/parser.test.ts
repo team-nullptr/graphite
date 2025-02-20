@@ -4,6 +4,8 @@ import { Lexer } from "./lexer";
 import { errorFmtAt, errorFmtExpected, Parser } from "./parser";
 import { Token, TOKEN_TYPE } from "./token";
 
+const TEST_DEBUG = process.env.TEST_DEBUG == "1";
+
 describe("Correctly parses valid definitions", () => {
   test.each<[string, ast.Node]>([
     [
@@ -99,6 +101,24 @@ describe("Correctly parses valid definitions", () => {
 
           c [        cost=45.6]
 
+          subgraph
+
+          { a [cost
+          =  45] ;
+              b [
+              color = orange
+              ]
+
+              ;
+
+              c [        cost=45.6]
+
+              d;
+              e [cost=1
+
+              ]
+              }
+
           d;
           e [cost=1
 
@@ -137,6 +157,37 @@ describe("Correctly parses valid definitions", () => {
                 new ast.NumberLiteral(new Token(TOKEN_TYPE.Number, "45.6"), 45.6)
               ),
             ]),
+            new ast.GraphStatement(new Token(TOKEN_TYPE.Subgraph, "subgraph"), [
+              new ast.NodeStatement(a, new ast.Identifier(a, a.literal), [
+                new ast.AttributeStatement(
+                  cost,
+                  new ast.Identifier(cost, cost.literal),
+                  new ast.NumberLiteral(new Token(TOKEN_TYPE.Number, "45"), 45)
+                ),
+              ]),
+              new ast.NodeStatement(b, new ast.Identifier(b, b.literal), [
+                new ast.AttributeStatement(
+                  color,
+                  new ast.Identifier(color, color.literal),
+                  new ast.Identifier(orange, orange.literal)
+                ),
+              ]),
+              new ast.NodeStatement(c, new ast.Identifier(c, c.literal), [
+                new ast.AttributeStatement(
+                  cost,
+                  new ast.Identifier(cost, cost.literal),
+                  new ast.NumberLiteral(new Token(TOKEN_TYPE.Number, "45.6"), 45.6)
+                ),
+              ]),
+              new ast.NodeStatement(d, new ast.Identifier(d, d.literal), []),
+              new ast.NodeStatement(e, new ast.Identifier(e, e.literal), [
+                new ast.AttributeStatement(
+                  cost,
+                  new ast.Identifier(cost, cost.literal),
+                  new ast.NumberLiteral(new Token(TOKEN_TYPE.Number, "1"), 1)
+                ),
+              ]),
+            ]),
             new ast.NodeStatement(d, new ast.Identifier(d, d.literal), []),
             new ast.NodeStatement(e, new ast.Identifier(e, e.literal), [
               new ast.AttributeStatement(
@@ -149,14 +200,34 @@ describe("Correctly parses valid definitions", () => {
         ]);
       })(),
     ],
-  ])("Case %#", (source, want) => {
+    [
+      `graph {
+        a
+      }
+      `,
+      (() => {
+        const a = new Token(TOKEN_TYPE.Id, "a");
+
+        return new ast.Definition([
+          new ast.GraphStatement(new Token(TOKEN_TYPE.Graph, "graph"), [
+            new ast.NodeStatement(a, new ast.Identifier(a, a.literal), []),
+          ]),
+        ]);
+      })(),
+    ],
+  ])("Correct parse case %#", (source, want) => {
     const lexer = new Lexer(source);
     const parser = new Parser(lexer);
     const ast = parser.parse();
 
-    // console.log(source);
-    // console.log(parser.errors);
-    // console.log(util.inspect(ast, { depth: null, compact: false, colors: true }));
+    if (TEST_DEBUG) {
+      (async () => {
+        const util = await import("util");
+        console.log(source);
+        console.log(parser.errors);
+        console.log(util.inspect(ast, { depth: null, compact: false, colors: true }));
+      })();
+    }
 
     assert.isEmpty(parser.errors);
     assert.deepEqual(ast, want);
@@ -173,7 +244,7 @@ describe("Reports syntax errors correctly", () => {
         a ->
 
       }`,
-      [errorFmtExpected(new Token(TOKEN_TYPE.RBrace, "}"), [TOKEN_TYPE.Id])],
+      [errorFmtExpected(new Token(TOKEN_TYPE.RBrace, "}"), [TOKEN_TYPE.Id, TOKEN_TYPE.Subgraph])],
     ],
     [
       `graph {
@@ -186,7 +257,7 @@ describe("Reports syntax errors correctly", () => {
       bar {}
       digraph { a; b; }`,
       [
-        errorFmtExpected(new Token(TOKEN_TYPE.LBracket, "["), [TOKEN_TYPE.Id]),
+        errorFmtExpected(new Token(TOKEN_TYPE.LBracket, "["), [TOKEN_TYPE.Id, TOKEN_TYPE.Subgraph]),
         errorFmtAt(new Token(TOKEN_TYPE.Id, "foo"), "Expected graph declaration."),
         errorFmtAt(new Token(TOKEN_TYPE.Id, "bar"), "Expected graph declaration."),
       ],
@@ -196,8 +267,10 @@ describe("Reports syntax errors correctly", () => {
     const parser = new Parser(lexer);
     parser.parse();
 
-    // console.log(source);
-    // console.log(parser.errors.join("\n"));
+    if (TEST_DEBUG) {
+      console.log(source);
+      console.log(parser.errors.join("\n"));
+    }
 
     assert.deepEqual(parser.errors, expectedErrors);
     assert.isNotEmpty(parser.errors);

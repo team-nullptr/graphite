@@ -1,7 +1,7 @@
 import { ErrorDescription } from "./ErrorDescription";
 
 export type DiagnosticsSummaryProps = {
-  errors: Error[];
+  errors: Array<string>;
 };
 
 export function DiagnosticsSummary({ errors }: DiagnosticsSummaryProps) {

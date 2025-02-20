@@ -31,23 +31,7 @@ export type CreateEditorStoreOpts = {
   project: Project;
 };
 
-const initialCode = `# Declare vertices
-vertex([A, B, C, D, E, F])
-
-# Create a new binary tree
-tree_binary([N, O, P, R, S, T, U, W, X, Y, Z])
-
-# Add edges
-edge(A, [B, C, D, E], 5)
-edge(D, C)
-edge(F, B)
-edge(B, [C, D])
-edge(O, A)
-
-# Add directed edges
-arc(A, [F])
-arc(E, C, 8)
-`;
+const initialCode = ``;
 
 const initialGraph: Graph = {
   edges: {},

@@ -3,6 +3,7 @@ export const TOKEN_TYPE = {
   Number: "NUMBER",
   Graph: "GRAPH",
   Digraph: "DIGRAPH",
+  Subgraph: "SUBGRAPH",
   DirectedEdge: "DIRECTED_EDGE",
   Edge: "EDGE",
   Semicolon: "SEMICOLON",
@@ -20,6 +21,7 @@ export type TokenType = (typeof TOKEN_TYPE)[keyof typeof TOKEN_TYPE];
 const keywords: Record<string, TokenType> = {
   graph: TOKEN_TYPE.Graph,
   digraph: TOKEN_TYPE.Digraph,
+  subgraph: TOKEN_TYPE.Subgraph,
 };
 
 export function lookupIdentifier(literal: string): TokenType {

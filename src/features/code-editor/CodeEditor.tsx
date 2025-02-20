@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import { Interpreter } from "~/core/graphene/interpreter";
-import { Lexer } from "~/core/graphene/lexer";
-import { Parser } from "~/core/graphene/parser";
+import { Evaluator } from "~/core/adot/evaluator";
+import { Lexer } from "~/core/adot/lexer";
+import { Parser } from "~/core/adot/parser";
 import { Split } from "~/shared/layout/Split";
 import { useEditorStore } from "../../pages/editor/context/editor";
 import { DiagnosticsSummary } from "./components/Diagnostics";
@@ -11,7 +11,7 @@ import { editorOnChange, useEditor } from "./hooks/useEditor";
 export function CodeEditor() {
   const { mode, setGraph } = useEditorStore(({ mode, setGraph }) => ({ mode, setGraph }));
   const [code, setCode] = useEditorStore((store) => [store.code, store.setCode]);
-  const [errors, setErrors] = useState<Error[]>([]);
+  const [errors, setErrors] = useState<Array<string>>([]);
 
   const isEditorReadonly = mode.type === "SIMULATION";
 
@@ -43,17 +43,15 @@ export function CodeEditor() {
 
   useEffect(() => {
     // Do we want to parse graph here?
-    try {
-      const tokens = new Lexer(code).lex();
-      const stmts = new Parser(tokens).parse();
-      const graph = new Interpreter(stmts).forge();
+    const lexer = new Lexer(code);
+    const parser = new Parser(lexer);
 
-      setGraph(graph);
-      setErrors([]);
-    } catch (err) {
-      if (err instanceof Error) setErrors([err]);
-      else console.error("Unexpected error");
-    }
+    setErrors([]);
+    const definition = parser.parse();
+    setErrors(parser.errors);
+
+    const graph = new Evaluator(definition).eval();
+    setGraph(graph);
   }, [setGraph, code]);
 
   const editorClassName = isEditorReadonly ? "h-full opacity-75 grayscale" : "h-full";

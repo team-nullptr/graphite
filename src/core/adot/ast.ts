@@ -1,9 +1,11 @@
 import { Token } from "./token";
 
+export type EdgeType = "--" | "->";
+
+// TODO: I am not sure if this classification does even make
+// any sense in case of graph declaration language.
 export abstract class Node {}
-
 export abstract class Statement extends Node {}
-
 export abstract class Expression extends Node {}
 
 export class Definition extends Node {
@@ -27,8 +29,6 @@ export class NodeStatement extends Statement {
     super();
   }
 }
-
-export type EdgeType = "--" | "->";
 
 export class EdgeStatement extends Statement {
   constructor(

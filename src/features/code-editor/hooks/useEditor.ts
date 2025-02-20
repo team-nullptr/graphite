@@ -1,4 +1,4 @@
-import { defaultKeymap, history } from "@codemirror/commands";
+import { defaultKeymap, indentWithTab, history } from "@codemirror/commands";
 import { HighlightStyle, syntaxHighlighting, syntaxTree } from "@codemirror/language";
 import { Compartment, EditorState, Extension } from "@codemirror/state";
 import { EditorView, ViewUpdate, keymap, lineNumbers } from "@codemirror/view";
@@ -6,7 +6,12 @@ import { tags } from "@lezer/highlight";
 import { useEffect, useRef, useState } from "react";
 import { graphene } from "~/core/graphene/tools/codeMirror";
 import colors from "tailwindcss/colors";
-import { CompletionContext, autocompletion, startCompletion } from "@codemirror/autocomplete";
+import {
+  CompletionContext,
+  autocompletion,
+  startCompletion,
+  closeBrackets,
+} from "@codemirror/autocomplete";
 
 // Creates onChange extension for editor.
 export function editorOnChange(cb: (value: string) => void) {
@@ -71,8 +76,9 @@ export function useEditor<T extends HTMLElement>(extensions: Extension[], readon
           keymap.of([{ key: "Ctrl-`", run: startCompletion }]),
           graphene,
           history(),
-          keymap.of(defaultKeymap),
+          keymap.of([...defaultKeymap, indentWithTab]),
           lineNumbers(),
+          closeBrackets(),
           autocompletion({
             override: [
               function (context: CompletionContext) {
@@ -86,11 +92,8 @@ export function useEditor<T extends HTMLElement>(extensions: Extension[], readon
                 return {
                   from: tagBefore ? nodeBefore.from + tagBefore.index : context.pos,
                   options: [
-                    { label: "vertex", type: "keyword" },
-                    { label: "edge", type: "keyword" },
-                    { label: "arc", type: "keyword" },
-                    { label: "graph_complete", type: "keyword" },
-                    { label: "tree_binary", type: "keyword" },
+                    { label: "graph", type: "keyword" },
+                    { label: "digraph", type: "keyword" },
                   ],
                 };
               },

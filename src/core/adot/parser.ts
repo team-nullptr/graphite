@@ -39,7 +39,7 @@ export class Parser {
         const graph = this.parseGraph();
         definition.graphs.push(graph);
       } catch (error) {
-        this.synchronizeToGraphDefinition();
+        this.synchronizeGraphDefinition();
       }
 
       this.nextToken();
@@ -51,29 +51,26 @@ export class Parser {
   private parseGraph(): ast.GraphStatement {
     const at = this.currToken;
 
-    if (!this.currTokenIs(TOKEN_TYPE.Graph, TOKEN_TYPE.Digraph)) {
+    if (!this.currTokenIs(TOKEN_TYPE.Graph, TOKEN_TYPE.Digraph, TOKEN_TYPE.Subgraph)) {
       throw this.error(errorFmtAt(this.currToken, "Expected graph declaration."));
     }
 
-    this.expectPeek(TOKEN_TYPE.LBrace); // eat the '{'
-    this.nextToken();
-
+    this.expectPeek(TOKEN_TYPE.LBrace);
+    this.nextToken(); // Load the first token to be parsed by parseStatementsList()
     const statementsList = this.parseStatementsList();
-
-    this.expectPeek(TOKEN_TYPE.RBrace); // finish at '}'
+    this.expectPeek(TOKEN_TYPE.RBrace);
 
     return new ast.GraphStatement(at, statementsList);
   }
 
   private parseStatementsList(): Array<ast.Statement> {
-    if (this.peekTokenIs(TOKEN_TYPE.RBrace)) {
+    if (this.currTokenIs(TOKEN_TYPE.RBrace)) {
       return [];
     }
 
     const statements: Array<ast.Statement> = [];
 
-    // NOTE:
-    // We know to watch for RBrace as it's the only token which can
+    // NOTE: We know to watch for RBrace as it's the only token which can
     // end statements list (other than EOF).
 
     while (!this.peekTokenIs(TOKEN_TYPE.EOF)) {
@@ -95,13 +92,17 @@ export class Parser {
         break;
       }
 
-      this.expectPeek(TOKEN_TYPE.Id);
+      this.expectPeek(TOKEN_TYPE.Id, TOKEN_TYPE.Subgraph);
     }
 
     return statements;
   }
 
   private parseStatement(): Array<ast.Statement> | ast.Statement {
+    if (this.currTokenIs(TOKEN_TYPE.Subgraph)) {
+      return this.parseGraph();
+    }
+
     if (this.peekTokenIs(TOKEN_TYPE.Edge, TOKEN_TYPE.DirectedEdge)) {
       return this.parseEdgeStatement();
     }
@@ -118,11 +119,10 @@ export class Parser {
       const left = this.parseIdentifier();
       this.nextToken();
       const edgeOp = this.currToken.literal as ast.EdgeType;
-      this.expectPeek(TOKEN_TYPE.Id);
+      this.expectPeek(TOKEN_TYPE.Id, TOKEN_TYPE.Subgraph);
       const right = this.parseIdentifier();
 
-      // NOTE:
-      // We don't consume the right token deliberately
+      // NOTE: We don't consume the right token deliberately
       // so that we can chain edge statements together.
 
       statements.push(new ast.EdgeStatement(at, left, right, edgeOp));
@@ -218,7 +218,7 @@ export class Parser {
   }
 
   /** Synchronizes parser to the next top-level graph definition. */
-  private synchronizeToGraphDefinition() {
+  private synchronizeGraphDefinition() {
     while (!this.currTokenIs(TOKEN_TYPE.RBrace, TOKEN_TYPE.EOF)) {
       this.nextToken();
     }

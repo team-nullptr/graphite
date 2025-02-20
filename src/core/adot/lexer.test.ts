@@ -11,6 +11,8 @@ describe("next token", () => {
 }
 
 test {}
+
+subgraph
 `;
 
   const lexer = new Lexer(source);
@@ -55,6 +57,7 @@ test {}
     [TOKEN_TYPE.Id, "test"],
     [TOKEN_TYPE.LBrace, "{"],
     [TOKEN_TYPE.RBrace, "}"],
+    [TOKEN_TYPE.Subgraph, "subgraph"],
     [TOKEN_TYPE.EOF, "<eof>"],
   ];
 
