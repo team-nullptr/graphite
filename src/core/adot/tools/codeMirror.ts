@@ -5,7 +5,6 @@ import { parser } from "./gen/gdl";
 export const adotThemeParser = parser.configure({
   props: [
     styleTags({
-      Graph: tags.content,
       Number: tags.number,
       Comment: tags.comment,
       "[ ] { }": tags.bracket,
