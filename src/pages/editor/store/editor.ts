@@ -31,22 +31,31 @@ export type CreateEditorStoreOpts = {
   project: Project;
 };
 
-const initialCode = `# Declare vertices
-vertex([A, B, C, D, E, F])
+const initialCode = `graph {
+  # This creates a node with ID "a"
+  a [cost = 100];
+  # This creates a node with cost of 100.
+  b [cost = 200];
 
-# Create a new binary tree
-tree_binary([N, O, P, R, S, T, U, W, X, Y, Z])
+  # Commas are optional
+  c [cost = 300]
 
-# Add edges
-edge(A, [B, C, D, E], 5)
-edge(D, C)
-edge(F, B)
-edge(B, [C, D])
-edge(O, A)
+  # You don't have to specify the cost
+  b -- e
 
-# Add directed edges
-arc(A, [F])
-arc(E, C, 8)
+  # This creates a path between a, b and c
+  # in which every edge has cost of 25.
+  a -- b -- c -- d -- e -- a [cost=20]
+
+  # Use -> to represent a directed edge.
+  a0 -- b0 -> c0 -> d0 -- e0 [cost=12.4];
+
+  a -- a0 [cost=0.5];
+  b -- b0 [cost=0.8];
+  c -- c0 [cost=0.3];
+  d -- d0 [cost=0.3];
+  e -- e0 [cost=0.8];
+}
 `;
 
 const initialGraph: Graph = {

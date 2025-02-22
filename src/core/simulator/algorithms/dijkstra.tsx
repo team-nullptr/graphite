@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 
 import { ColumnDef, createColumnHelper } from "@tanstack/react-table";
-
 import type { Algorithm } from "~/core/simulator/algorithm";
 import { Graph, Vertex } from "~/core/simulator/graph";
 import { VertexPreview } from "~/shared/ui/VertexPreview";
@@ -9,6 +8,7 @@ import type { Color } from "~/types/color";
 import type { Highlight, Highlights } from "../highlight";
 import { StepBuilder, type Step } from "../step";
 import { State, TableStateBuilder } from "../state";
+import { Heap, minHeapCompareFn } from "../datastructures/heap";
 
 /** TableData represents data shown in the dijkstra's table state. */
 type TableData = {
@@ -88,26 +88,26 @@ function resolvePath(
   return { vertices, edges };
 }
 
-/** Dijkstra algorithm helper for picking the next closest vertex. */
-function pickClosest(
-  unvisited: IterableIterator<Vertex>,
-  distances: Map<string, number>
-): Vertex | undefined {
-  let next: Vertex | undefined;
+// /** Dijkstra algorithm helper for picking the next closest vertex. */
+// function pickClosest(
+//   unvisited: IterableIterator<Vertex>,
+//   distances: Map<string, number>
+// ): Vertex | undefined {
+//   let next: Vertex | undefined;
 
-  for (const candidate of unvisited) {
-    if (!next) {
-      next = candidate;
-      continue;
-    }
+//   for (const candidate of unvisited) {
+//     if (!next) {
+//       next = candidate;
+//       continue;
+//     }
 
-    if (distances.get(next.id)! > distances.get(candidate.id)!) {
-      next = candidate;
-    }
-  }
+//     if (distances.get(next.id)! > distances.get(candidate.id)!) {
+//       next = candidate;
+//     }
+//   }
 
-  return next;
-}
+//   return next;
+// }
 
 /** Dijkstra algorithm implementation. */
 function algorithm(graph: Graph, startingVertex: string, destinationVertex?: string): Step[] {
@@ -116,28 +116,31 @@ function algorithm(graph: Graph, startingVertex: string, destinationVertex?: str
   const vertices = Object.values(graph.vertices);
   const unvisited = new Set(vertices);
 
-  const distances = new Map(vertices.map((vertex) => [vertex.id, Infinity]));
-  const parents = new Map<string, string | undefined>();
+  const parents = new Map<string, string | undefined>([[startingVertex, undefined]]);
+  const initialDistances: Array<[nodeId: string, distance: number]> = vertices.map((vertex) => [
+    vertex.id,
+    startingVertex === vertex.id ? 0 : Infinity,
+  ]);
 
-  const start = graph.vertices[startingVertex];
-  distances.set(start.id, 0);
-  parents.set(start.id, undefined);
+  const distancesMap = new Map(initialDistances);
+  const distancesPq = new Heap<string>(initialDistances, minHeapCompareFn);
 
   {
-    const highlights: Highlights = new Map([[start.id, "sky"]]);
+    const highlights: Highlights = new Map([[startingVertex, "sky"]]);
 
     steps.push(
       new StepBuilder({
         description: "Set distance to starting vertex to 0.",
       })
-        .state(buildBaseState(distances, highlights))
+        .state(buildBaseState(distancesMap, highlights))
         .verticesHighlights(highlights)
         .build()
     );
   }
 
-  while (unvisited.size > 0) {
-    const current = pickClosest(unvisited.values(), distances)!;
+  while (distancesPq.size > 0) {
+    const [currentId, currentDistance] = distancesPq.extractTop();
+    const current = graph.vertices[currentId];
 
     {
       const highlights: Highlights = new Map([
@@ -149,7 +152,7 @@ function algorithm(graph: Graph, startingVertex: string, destinationVertex?: str
         new StepBuilder({
           description: "Pick the closest vertex from all unvisited vertices.",
         })
-          .state(buildBaseState(distances, highlights))
+          .state(buildBaseState(distancesMap, highlights))
           .verticesHighlights(highlights)
           .build()
       );
@@ -159,16 +162,14 @@ function algorithm(graph: Graph, startingVertex: string, destinationVertex?: str
 
     for (const edgeId of current.outs) {
       const edge = graph.edges[edgeId];
-
       const adjacent =
         graph.vertices[edge.to === current.id && !edge.directed ? edge.from : edge.to];
 
-      if (!unvisited.has(adjacent)) {
-        continue;
-      }
+      const newDistance = currentDistance + edge.weight!;
 
-      if (distances.get(adjacent.id)! > distances.get(current.id)! + edge.weight!) {
-        distances.set(adjacent.id, distances.get(current.id)! + edge.weight!);
+      if (distancesMap.get(adjacent.id)! > newDistance) {
+        distancesPq.increaseKey(adjacent.id, newDistance);
+        distancesMap.set(adjacent.id, newDistance);
         parents.set(adjacent.id, current.id);
       }
 
@@ -182,11 +183,14 @@ function algorithm(graph: Graph, startingVertex: string, destinationVertex?: str
         ...visitedHighlights(vertices, unvisited),
       ]);
 
+      console.log(distancesMap);
+
       steps.push(
         new StepBuilder({
-          description: "Iterate over all adjacent unvisited nodes and update their min length.",
+          description:
+            "Iterate over all adjacent unvisited nodes and update their minimum distance.",
         })
-          .state(buildBaseState(distances, highlights))
+          .state(buildBaseState(distancesMap, highlights))
           .verticesHighlights(highlights)
           .build()
       );
@@ -201,7 +205,7 @@ function algorithm(graph: Graph, startingVertex: string, destinationVertex?: str
         new StepBuilder({
           description: "Mark current node as visited.",
         })
-          .state(buildBaseState(distances, highlights))
+          .state(buildBaseState(distancesMap, highlights))
           .verticesHighlights(highlights)
           .build()
       );
@@ -213,7 +217,7 @@ function algorithm(graph: Graph, startingVertex: string, destinationVertex?: str
 
     const step = new StepBuilder({
       description: "There is no more unvisited vertices. End the algorithm.",
-    }).state(buildBaseState(distances, highlights));
+    }).state(buildBaseState(distancesMap, highlights));
 
     if (destinationVertex) {
       const { vertices, edges } = resolvePath(destinationVertex, parents, graph);
@@ -241,21 +245,41 @@ export const dijkstra: Algorithm<DijkstraAlgorithmParams> = {
   description: "Finds the shortest path from a starting node to every other node.",
   tags: ["shortest path"],
   guide: `
-  Dijkstra algorithm finds the shortest path between vertices in a graph. We use a map to keep track of shortest distance from **Start Vertex** to other vertices. By default distance to all vertices is equal to *infinity*. We also keep track of unvisited vertices with a set.
+  **Dijkstra** algorithm finds the shortest path between vertices in a graph. There is no a single way of
+  implementing Dijkstra algorithm, hovewer we often use priority queue to optimize finding the next vertex
+  with the smallest distance.
 
-  Before the "algorithm loop" we set **Start Vertex's** distance to 0. Then until unvisited set is not empty:
-
-  1. We pick the vertex with the smallest distance
-  2. Iterate through it's adjacent vertices
-      - If adjacent vertex was already visited we continue to the next adjacent vertex. 
-      - Otherwise we update the minimum distance to the adjacent vertex if it's current minimum distance is bigger than currently processed vertex's minimum distance + connection edge weight.
-  3. After we have processed all adjacent vertices we remove the currently processed vertex from unvisited vertices.
+  \`\`\`
+  1   function Dijkstra(Graph, source):
+  2       create vertex priority queue Q
+  3
+  4       dist[source] ← 0                          // Initialization
+  5       Q.add_with_priority(source, 0)            // associated priority equals dist[·]
+  6
+  7       for each vertex v in Graph.Vertices:
+  8           if v ≠ source
+  9               prev[v] ← UNDEFINED               // Predecessor of v
+  10              dist[v] ← INFINITY                // Unknown distance from source to v
+  11              Q.add_with_priority(v, INFINITY)
+  12
+  13
+  14      while Q is not empty:                     // The main loop
+  15          u ← Q.extract_min()                   // Remove and return best vertex
+  16          for each neighbor v of u:             // Go through all v neighbors of u
+  17              alt ← dist[u] + Graph.Edges(u, v)
+  18              if alt < dist[v]:
+  19                  prev[v] ← u
+  20                  dist[v] ← alt
+  21                  Q.decrease_priority(v, alt)
+  22
+  23      return dist, prev
+  \`\`\`
+  source: https://en.wikipedia.org/wiki/Dijkstra%27s_algorithm
   `,
   params: {
     "Start Vertex": { type: "vertex", required: true },
     "Destination Vertex": { type: "vertex", required: false },
   },
-  stepGenerator: (graph, params) => {
-    return algorithm(graph, params["Start Vertex"], params["Destination Vertex"]);
-  },
+  stepGenerator: (graph, params) =>
+    algorithm(graph, params["Start Vertex"], params["Destination Vertex"]),
 };

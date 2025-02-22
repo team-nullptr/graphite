@@ -1,0 +1,21 @@
+@top Program { Graph* }
+@skip { space | Comment }
+
+Graph { "graph {" (Stmt ";"?)* "}" }
+
+Stmt { NodeStmt | EdgeStmt }
+
+NodeStmt { Identifier AttrList? }
+
+EdgeStmt { Identifier EdgeRHS AttrList? }
+EdgeRHS { ("--" | "->") Identifier EdgeRHS? }
+
+AttrList { "[" (Identifier "=" (Identifier | Number) ";"?)*  "]" }
+
+@tokens {
+    space { @whitespace+ }
+    Comment { "#" ![\n]* }
+
+    Identifier {@asciiLetter (@digit | "_" | @asciiLetter)*}
+    Number { @digit+ }
+}

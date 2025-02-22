@@ -23,7 +23,7 @@ export function Select({ values, label, value, onChange }: SelectOptions) {
     >
       <RadixSelect.Trigger
         aria-label={label}
-        className="relative w-full rounded-md border  px-4 py-2 text-left text-sm outline-none "
+        className="relative w-full rounded-md border px-4 py-2 text-left text-sm outline-none "
       >
         <RadixSelect.Value placeholder={label} />
         <RadixSelect.Icon className="absolute bottom-0 right-2 top-0 my-auto h-4 w-4">
@@ -31,14 +31,11 @@ export function Select({ values, label, value, onChange }: SelectOptions) {
         </RadixSelect.Icon>
       </RadixSelect.Trigger>
       <RadixSelect.Portal>
-
-        <RadixSelect.Content className="w-full overflow-hidden rounded border border-slate-300 bg-slate-50 shadow-lg">
+        <RadixSelect.Content className="z-20 w-full overflow-hidden rounded border border-slate-300 bg-slate-50 shadow-lg">
           <RadixSelect.ScrollUpButton className="flex w-full justify-center border-b border-slate-300 p-2">
             <ChevronUpIcon className="w-4" />
           </RadixSelect.ScrollUpButton>
-            
-            
-      
+
           <RadixSelect.Viewport>
             {values.map((val) => (
               <SelectItem key={val} value={val} />
