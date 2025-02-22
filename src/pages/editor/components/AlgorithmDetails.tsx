@@ -60,7 +60,10 @@ export function AlgorithmDetails({ algorithm, onBack }: AlgorithmDetails) {
 
   return (
     <div className="flex h-full flex-col bg-slate-50">
-      <Controls alignment="start" className="border-b border-slate-300">
+      <Controls
+        alignment="start"
+        className="sticky top-0 z-10 border-b border-slate-300 bg-slate-50"
+      >
         <ControlsButton
           icon={<ArrowLeftIcon className="h-5 w-5" />}
           onClick={handleBackClicked}
@@ -99,8 +102,8 @@ export function AlgorithmDetails({ algorithm, onBack }: AlgorithmDetails) {
             )}
           </div>
         </div>
-        <div>
-          <div className="prose prose-slate p-4">
+        <div className="overflow-y-auto">
+          <div className="prose prose-slate m-auto max-w-4xl p-4">
             <ReactMarkdown>{algorithm.guide}</ReactMarkdown>
           </div>
         </div>

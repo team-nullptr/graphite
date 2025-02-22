@@ -92,7 +92,11 @@ export function useGraphLayout(graph: Graph, svgRef: RefObject<SVGSVGElement>) {
     };
   }, [svgRef]);
 
-  useForceSimulation(graph, selectedVertexRef, setArrangement);
+  const { isForceLayoutEnabled, setIsForceLayoutEnabled } = useForceSimulation(
+    graph,
+    selectedVertexRef,
+    setArrangement
+  );
 
   return {
     arrangement,
@@ -100,5 +104,7 @@ export function useGraphLayout(graph: Graph, svgRef: RefObject<SVGSVGElement>) {
     svgRef,
     selectedVertexRef,
     areControlsEnabled,
+    isForceLayoutEnabled,
+    setIsForceLayoutEnabled,
   };
 }

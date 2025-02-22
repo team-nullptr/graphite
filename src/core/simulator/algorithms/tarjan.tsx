@@ -1,12 +1,10 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { ColumnDef, createColumnHelper } from "@tanstack/react-table";
-
 import { Edge, Graph } from "~/core/simulator/graph";
 import { cn } from "~/lib/utils";
 import { VertexPreview } from "~/shared/ui/VertexPreview";
 import { ArrayStateBuilder, State, TableStateBuilder } from "../state";
 import { Step, StepBuilder } from "../step";
-
 import type { Algorithm } from "~/core/simulator/algorithm";
 import type { Color } from "~/types/color";
 import { Highlight, Highlights } from "../highlight";
@@ -38,11 +36,13 @@ const columns = [
     },
   }),
   columnHelper.accessor("lowestTime", {
-    header: "Lowest Discovery Time Reachable",
+    header: "Lowest Reachable Discovery Time",
     cell: (info) => {
       const { value, updated } = info.getValue();
       return (
-        <div className={cn("transition-all", updated && "animate-bounce text-sky-600")}>
+        <div
+          className={cn("transition-all", updated && "animate-bounce font-extrabold text-sky-600")}
+        >
           {value}
         </div>
       );
@@ -67,8 +67,8 @@ type Context = {
   steps: Step[];
   bridges: Edge[];
   visited: Set<string>;
-  lowest: Map<string, number>;
-  discovery: Map<string, number>;
+  lowestReachable: Map<string, number>;
+  discoveryTime: Map<string, number>;
 };
 
 function buildRecursionStackState(recursion: string[]) {
@@ -85,11 +85,11 @@ function buildStateTableData(context: Context, update?: StateTableDataUpdate): S
   return Object.keys(context.graph.vertices).map((id) => ({
     vertex: { id },
     lowestTime: {
-      value: context.lowest.get(id)!,
+      value: context.lowestReachable.get(id)!,
       updated: update?.lowestTime?.(id) ?? false,
     },
     discoveryTime: {
-      value: context.discovery.get(id)!,
+      value: context.discoveryTime.get(id)!,
       updated: update?.discoveryTime?.(id) ?? false,
     },
   }));
@@ -107,7 +107,7 @@ function visitedHighlights(context: Context): Highlights {
   return new Map([...context.visited.values()].map((id) => [id, "slate"]));
 }
 
-function tarjans(context: Context, currentId: string, stack: string[], parentId?: string) {
+function dfs(context: Context, currentId: string, stack: string[], parentId?: string) {
   const recursionStack = [...stack, currentId];
 
   context.visited.add(currentId);
@@ -120,11 +120,13 @@ function tarjans(context: Context, currentId: string, stack: string[], parentId?
   );
 
   context.time++;
-  context.lowest.set(currentId, context.time);
-  context.discovery.set(currentId, context.time);
+  context.lowestReachable.set(currentId, context.time);
+  context.discoveryTime.set(currentId, context.time);
 
   context.steps.push(
-    new StepBuilder({ description: `Update ${currentId} vertex's lowest discovery time.` })
+    new StepBuilder({
+      description: `Update ${currentId} vertex's Lowest Reachable Discovery Time.`,
+    })
       .state([
         buildBridgesState(context),
         buildRecursionStackState(recursionStack),
@@ -141,25 +143,32 @@ function tarjans(context: Context, currentId: string, stack: string[], parentId?
       .build()
   );
 
+  let parentSkippedOnce = false;
   const current = context.graph.vertices[currentId]!;
 
   for (const edgeId of current.outs) {
     const edge = context.graph.edges[edgeId];
     const adjacentId = edge.to === current.id && !edge.directed ? edge.from : edge.to;
 
-    if (adjacentId === parentId) {
+    // If adjacent node is current's node parent and we haven't skipped the parent yet
+    // (this conditions ensures that we ignore just a single edge, in case there are many edges to parent)
+    if (adjacentId === parentId && !parentSkippedOnce) {
+      parentSkippedOnce = true;
       continue;
     }
 
+    // If adjacent node was already visited (through BNF) it means that there exists a back edge to some
+    // ancestor of current.
     if (context.visited.has(adjacentId)) {
-      context.lowest.set(
+      // Update lowest reachable discovery time from currentId.
+      context.lowestReachable.set(
         currentId,
-        Math.min(context.lowest.get(currentId)!, context.discovery.get(adjacentId)!)
+        Math.min(context.lowestReachable.get(currentId)!, context.discoveryTime.get(adjacentId)!)
       );
 
       context.steps.push(
         new StepBuilder({
-          description: `Adjacent node ${adjacentId} was already visited. Update lowest discovery time for ${currentId}`,
+          description: `Adjacent node ${adjacentId} was already visited. Update Lowest Reachable Discovery Time for ${currentId}`,
         })
           .state([
             buildBridgesState(context),
@@ -188,16 +197,18 @@ function tarjans(context: Context, currentId: string, stack: string[], parentId?
         .build()
     );
 
-    tarjans(context, adjacentId, [...stack, currentId], currentId);
+    // In every other case just continue the dfs algorithm.
+    dfs(context, adjacentId, [...stack, currentId], currentId);
 
-    context.lowest.set(
+    // During back tracking update lowest distance to the current node.
+    context.lowestReachable.set(
       currentId,
-      Math.min(context.lowest.get(currentId)!, context.lowest.get(adjacentId)!)
+      Math.min(context.lowestReachable.get(currentId)!, context.lowestReachable.get(adjacentId)!)
     );
 
     context.steps.push(
       new StepBuilder({
-        description: `Update lowest discovery time for ${currentId}.`,
+        description: `Update Lowest Reachable Discovery Time for ${currentId}.`,
       })
         .state([
           buildBridgesState(context),
@@ -210,12 +221,14 @@ function tarjans(context: Context, currentId: string, stack: string[], parentId?
         .build()
     );
 
-    if (context.lowest.get(adjacentId)! > context.discovery.get(currentId)!) {
+    // If during DFS backtracking adjacent node has lowest reachable discovery time greater than current id
+    // edge between current and adjacent is a bridge.
+    if (context.lowestReachable.get(adjacentId)! > context.discoveryTime.get(currentId)!) {
       context.bridges.push(edge);
 
       context.steps.push(
         new StepBuilder({
-          description: `Lowest discovery time of adjacent node ${adjacentId} is greater than lowest discovery time of ${currentId}. This means that edge between ${edge.from} and ${edge.to} is a bridge!`,
+          description: `Lowest Reachable Discovery Time of adjacent node ${adjacentId} is greater than Lowest Reachable Discovery Time time of ${currentId}. This means that edge between ${edge.from} and ${edge.to} is a bridge!`,
         })
           .state(buildDefaultState(recursionStack, context))
           .verticesHighlights(visitedHighlights(context))
@@ -244,12 +257,16 @@ function algorithm(graph: Graph, startingVertex: string): Step[] {
     steps: [],
     bridges: [],
     visited: new Set<string>(),
-    lowest: new Map<string, number>([...initialDistances]),
-    discovery: new Map<string, number>([...initialDistances]),
+    /** lowestReachable stores the lowest discovery time that can be reached from node or it's descendants. */
+    lowestReachable: new Map<string, number>([...initialDistances]),
+    /** discoveryTime is the tick at which node was visited by DFS algorithm. */
+    discoveryTime: new Map<string, number>([...initialDistances]),
   };
 
   context.steps.push(
-    new StepBuilder({ description: "Initialize lowest time and discovery time." })
+    new StepBuilder({
+      description: "Initialize Lowest Reachable Discovery Time and Discovery Time.",
+    })
       .state([
         buildBridgesState(context),
         buildRecursionStackState([]),
@@ -267,7 +284,7 @@ function algorithm(graph: Graph, startingVertex: string): Step[] {
 
   context.steps.push(
     new StepBuilder({
-      description: `Run recursive dfs from the starting vertex ${startingVertex}`,
+      description: `Run dfs from the starting vertex ${startingVertex}`,
     })
       .state([
         buildBridgesState(context),
@@ -278,7 +295,7 @@ function algorithm(graph: Graph, startingVertex: string): Step[] {
       .build()
   );
 
-  tarjans(context, startingVertex, [], undefined);
+  dfs(context, startingVertex, [], undefined);
 
   context.steps.push(
     new StepBuilder({ description: "All vertices had been visited. End the algorithm." })
@@ -300,7 +317,6 @@ function algorithm(graph: Graph, startingVertex: string): Step[] {
       .build()
   );
 
-  console.log(context.bridges);
   return context.steps;
 }
 
@@ -309,22 +325,25 @@ export interface TarjanAlgorithmParams {
 }
 
 export const tarjan: Algorithm<TarjanAlgorithmParams> = {
-  name: "Bridge finding with Tarjan's algorithm",
+  name: "Tarjan's Bridge-Finding",
   description: "Finds bridges in a graph.",
   tags: ["bridges"],
   guide: `
-  In order to find bridges with Tarjan's algorithm we need to store **Discovery Time** and **Lowest Reachable Discovery Time** for each vertex in our graph. 
-  
-  Because this algorithm uses DFS **Discovery Time** can be understood as recursion depth at which vertex was discovered. 
+  **Tarjan's Bridge-Finding Algorithm** is used to identify bridges in an undirected graph.
 
-  **Lowest Reachable Discovery Time** is the lowest discovery time that can be reached from given vertex excluding it's parent.
+  For each node, we track two key values:
 
-  We know that an edge is a bridge when adjacent's node **Lowest Discovery Time** is bigger than currently processed vertex's **Discovery Time**. In other words it means that adjacent vertex can't be reached without this connection so it is a bridge.
+  1. **Discovery Time** – The depth in the DFS (Depth-First Search) recursion when the node was first encountered.
+  2. **Lowest Reachable Discovery Time** – The earliest discovery time that can be reached from the node, either directly or through its descendants.
+
+  #### Example:
+  If a node **X** has a **Lowest Reachable Discovery Time** of \`10\`, it means that from **X** or any of its descendants, we can reach a node that was discovered at depth \`10\`.
+
+  #### Bridge Condition:
+  A bridge is found when an adjacent node **Y** has a **Lowest Reachable Discovery Time** that is **greater than** **X**'s **Discovery Time**. This means that **Y** and its subtree are only accessible through **X**, and removing the edge \`{X, Y}\` would disconnect the graph.
   `,
   params: {
     "Start Vertex": { type: "vertex", required: true },
   },
-  stepGenerator: (graph, params) => {
-    return algorithm(graph, params["Start Vertex"]);
-  },
+  stepGenerator: (graph, params) => algorithm(graph, params["Start Vertex"]),
 };

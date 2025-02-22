@@ -52,7 +52,8 @@ export function SpaceshipButton({
             className={`flex items-center gap-2 rounded-lg bg-transparent px-3 py-2 text-slate-800 transition-all ease-out enabled:hover:bg-slate-800 enabled:hover:text-white disabled:pointer-events-none disabled:bg-slate-300 disabled:opacity-60 disabled:shadow-sm`}
             onClick={onClick}
           >
-            {icon} {label}
+            {label}
+            {icon}
           </button>
         </div>
       </div>

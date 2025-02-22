@@ -1,4 +1,12 @@
-import { Dispatch, MutableRefObject, SetStateAction, useCallback, useEffect, useRef } from "react";
+import {
+  Dispatch,
+  MutableRefObject,
+  SetStateAction,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { Graph, Vertex } from "~/core/simulator/graph";
 import { Arrangement } from "../types/arrangement";
 import { SelectedVertex } from "../types/selectedVertex";
@@ -22,7 +30,7 @@ class ForceSimulator {
   settings: ForceSimulatorSettings = defaultForceSimulatorSettings;
 
   maxForce = 0.5;
-  attractiveTargetLength = 200;
+  attractiveTargetLength = 100;
   attractiveStrength = 0.025;
   repulsiveStrength = 5;
   repulsiveChillOut = 0.02;
@@ -154,9 +162,14 @@ export function useForceSimulation(
   selectedVertexRef: MutableRefObject<SelectedVertex | undefined>,
   setArrangement: Dispatch<SetStateAction<Arrangement>>
 ) {
+  const [isForceLayoutEnabled, setIsForceLayoutEnabled] = useState(true);
   const frameRef = useRef<number>();
 
   const runSimulation: FrameRequestCallback = useCallback(() => {
+    if (!isForceLayoutEnabled) {
+      return;
+    }
+
     const selectedVertex = selectedVertexRef.current;
 
     setArrangement((current) => {
@@ -168,7 +181,7 @@ export function useForceSimulation(
     });
 
     frameRef.current = requestAnimationFrame(runSimulation);
-  }, [graph, setArrangement, selectedVertexRef]);
+  }, [isForceLayoutEnabled, graph, setArrangement, selectedVertexRef]);
 
   useEffect(() => {
     frameRef.current = requestAnimationFrame(runSimulation);
@@ -179,4 +192,9 @@ export function useForceSimulation(
       }
     };
   }, [runSimulation]);
+
+  return {
+    isForceLayoutEnabled,
+    setIsForceLayoutEnabled,
+  };
 }

@@ -32,25 +32,29 @@ export type CreateEditorStoreOpts = {
 };
 
 const initialCode = `graph {
-  # This creates a node named "start"
-  start;
-
-  # This creates a node with cost of 100.
+  # This creates a node with ID "a"
   a [cost = 100];
+  # This creates a node with cost of 100.
   b [cost = 200];
 
   # Commas are optional
   c [cost = 300]
 
-  # This creates a path between a, b and c
-  # in which every edge has cost of 25.
-  a -- b -- c [cost = 25]
-
-  # Use -> to represent a directed edge.
-  d -> e -> f [cost = 50]
-
   # You don't have to specify the cost
   b -- e
+
+  # This creates a path between a, b and c
+  # in which every edge has cost of 25.
+  a -- b -- c -- d -- e -- a [cost=20]
+
+  # Use -> to represent a directed edge.
+  a0 -- b0 -> c0 -> d0 -- e0 [cost=12.4];
+
+  a -- a0 [cost=0.5];
+  b -- b0 [cost=0.8];
+  c -- c0 [cost=0.3];
+  d -- d0 [cost=0.3];
+  e -- e0 [cost=0.8];
 }
 `;
 

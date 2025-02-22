@@ -18,7 +18,7 @@ export function GraphView({ verticesHighlights, edgesHighlights, graph }: GraphV
   const svgRef = useRef<SVGSVGElement>(null);
 
   // prettier-ignore
-  const { arrangement, vertexMouseDownHandler, areControlsEnabled: isPanEnabled } =
+  const { arrangement, vertexMouseDownHandler, areControlsEnabled, isForceLayoutEnabled, setIsForceLayoutEnabled } =
     useGraphLayout(graph, svgRef);
 
   const positionedEdges = useMemo(
@@ -35,13 +35,15 @@ export function GraphView({ verticesHighlights, edgesHighlights, graph }: GraphV
 
   return (
     <ControlledSvg
-      isPanEnabled={isPanEnabled}
+      isPanEnabled={areControlsEnabled}
       zoomBounds={{ min: 0.5, max: 2 }}
       ref={svgRef}
       className="h-full w-full"
       controls={({ zoom, setZoom, setCenter }) => (
         <Toolbar
           zoom={zoom}
+          isForceLayoutEnabled={isForceLayoutEnabled}
+          onForceLayoutToggle={() => setIsForceLayoutEnabled(!isForceLayoutEnabled)}
           onZoomReset={() => setZoom(1)}
           onZoomIncrease={() => {
             setZoom(zoom + 0.1);

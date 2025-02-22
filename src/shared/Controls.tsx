@@ -15,7 +15,13 @@ export function Controls({ children, alignment = "center", className }: Controls
   const alignmentStyle = `justify-${alignment}`;
 
   return (
-    <nav className={cn("flex h-10 items-center gap-4 bg-slate-50 px-4", alignmentStyle, className)}>
+    <nav
+      className={cn(
+        "flex min-h-[40px] items-center gap-4 bg-slate-50 px-4",
+        alignmentStyle,
+        className
+      )}
+    >
       {children}
     </nav>
   );

@@ -119,18 +119,28 @@ export interface IterativeBFSAlgorithmParams {
 }
 
 export const bfs: Algorithm<IterativeBFSAlgorithmParams> = {
-  name: "Iterative Breath First Search",
+  name: "Breath First Search",
   description: "See how BFS explores vertices in your graph.",
   tags: ["exploration"],
   guide: `
-  BFS algorithm is a traversal algorithm that starts at the **Start Vertex** and explores all vertices at the present depth prior to moving on to the vertices at the next depth level.
-  Iterative version uses a queue to maintain the correct visit order. 
+  **BFS** algorithm is a traversal algorithm that explores all vertices at the present depth prior to moving on to the vertices at the next depth level.
+  Iterative version uses a queue to maintain the correct visit order.
 
-  Before we start the "algorithm loop" we *add our starting vertex to the queue*. Then until our stack is empty:
-
-  1. We get the first vertex from our queue.
-  2. If the vertex is not visited we mark it as visited, otherwise we continue to step 1.
-  3. We push all adjacent unvisited vertices to the queue.
+  \`\`\`
+   1  procedure BFS(G, root) is
+   2      let Q be a queue
+   3      label root as explored
+   4      Q.enqueue(root)
+   5      while Q is not empty do
+   6          v := Q.dequeue()
+   7          if v is the goal then
+   8              return v
+   9          for all edges from v to w in G.adjacentEdges(v) do
+  10              if w is not labeled as explored then
+  11                  label w as explored
+  12                  Q.enqueue(w)
+  \`\`\`
+  source: https://en.wikipedia.org/wiki/Breadth-first_search
 `,
   params: {
     "Start Vertex": { type: "vertex", required: true },
