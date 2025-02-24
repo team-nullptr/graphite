@@ -4,18 +4,26 @@ import { Arrangement } from "../types/arrangement";
 import { Vec2 } from "../types/vec2";
 import { useCallback, useMemo } from "react";
 import { Highlights } from "~/core/simulator/highlight";
+import { Labels } from "~/core/simulator/step";
 
 const LEFT_MOUSE_BUTTON = 0;
 const centerPosition = new Vec2(0, 0);
 
 export type VerticesProps = {
   vertices: VertexType[];
+  labels: Labels;
   highlights?: Highlights;
   arrangement: Arrangement;
   onVertexMouseDown?: (vertexId: string, event: MouseEvent) => void;
 };
 
-export function Vertices({ vertices, highlights, arrangement, onVertexMouseDown }: VerticesProps) {
+export function Vertices({
+  labels,
+  vertices,
+  highlights,
+  arrangement,
+  onVertexMouseDown,
+}: VerticesProps) {
   const vertexMouseDownHandler = useCallback(
     (vertexId: string, event: MouseEvent) => {
       if (event.button === LEFT_MOUSE_BUTTON) {
@@ -30,6 +38,7 @@ export function Vertices({ vertices, highlights, arrangement, onVertexMouseDown 
       const vertexId = vertex.id;
       const { x, y } = arrangement[vertexId] ?? centerPosition;
       const color = highlights?.get(vertexId);
+      const label = labels.get(vertexId);
 
       return (
         <Vertex
@@ -37,6 +46,7 @@ export function Vertices({ vertices, highlights, arrangement, onVertexMouseDown 
           cx={x}
           cy={y}
           value={vertexId}
+          label={label}
           color={color}
           onMouseDown={(event) => {
             vertexMouseDownHandler(vertexId, event);
@@ -44,7 +54,7 @@ export function Vertices({ vertices, highlights, arrangement, onVertexMouseDown 
         />
       );
     });
-  }, [vertices, highlights, arrangement, vertexMouseDownHandler]);
+  }, [labels, vertices, highlights, arrangement, vertexMouseDownHandler]);
 
   return <>{renderedVertices}</>;
 }

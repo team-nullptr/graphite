@@ -8,10 +8,11 @@ export type VertexProps = {
   value: string;
   onMouseDown?: (event: MouseEvent) => void;
   /** Vertex's color (slate is the default one) */
+  label?: string;
   color?: Color;
 };
 
-export function Vertex({ cx, cy, value, onMouseDown, color }: VertexProps) {
+export function Vertex({ cx, cy, value, onMouseDown, label, color }: VertexProps) {
   const ref = useRef<SVGGElement>(null);
 
   useEffect(() => {
@@ -34,6 +35,8 @@ export function Vertex({ cx, cy, value, onMouseDown, color }: VertexProps) {
   const strokeColor = color ? colors[color][500] : colors["slate"][300];
   const textColor = colors[color ?? "slate"][900];
 
+  const plateOffset = -35;
+
   return (
     <g ref={ref} className="font-[JetBrains]">
       <circle
@@ -52,6 +55,28 @@ export function Vertex({ cx, cy, value, onMouseDown, color }: VertexProps) {
       >
         {value}
       </text>
+
+      {label && (
+        <g opacity="0.4">
+          <rect
+            width="50"
+            height="20"
+            x={cx - 25}
+            rx="5"
+            ry="5"
+            y={cy - 10 + plateOffset}
+            stroke={strokeColor}
+            fill={fillColor}
+          ></rect>
+          <text
+            className="transition-[fill] [dominant-baseline:central] [text-anchor:middle]"
+            x={cx}
+            y={cy + plateOffset}
+          >
+            {label}
+          </text>
+        </g>
+      )}
     </g>
   );
 }

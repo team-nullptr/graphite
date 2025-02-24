@@ -9,8 +9,11 @@ import "./editor-styles.css";
 import { editorOnChange, useEditor } from "./hooks/useEditor";
 
 export function CodeEditor() {
-  const { mode, setGraph } = useEditorStore(({ mode, setGraph }) => ({ mode, setGraph }));
-  const [code, setCode] = useEditorStore((store) => [store.code, store.setCode]);
+  const mode = useEditorStore(({ mode }) => mode);
+  const setGraph = useEditorStore(({ setGraph }) => setGraph);
+
+  const code = useEditorStore(({ code }) => code);
+  const setCode = useEditorStore(({ setCode }) => setCode);
   const [errors, setErrors] = useState<Array<string>>([]);
 
   const isEditorReadonly = mode.type === "SIMULATION";

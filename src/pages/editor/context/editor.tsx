@@ -57,15 +57,12 @@ export function EditorStoreProvider({
   );
 }
 
-export function useEditorStore<T>(
-  selector: (state: EditorState) => T,
-  equalityFn?: (left: T, right: T) => boolean
-): T {
+export function useEditorStore<T>(selector: (state: EditorState) => T): T {
   const store = useContext(EditorStoreContext);
 
   if (!store) {
     throw new Error("'useEditorStore' hook must be used inside <EditorStoreContext.Provider/>");
   }
 
-  return useStore(store, selector, equalityFn);
+  return useStore(store, selector);
 }

@@ -36,7 +36,7 @@ const columns = [
       return <span className="block transition-all">{info.getValue()}</span>;
     },
   }),
-] as ColumnDef<unknown, any>[];
+] as Array<ColumnDef<unknown, any>>;
 
 /** Helper for building table data from given algorithm state. */
 function buildTableData(distances: Map<string, number>, highlights: Highlights) {
@@ -52,7 +52,7 @@ function buildTableData(distances: Map<string, number>, highlights: Highlights) 
 }
 
 /** Builds base state for step. */
-function buildBaseState(distances: Map<string, number>, highlights: Highlights): State[] {
+function buildBaseState(distances: Map<string, number>, highlights: Highlights): Array<State> {
   return [new TableStateBuilder({ columns }).data(buildTableData(distances, highlights)).build()];
 }
 
@@ -68,7 +68,7 @@ function resolvePath(
   target: string,
   parents: Map<string, string | undefined>,
   graph: Graph
-): { vertices: string[]; edges: string[] } {
+): { vertices: Array<string>; edges: Array<string> } {
   const vertices: string[] = [target];
   const edges: string[] = [];
 
@@ -77,6 +77,7 @@ function resolvePath(
   while (next) {
     const from = vertices[vertices.length - 1];
     vertices.push(next);
+
     const to = vertices[vertices.length - 1];
 
     const edge = Object.values(graph.edges).find((edge) => edge.between(from, to));
@@ -88,29 +89,8 @@ function resolvePath(
   return { vertices, edges };
 }
 
-// /** Dijkstra algorithm helper for picking the next closest vertex. */
-// function pickClosest(
-//   unvisited: IterableIterator<Vertex>,
-//   distances: Map<string, number>
-// ): Vertex | undefined {
-//   let next: Vertex | undefined;
-
-//   for (const candidate of unvisited) {
-//     if (!next) {
-//       next = candidate;
-//       continue;
-//     }
-
-//     if (distances.get(next.id)! > distances.get(candidate.id)!) {
-//       next = candidate;
-//     }
-//   }
-
-//   return next;
-// }
-
 /** Dijkstra algorithm implementation. */
-function algorithm(graph: Graph, startingVertex: string, destinationVertex?: string): Step[] {
+function algorithm(graph: Graph, startingVertex: string, destinationVertex?: string): Array<Step> {
   const steps: Step[] = [];
 
   const vertices = Object.values(graph.vertices);

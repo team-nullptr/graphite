@@ -20,20 +20,15 @@ export interface AlgorithmDetails {
 }
 
 export function AlgorithmDetails({ algorithm, onBack }: AlgorithmDetails) {
-  const { graph, mode, setMode, paramsValue, setParamsValue } = useEditorStore((storeState) => {
-    const { graph, mode, setMode, algorithmParams, setAlgorithmParams } = storeState;
-    return {
-      graph,
-      mode,
-      setMode,
-      paramsValue: algorithmParams,
-      setParamsValue: setAlgorithmParams,
-    };
-  });
+  const graph = useEditorStore((s) => s.graph);
+  const mode = useEditorStore((s) => s.mode);
+  const setMode = useEditorStore((s) => s.setMode);
+  const algorithmParams = useEditorStore((s) => s.algorithmParams);
+  const setAlgorithmParams = useEditorStore((s) => s.setAlgorithmParams);
 
   const handleBackClicked = () => {
     setMode({ type: "IDLE" });
-    setParamsValue({});
+    setAlgorithmParams({});
     onBack();
   };
 
@@ -41,16 +36,16 @@ export function AlgorithmDetails({ algorithm, onBack }: AlgorithmDetails) {
     paramName: keyof (typeof algorithm)["params"],
     newParamValue: string
   ) => {
-    setParamsValue({ ...paramsValue, [paramName]: newParamValue });
+    setAlgorithmParams({ ...algorithmParams, [paramName]: newParamValue });
   };
 
   const isParamValueValid = useMemo(() => {
-    return validateAlgorithmParams(algorithm.params, paramsValue as Record<string, string>);
-  }, [paramsValue]);
+    return validateAlgorithmParams(algorithm.params, algorithmParams as Record<string, string>);
+  }, [algorithmParams, algorithm.params]);
 
   const loadSteps = () => {
     if (!isParamValueValid) return;
-    const steps = algorithm.stepGenerator(graph, paramsValue);
+    const steps = algorithm.stepGenerator(graph, algorithmParams);
     setMode({ type: "SIMULATION", steps });
   };
 
@@ -79,7 +74,7 @@ export function AlgorithmDetails({ algorithm, onBack }: AlgorithmDetails) {
           <div className="flex flex-col gap-2">
             <AlgorithmDetailParams<NonNullable<unknown>>
               paramDefinitions={algorithm.params}
-              value={paramsValue}
+              value={algorithmParams}
               availableVertices={Object.values(graph.vertices)}
               onChange={handleSetParamsValue}
             />

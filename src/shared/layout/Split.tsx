@@ -91,7 +91,7 @@ export type DynamicSplitProps = {
 export function DynamicSplit({
   orientation,
   active,
-  initialShare = 60,
+  initialShare = 80,
   staticPane,
   dynamicPane,
 }: DynamicSplitProps) {

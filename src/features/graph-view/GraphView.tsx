@@ -7,14 +7,16 @@ import { useGraphLayout } from "./hooks/useGraphLayout";
 import { useRef, useMemo } from "react";
 import { Toolbar } from "./components/Toolbar";
 import { Highlights } from "~/core/simulator/highlight";
+import { Labels } from "~/core/simulator/step";
 
 export type GraphViewProps = {
+  labels: Labels;
   verticesHighlights?: Highlights;
   edgesHighlights?: Highlights;
   graph: Graph;
 };
 
-export function GraphView({ verticesHighlights, edgesHighlights, graph }: GraphViewProps) {
+export function GraphView({ labels, verticesHighlights, edgesHighlights, graph }: GraphViewProps) {
   const svgRef = useRef<SVGSVGElement>(null);
 
   // prettier-ignore
@@ -70,6 +72,7 @@ export function GraphView({ verticesHighlights, edgesHighlights, graph }: GraphV
       />
       <Vertices
         vertices={Object.values(graph.vertices)}
+        labels={labels}
         highlights={verticesHighlights}
         arrangement={arrangement}
         onVertexMouseDown={vertexMouseDownHandler}

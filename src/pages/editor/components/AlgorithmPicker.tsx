@@ -4,10 +4,8 @@ import { AlgorithmDetails } from "./AlgorithmDetails";
 import { AlgorithmGrid } from "./AlgorithmGrid";
 
 export function AlgorithmPicker() {
-  const [algorithm, setAlgorithm] = useEditorStore((store) => [
-    store.algorithm,
-    store.setAlgorithm,
-  ]);
+  const algorithm = useEditorStore(({ algorithm }) => algorithm);
+  const setAlgorithm = useEditorStore(({ setAlgorithm }) => setAlgorithm);
 
   return (
     <div className="h-full w-full bg-slate-50">

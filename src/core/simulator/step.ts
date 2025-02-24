@@ -1,9 +1,12 @@
 import { Highlights } from "./highlight";
 import { State } from "./state";
 
+export type Labels = Map<string, string>;
+
 export type Step = {
   description: string;
   state: State[];
+  labels: Labels;
   verticesHighlights: Highlights;
   edgesHighlights: Highlights;
 };
@@ -17,6 +20,7 @@ export class StepBuilder {
     this.target = {
       ...required,
       state: [],
+      labels: new Map(),
       verticesHighlights: new Map(),
       edgesHighlights: new Map(),
     };
@@ -24,6 +28,11 @@ export class StepBuilder {
 
   state(state: State[]) {
     this.target.state = state;
+    return this;
+  }
+
+  labels(labels: Labels) {
+    this.target.labels = labels;
     return this;
   }
 
