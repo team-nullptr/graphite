@@ -44,7 +44,7 @@ const initialCode = `graph {
   b -- e
 
   # This creates a path between a, b and c
-  # in which every edge has cost of 25.
+  # in which every edge has cost of 20.
   a -- b -- c -- d -- e -- a [cost=20]
 
   # Use -> to represent a directed edge.
