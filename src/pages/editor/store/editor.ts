@@ -37,15 +37,18 @@ const initialCode = `graph {
   # This creates a node with cost of 100.
   b [cost = 200];
 
-  # Commas are optional
+  # Semicolons are optional
   c [cost = 300]
+
+  # This creates a path between a, b, c, d and e
+  # in which every edge has cost of 20.
+  a -- b -- c -- d -- e -- a [cost=20]
+
+  # You can create nodes while creating paths
+  a -- d [cost=10]
 
   # You don't have to specify the cost
   b -- e
-
-  # This creates a path between a, b and c
-  # in which every edge has cost of 20.
-  a -- b -- c -- d -- e -- a [cost=20]
 
   # Use -> to represent a directed edge.
   a0 -- b0 -> c0 -> d0 -- e0 [cost=12.4];
