@@ -7,10 +7,12 @@ import { useEditorStore } from "../../pages/editor/context/editor";
 import { DiagnosticsSummary } from "./components/Diagnostics";
 import "./editor-styles.css";
 import { editorOnChange, useEditor } from "./hooks/useEditor";
+import "./graph-export-utils";
 
 export function CodeEditor() {
   const mode = useEditorStore(({ mode }) => mode);
   const setGraph = useEditorStore(({ setGraph }) => setGraph);
+  const graph = useEditorStore(({ graph }) => graph);
 
   const code = useEditorStore(({ code }) => code);
   const setCode = useEditorStore(({ setCode }) => setCode);
@@ -23,7 +25,7 @@ export function CodeEditor() {
     isEditorReadonly
   );
 
-  // TODO: It might be a good idea to extract code-mirrors specific logic.
+  // TODO: It might be a good idea to extract code-mirrors specific logic to some hook.
   useEffect(() => {
     if (!view) {
       return;
@@ -56,6 +58,7 @@ export function CodeEditor() {
     const graph = new Evaluator(definition).eval();
     if (graph.length !== 0) {
       setGraph(graph[0]);
+      (window as any).graph = graph[0];
     }
   }, [setGraph, code]);
 
