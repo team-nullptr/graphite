@@ -18,6 +18,9 @@
 
   for (const edge of edges) {
     matrix[idToIndexMap[edge.from]][idToIndexMap[edge.to]] = 1;
+    if (!edge.directed) {
+      matrix[idToIndexMap[edge.to]][idToIndexMap[edge.from]] = 1;
+    }
   }
 
   console.log(JSON.stringify(matrix));
@@ -38,6 +41,10 @@
 
   for (const edge of edges) {
     list[idToIndexMap[edge.from]].push(idToIndexMap[edge.to]);
+
+    if (!edge.directed) {
+      list[idToIndexMap[edge.to]].push(idToIndexMap[edge.from]);
+    }
   }
 
   console.log(JSON.stringify(list));
