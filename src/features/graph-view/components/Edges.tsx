@@ -22,6 +22,15 @@ export function Edges({ positionedEdges, arrangement, highlights }: EdgesProps) 
       const { x: toX, y: toY } = arrangement[edge.to] ?? centerPosition;
       const isCircular = edge.from === edge.to;
 
+      let name = edge.name ?? undefined;
+      if (edge.weight !== null) {
+        if (name) {
+          name += `: ${edge.weight}`;
+        } else {
+          name = edge.weight.toString();
+        }
+      }
+
       return (
         <Edge
           key={edge.id}
@@ -34,7 +43,7 @@ export function Edges({ positionedEdges, arrangement, highlights }: EdgesProps) 
           circular={isCircular}
           color={color}
           thicken={!!color}
-          weight={edge.weight ?? undefined}
+          name={name}
         />
       );
     });

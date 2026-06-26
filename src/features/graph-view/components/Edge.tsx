@@ -17,7 +17,7 @@ export type EdgeProps = {
   position?: number;
   circular?: boolean;
   thicken?: boolean;
-  weight?: number;
+  name?: string;
 };
 
 export function Edge(props: EdgeProps) {
@@ -34,7 +34,7 @@ function StraightEdge({
   color = "slate",
   thicken = false,
   position = 0,
-  weight,
+  name,
 }: EdgeProps) {
   const edgePathRef = useRef<SVGPathElement>(null);
 
@@ -69,7 +69,7 @@ function StraightEdge({
         d={path}
         stroke={stroke}
       />
-      {weight && <EdgeLabel text={weight.toString()} position={edgeLabelPosition} angle={-deg} />}
+      {name && <EdgeLabel text={name} position={edgeLabelPosition} angle={-deg} />}
       {directed && <Arrow position={end} angle={-angle} color={color} />}
     </g>
   );
@@ -81,7 +81,7 @@ const getPathCenter = (path: SVGPathElement) => {
   return new Vec2(centerPoint.x, centerPoint.y);
 };
 
-const CircularEdge = ({ x, y, directed, position = 0, color = "slate", weight }: EdgeProps) => {
+const CircularEdge = ({ x, y, directed, position = 0, color = "slate", name }: EdgeProps) => {
   const radius = 6 * position + 16;
   const cx = radius + vertexRadius / 1.61;
   const transform = `translate(${x} ${y}) rotate(65)`;
@@ -103,7 +103,7 @@ const CircularEdge = ({ x, y, directed, position = 0, color = "slate", weight }:
         r={radius}
         stroke={stroke}
       />
-      {weight && <EdgeLabel text={weight.toString()} position={edgeLabelPosition} angle={-90} />}
+      {name && <EdgeLabel text={name} position={edgeLabelPosition} angle={-90} />}
       {directed && <Arrow position={arrowPosition} angle={arrowAngle} color={color} />}
     </g>
   );

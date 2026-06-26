@@ -58,6 +58,10 @@ const initialCode = `graph {
   c -- c0 [cost=0.3];
   d -- d0 [cost=0.3];
   e -- e0 [cost=0.8];
+
+  # You can also give edges explicit names
+
+  x -- z [name="Connection"]
 }
 `;
 

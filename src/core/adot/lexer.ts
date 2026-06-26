@@ -29,6 +29,14 @@ export class Lexer {
           token = this.newToken(TOKEN_TYPE.Illegal, this.char + this.peekChar());
         }
         break;
+      case '"':
+        const string = this.readString();
+        if (string === null) {
+          token = this.newToken(TOKEN_TYPE.Illegal, this.char);
+        } else {
+          token = this.newToken(TOKEN_TYPE.String, string);
+        }
+        break;
       case "=":
         token = this.newToken(TOKEN_TYPE.Eq, this.char);
         break;
@@ -65,6 +73,28 @@ export class Lexer {
 
     this.readChar();
     return token;
+  }
+
+  private readString(): string | null {
+    let output = "";
+    this.readChar(); // Skip the initial quote
+    let escape = false;
+    while (this.char != '"' || escape) {
+      if (this.char == "\n") return null; // Early EoL
+      if (escape) {
+        output += this.char;
+        escape = false;
+      } else {
+        if (this.char == "\\") {
+          escape = true;
+        } else {
+          output += this.char;
+        }
+      }
+      this.readChar();
+    }
+
+    return output;
   }
 
   private readNumber(): string {

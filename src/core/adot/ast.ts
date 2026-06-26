@@ -54,6 +54,12 @@ export class NumberLiteral extends Expression {
   }
 }
 
+export class StringLiteral extends Expression {
+  constructor(public readonly token: Token, public value: string) {
+    super();
+  }
+}
+
 export class Identifier extends Expression {
   constructor(public readonly token: Token, public value: string) {
     super();

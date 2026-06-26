@@ -13,6 +13,7 @@ export class Edge {
     public readonly from: string,
     public readonly to: string,
     public weight: number | null,
+    public name: string | null,
     public readonly directed: boolean
   ) {}
 

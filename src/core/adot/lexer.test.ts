@@ -11,6 +11,8 @@ describe("Lexer next token", () => {
     a -- b;
     c [cost=10.23]
     c -- d0 [cost=10]
+
+    x -- y [name="test"]
 }
 
 test {}
@@ -52,6 +54,16 @@ subgraph
     [TOKEN_TYPE.Id, "cost"],
     [TOKEN_TYPE.Eq, "="],
     [TOKEN_TYPE.Number, "10"],
+    [TOKEN_TYPE.RBracket, "]"],
+
+    // x -- y [name="test"]
+    [TOKEN_TYPE.Id, "x"],
+    [TOKEN_TYPE.Edge, "--"],
+    [TOKEN_TYPE.Id, "y"],
+    [TOKEN_TYPE.LBracket, "["],
+    [TOKEN_TYPE.Id, "name"],
+    [TOKEN_TYPE.Eq, "="],
+    [TOKEN_TYPE.String, "test"],
     [TOKEN_TYPE.RBracket, "]"],
 
     // }

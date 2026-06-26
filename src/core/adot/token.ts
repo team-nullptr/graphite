@@ -14,6 +14,7 @@ export const TOKEN_TYPE = {
   Eq: "EQ",
   Illegal: "ILLEGAL",
   EOF: "EOF",
+  String: "STRING",
 } as const;
 
 export type TokenType = (typeof TOKEN_TYPE)[keyof typeof TOKEN_TYPE];

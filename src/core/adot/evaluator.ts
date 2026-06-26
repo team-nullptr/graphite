@@ -66,6 +66,9 @@ export class Evaluator {
       attributesList["cost"] && typeof attributesList["cost"] === "number"
         ? attributesList["cost"]
         : null,
+      attributesList["name"] && typeof attributesList["name"] === "string"
+        ? attributesList["name"]
+        : null,
       isDirected
     );
 

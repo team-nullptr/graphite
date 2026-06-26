@@ -205,6 +205,8 @@ export class Parser {
         return this.parseIdentifier();
       case TOKEN_TYPE.Number:
         return this.parseNumberLiteral();
+      case TOKEN_TYPE.String:
+        return this.parseStringLiteral();
       default:
         throw this.error(errorFmtAt(this.currToken, "Expected an expression."));
     }
@@ -212,6 +214,10 @@ export class Parser {
 
   private parseNumberLiteral(): ast.NumberLiteral {
     return new ast.NumberLiteral(this.currToken, parseFloat(this.currToken.literal));
+  }
+
+  private parseStringLiteral(): ast.StringLiteral {
+    return new ast.StringLiteral(this.currToken, this.currToken.literal);
   }
 
   private parseIdentifier(): ast.Identifier {
